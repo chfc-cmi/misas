@@ -1,4 +1,3 @@
-# nbdev template
+# Model Interpretation through Sensitivity Analysis for Segmentation
 
-Use this template to more easily create your nbdev project.
 
