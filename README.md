@@ -1,5 +1,5 @@
-# misas - Model Interpretation through Sensitivity Analysis for Segmentation
-> A library that helps interpreting and explaining your segmetation models through analysing their sensitivity to defined alterations of the input
+# Model Interpretation through Sensitivity Analysis for Segmentation
+> Interpret and explain your segmetation models through analysing their sensitivity to defined alterations of the input
 
 
 Input alterations currently include:
@@ -8,7 +8,7 @@ Input alterations currently include:
 
 ## Install
 
-`pip install your_project_name`
+`pip install misas`
 
 ## How to use
 
