@@ -10,7 +10,7 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: Model Interpretation through Sensitivity Analysis for Segmentation
+      title: Local Interpretability
       url: /local_interpret
     output: web
     title: misas

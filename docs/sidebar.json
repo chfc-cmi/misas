@@ -1,6 +1,6 @@
 {
   "misas": {
     "Overview": "/",
-    "Model Interpretation through Sensitivity Analysis for Segmentation": "/local_interpret"
+    "Local Interpretability": "/local_interpret"
   }
 }
