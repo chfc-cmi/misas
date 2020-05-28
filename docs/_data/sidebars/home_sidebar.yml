@@ -10,8 +10,8 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: module name here
-      url: /core
+      title: Model Interpretation through Sensitivity Analysis for Segmentation
+      url: /local_interpret
     output: web
     title: misas
   output: web
