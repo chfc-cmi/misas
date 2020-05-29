@@ -99,3 +99,17 @@ plt.plot(results['pxls'], results['diceLV'])
 plt.plot(results['pxls'], results['diceMY'])
 plt.axis([32,256,0,1])
 ```
+
+    
+
+
+
+
+
+    [32, 256, 0, 1]
+
+
+
+
+![png](docs/images/output_15_2.png)
+
