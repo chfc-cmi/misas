@@ -113,3 +113,20 @@ plt.axis([32,256,0,1])
 
 ![png](docs/images/output_15_2.png)
 
+
+```python
+interact(
+    plot_crop,
+    image_function=fixed(img),
+    model=fixed(trainedModel),
+    pxls=widgets.IntSlider(min=10, max=256, step=2, value=76, continuous_update=False),
+    figsize=fixed((10,10))
+)
+```
+
+
+
+
+    <function misas.core.plot_crop(image_function, model, pxls, **kwargs)>
+
+
