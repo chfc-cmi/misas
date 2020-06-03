@@ -57,7 +57,9 @@ def plot_crop_series(image_function, model, start=256, end=56, num=5):
         croppedImage = image_function()
         croppedImage.resize(256)
         croppedImage.crop(int(pxls))
+        croppedImage.rotate(180)
         croppedImage.crop_pad(256, padding_mode = 'zeros')
+        croppedImage.rotate(180)
         croppedImage.show(ax=ax, title=f'pixels={int(pxls)}', y =  model.predict(croppedImage)[0])
 
 # Cell
@@ -69,7 +71,8 @@ def crop_series(image_function, mask_function, model, step_size=5):
         trueMask = mask_function()
         trueMask.resize(256)
 
-        croppedImage = image.crop(pxls).crop_pad(256, padding_mode = 'zeros')
+        # use double rotation to avoid cropping and padding with odd numbers to lead to 1px offset
+        croppedImage = image.crop(pxls).rotate(180).crop_pad(256, padding_mode = 'zeros').rotate(180)
         prediction = model.predict(croppedImage)[0]
         prediction._px = prediction._px.float()
 
@@ -83,5 +86,5 @@ def crop_series(image_function, mask_function, model, step_size=5):
 # Cell
 @gif.frame
 def plot_crop(image_function, model, pxls, **kwargs):
-    img = image_function().resize(256).crop(pxls).crop_pad(256, padding_mode = 'zeros')
+    img = image_function().resize(256).crop(pxls).rotate(180).crop_pad(256, padding_mode = 'zeros').rotate(180)
     return img.show(title=f'cropping={pxls}', y =  model.predict(img)[0], **kwargs)
