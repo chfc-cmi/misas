@@ -8,7 +8,8 @@ index = {"dice": "01_local_interpret.ipynb",
          "plot_rotation": "01_local_interpret.ipynb",
          "plot_crop_series": "01_local_interpret.ipynb",
          "crop_series": "01_local_interpret.ipynb",
-         "plot_crop": "01_local_interpret.ipynb"}
+         "plot_crop": "01_local_interpret.ipynb",
+         "plot_brightness_series": "01_local_interpret.ipynb"}
 
 modules = ["core.py"]
 
