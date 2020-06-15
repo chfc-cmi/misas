@@ -2,7 +2,8 @@
 
 __all__ = ['plot_generic_series', 'plot_rotation_series', 'rotation_series', 'plot_rotation', 'cropTransform',
            'plot_crop_series', 'crop_series', 'plot_crop', 'plot_brightness_series', 'bright_series',
-           'plot_contrast_series', 'contrast_series']
+           'plot_contrast_series', 'contrast_series', 'plot_rotation_series', 'plot_brightness_series',
+           'plot_zoom_series']
 
 # Internal Cell
 from fastai.vision import *
@@ -146,3 +147,18 @@ def contrast_series(image_function, mask_function, model, step_size=0.5):
 
     results1 = pd.DataFrame(results1,columns = ['scale', 'diceLV1', 'diceMY1'])
     return results1
+
+# Cell
+def plot_rotation_series(image, model, start=0, end=180, num=6):
+    rotationTransform = lambda image, deg: image.resize(256).rotate(degrees=int(deg))
+    plot_generic_series(image,model,rotationTransform, start=start, end=end, num=num, param_name="degrees")
+
+# Cell
+def plot_brightness_series(image, model, start=0.05, end=0.95, num=5):
+    brightnessTransform = lambda image, light: image.resize(256).brightness(light)
+    plot_generic_series(image,model,brightnessTransform, start=start, end=end, num=num, param_name="brightness")
+
+# Cell
+def plot_zoom_series(image, model, start=1.00, end=10.05, num=5):
+    brightnessTransform = lambda image, light: image.resize(256).zoom(scale)
+    plot_generic_series(image,model,zoomTransform, start=start, end=end, num=num, param_name="brightness")
