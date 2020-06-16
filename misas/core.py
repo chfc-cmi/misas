@@ -2,8 +2,7 @@
 
 __all__ = ['plot_generic_series', 'plot_rotation_series', 'rotation_series', 'plot_rotation', 'cropTransform',
            'plot_crop_series', 'crop_series', 'plot_crop', 'plot_brightness_series', 'bright_series',
-           'plot_contrast_series', 'contrast_series', 'plot_rotation_series', 'plot_brightness_series',
-           'plot_zoom_series']
+           'plot_contrast_series', 'contrast_series', 'plot_zoom_series', 'zoom_series']
 
 # Internal Cell
 from fastai.vision import *
@@ -14,9 +13,9 @@ import gif
 import numpy as np
 
 # Internal Cell
-def dice_by_component(rotatedPrediction, trueMask, component = 1):
+def dice_by_component(predictedMask, trueMask, component = 1):
     dice = 1
-    pred = rotatedPrediction.data == component
+    pred = predictedMask.data == component
     msk = trueMask.data == component
     intersect = pred&msk
     total = pred.sum() + msk.sum()
@@ -149,16 +148,25 @@ def contrast_series(image_function, mask_function, model, step_size=0.5):
     return results1
 
 # Cell
-def plot_rotation_series(image, model, start=0, end=180, num=6):
-    rotationTransform = lambda image, deg: image.resize(256).rotate(degrees=int(deg))
-    plot_generic_series(image,model,rotationTransform, start=start, end=end, num=num, param_name="degrees")
+def plot_zoom_series(image, model, start=1.00, end=2.75, num=5):
+    zoomTransform = lambda image, scale1: image.resize(256).zoom(scale1)
+    plot_generic_series(image,model,zoomTransform, start=start, end=end, num=num, param_name="scale1")
 
 # Cell
-def plot_brightness_series(image, model, start=0.05, end=0.95, num=5):
-    brightnessTransform = lambda image, light: image.resize(256).brightness(light)
-    plot_generic_series(image,model,brightnessTransform, start=start, end=end, num=num, param_name="brightness")
+def zoom_series(image_function, mask_function, model, step_size=0.75):
+    results = list()
+    for scale1 in tqdm(np.arange(1., 3.0, step_size)):
+        trueMask = mask_function().resize(256)
+        trueMask.zoom(scale = scale1)
+        image = image_function()
+        image.resize(256)
+        zoomImage = image.zoom(scale = scale1)
+        prediction = model.predict(zoomImage)[0]
+        prediction._px = prediction._px.float()
 
-# Cell
-def plot_zoom_series(image, model, start=1.00, end=10.05, num=5):
-    brightnessTransform = lambda image, light: image.resize(256).zoom(scale)
-    plot_generic_series(image,model,zoomTransform, start=start, end=end, num=num, param_name="brightness")
+        diceLV = dice_by_component(prediction, trueMask, component = 1)
+        diceMY = dice_by_component(prediction, trueMask, component = 2)
+        results.append([scale1, diceLV, diceMY])
+
+    results = pd.DataFrame(results,columns = ['scale1', 'diceLV', 'diceMY'])
+    return results
