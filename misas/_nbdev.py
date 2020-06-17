@@ -13,9 +13,13 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "plot_crop": "01_local_interpret.ipynb",
          "plot_brightness_series": "01_local_interpret.ipynb",
          "bright_series": "01_local_interpret.ipynb",
+         "plot_brightness": "01_local_interpret.ipynb",
          "plot_contrast_series": "01_local_interpret.ipynb",
          "contrast_series": "01_local_interpret.ipynb",
-         "plot_zoom_series": "01_local_interpret.ipynb"}
+         "plot_contrast": "01_local_interpret.ipynb",
+         "plot_zoom_series": "01_local_interpret.ipynb",
+         "zoom_series": "01_local_interpret.ipynb",
+         "plot_zoom": "01_local_interpret.ipynb"}
 
 modules = ["core.py"]
 
