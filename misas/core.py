@@ -3,7 +3,7 @@
 __all__ = ['plot_generic_series', 'eval_generic_series', 'rotationTransform', 'plot_rotation_series',
            'eval_rotation_series', 'plot_rotation', 'cropTransform', 'plot_crop_series', 'eval_crop_series',
            'plot_crop', 'brightnessTransform', 'plot_brightness_series', 'eval_bright_series', 'plot_brightness',
-           'plot_contrast_series', 'contrast_series', 'plot_contrast', 'plot_zoom_series', 'zoom_series', 'plot_zoom',
+           'eval_contrast_series', 'plot_contrast', 'plot_zoom_series', 'zoom_series', 'plot_zoom',
            'plot_dihedral_series']
 
 # Internal Cell
@@ -175,27 +175,41 @@ def plot_brightness(image_function, model, light):
     return img.show(title=f'brightness={light:.2f}', y =  model.predict(img)[0])
 
 # Cell
-def plot_contrast_series(image, model, start=0.1, end=7, num=5, **kwargs):
-    contrastTransform = lambda image, scale: image.resize(256).contrast(scale)
-    plot_generic_series(image,model,contrastTransform, start=start, end=end, num=num, param_name="scale", log_steps=True, **kwargs)
+#def plot_contrast_series(image, model, start=0.1, end=7, num=5, **kwargs):
+#    contrastTransform = lambda image, scale: image.resize(256).contrast(scale)
+#    plot_generic_series(image,model,contrastTransform, start=start, end=end, num=num, param_name="scale", log_steps=True, **kwargs)
 
 # Cell
-def contrast_series(image_function, mask_function, model, step_size=0.5):
-    trueMask = mask_function().resize(256)
-    results1 = list()
-    for scale in tqdm(np.arange(0, 7, step_size)):
-        image = image_function()
-        image.resize(256)
-        ContrastImage = contrast(image, scale)
-        prediction = model.predict(ContrastImage)[0]
-        prediction._px = prediction._px.float()
+def eval_contrast_series(image, mask, model, start=0.1, end=7.0, step_size=0.5, param_name="contrast", **kwargs):
+    return eval_generic_series(
+        image,
+        mask,
+        model,
+        contrastTransform,
+        start=start,
+        end=end,
+        step_size=step_size,
+        param_name=param_name,
+        **kwargs
+    )
 
-        diceLV1 = dice_by_component(prediction, trueMask, component = 1)
-        diceMY1 = dice_by_component(prediction, trueMask, component = 2)
-        results1.append([scale, diceLV1, diceMY1])
+# Cell
+#def contrast_series(image_function, mask_function, model, step_size=0.5):
+#    trueMask = mask_function().resize(256)
+#    results1 = list()
+#    for scale in tqdm(np.arange(0, 7, step_size)):
+#        image = image_function()
+#        image.resize(256)
+#        ContrastImage = contrast(image, scale)
+#        prediction = model.predict(ContrastImage)[0]
+#        prediction._px = prediction._px.float()
 
-    results1 = pd.DataFrame(results1,columns = ['scale', 'diceLV1', 'diceMY1'])
-    return results1
+#        diceLV1 = dice_by_component(prediction, trueMask, component = 1)
+#        diceMY1 = dice_by_component(prediction, trueMask, component = 2)
+#        results1.append([scale, diceLV1, diceMY1])
+
+#    results1 = pd.DataFrame(results1,columns = ['scale', 'diceLV1', 'diceMY1'])
+#    return results1
 
 # Cell
 @gif.frame
