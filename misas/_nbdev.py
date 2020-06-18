@@ -21,7 +21,8 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "plot_contrast": "01_local_interpret.ipynb",
          "plot_zoom_series": "01_local_interpret.ipynb",
          "zoom_series": "01_local_interpret.ipynb",
-         "plot_zoom": "01_local_interpret.ipynb"}
+         "plot_zoom": "01_local_interpret.ipynb",
+         "plot_dihedral_series": "01_local_interpret.ipynb"}
 
 modules = ["core.py"]
 

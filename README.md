@@ -14,11 +14,11 @@ Input alterations currently include:
 
 Example with kaggle data
 
-```python
+```
 from fastai.vision import *
 ```
 
-```python
+```
 img = lambda: open_image("example/kaggle/images/1-frame014-slice005.png")
 trueMask = lambda: open_mask("example/kaggle/masks/1-frame014-slice005.png")
 trainedModel = load_learner(path="example/kaggle", file="model.pkl", tfm_y=False)
@@ -31,7 +31,7 @@ img().show(y=trueMask(), figsize=(8,8))
 
 ### Rotation
 
-```python
+```
 plot_rotation_series(img(), trainedModel)
 ```
 
@@ -39,7 +39,7 @@ plot_rotation_series(img(), trainedModel)
 ![png](docs/images/output_8_0.png)
 
 
-```python
+```
 results = rotation_series(img, trueMask, trainedModel)
 plt.plot(results['deg'], results['diceLV'])
 plt.plot(results['deg'], results['diceMY'])
@@ -62,12 +62,12 @@ plt.axis([0,360,0,1])
 
 You can use interactive elements to manually explore the impact of rotation
 
-```python
+```
 from ipywidgets import interact, interactive, fixed, interact_manual
 import ipywidgets as widgets
 ```
 
-```python
+```
 interact(
     plot_rotation,
     image_function=fixed(img),
@@ -85,7 +85,7 @@ interact(
 
 ### Cropping
 
-```python
+```
 plot_crop_series(img(), trainedModel)
 ```
 
@@ -93,7 +93,7 @@ plot_crop_series(img(), trainedModel)
 ![png](docs/images/output_14_0.png)
 
 
-```python
+```
 results = crop_series(img, trueMask, trainedModel)
 plt.plot(results['pxls'], results['diceLV'])
 plt.plot(results['pxls'], results['diceMY'])
@@ -114,7 +114,7 @@ plt.axis([32,256,0,1])
 ![png](docs/images/output_15_2.png)
 
 
-```python
+```
 interact(
     plot_crop,
     image_function=fixed(img),

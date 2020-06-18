@@ -3,7 +3,7 @@
 __all__ = ['plot_generic_series', 'eval_generic_series', 'rotationTransform', 'plot_rotation_series',
            'eval_rotation_series', 'plot_rotation', 'cropTransform', 'plot_crop_series', 'eval_crop_series',
            'plot_crop', 'plot_brightness_series', 'bright_series', 'plot_brightness', 'plot_contrast_series',
-           'contrast_series', 'plot_contrast', 'plot_zoom_series', 'zoom_series', 'plot_zoom']
+           'contrast_series', 'plot_contrast', 'plot_zoom_series', 'zoom_series', 'plot_zoom', 'plot_dihedral_series']
 
 # Internal Cell
 from fastai.vision import *
@@ -234,3 +234,8 @@ def zoom_series(image_function, mask_function, model, step_size=0.75):
 def plot_zoom(image_function, model, scale, **kwargs):
     img = image_function().resize(256).zoom(scale = scale)
     return img.show(title=f'zoom={scale}', y =  model.predict(img)[0], **kwargs)
+
+# Cell
+def plot_dihedral_series(image, model, start=0, end=7, num=8):
+    dihedralTransform = lambda image, sym_im: image.resize(256).dihedral(k=int(sym_im))
+    plot_generic_series(image,model,dihedralTransform, start=start, end=end, num=num, param_name="dihedral")
