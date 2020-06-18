@@ -2,8 +2,9 @@
 
 __all__ = ['plot_generic_series', 'eval_generic_series', 'rotationTransform', 'plot_rotation_series',
            'eval_rotation_series', 'plot_rotation', 'cropTransform', 'plot_crop_series', 'eval_crop_series',
-           'plot_crop', 'plot_brightness_series', 'bright_series', 'plot_brightness', 'plot_contrast_series',
-           'contrast_series', 'plot_contrast', 'plot_zoom_series', 'zoom_series', 'plot_zoom', 'plot_dihedral_series']
+           'plot_crop', 'brightnessTransform', 'plot_brightness_series', 'eval_bright_series', 'plot_brightness',
+           'plot_contrast_series', 'contrast_series', 'plot_contrast', 'plot_zoom_series', 'zoom_series', 'plot_zoom',
+           'plot_dihedral_series']
 
 # Internal Cell
 from fastai.vision import *
@@ -147,27 +148,25 @@ def plot_crop(image_function, model, pxls, **kwargs):
     return img.show(title=f'cropping={pxls}', y =  model.predict(img)[0], **kwargs)
 
 # Cell
+def brightnessTransform(image, light):
+    return image.brightness(light)
+
 def plot_brightness_series(image, model, start=0.05, end=0.95, num=5, **kwargs):
-    brightnessTransform = lambda image, light: image.resize(256).brightness(light)
     plot_generic_series(image,model,brightnessTransform, start=start, end=end, num=num, param_name="brightness", **kwargs)
 
 # Cell
-def bright_series(image_function, mask_function, model, step_size=0.05):
-    trueMask = mask_function().resize(256)
-    results1 = list()
-    for light in tqdm(np.arange(0, 1.05, step_size)):
-        image = image_function()
-        image.resize(256)
-        BrightImage = brightness(image, light)
-        prediction = model.predict(BrightImage)[0]
-        prediction._px = prediction._px.float()
-
-        diceLV1 = dice_by_component(prediction, trueMask, component = 1)
-        diceMY1 = dice_by_component(prediction, trueMask, component = 2)
-        results1.append([light, diceLV1, diceMY1])
-
-    results1 = pd.DataFrame(results1,columns = ['light', 'diceLV1', 'diceMY1'])
-    return results1
+def eval_bright_series(image, mask, model, start=0.05, end=0.95, step_size=0.05, param_name="brightness", **kwargs):
+    return eval_generic_series(
+        image,
+        mask,
+        model,
+        brightnessTransform,
+        start=start,
+        end=end,
+        step_size=step_size,
+        param_name=param_name,
+        **kwargs
+    )
 
 # Cell
 @gif.frame
