@@ -1,6 +1,7 @@
 {
   "misas": {
     "Overview": "/",
-    "Local Interpretability": "/local_interpret"
+    "Local Interpretability": "/local_interpret",
+    "Title": "/ukbb_on_kaggle"
   }
 }
