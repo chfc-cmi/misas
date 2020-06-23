@@ -25,7 +25,8 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "eval_zoom_series": "01_local_interpret.ipynb",
          "dihedralTransform": "01_local_interpret.ipynb",
          "get_dihedral_series": "01_local_interpret.ipynb",
-         "eval_dihedral_series": "01_local_interpret.ipynb"}
+         "eval_dihedral_series": "01_local_interpret.ipynb",
+         "resizeTransform": "01_local_interpret.ipynb"}
 
 modules = ["core.py"]
 
