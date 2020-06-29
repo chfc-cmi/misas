@@ -7,7 +7,9 @@ __all__ = ['get_generic_series', 'plot_series', 'plot_frame', 'gif_series', 'eva
            'dihedralTransform', 'get_dihedral_series', 'eval_dihedral_series', 'resizeTransform']
 
 # Internal Cell
-from fastai.vision import *
+from fastai2.vision.all import *
+from fastai.vision import load_learner
+from fastai.vision import Image
 import pandas as pd
 from tqdm.notebook import tqdm
 import matplotlib.pyplot as plt
@@ -18,8 +20,8 @@ import numpy as np
 # Internal Cell
 def dice_by_component(predictedMask, trueMask, component = 1):
     dice = Tensor([1])
-    pred = predictedMask.data == component
-    msk = trueMask.data == component
+    pred = image2tensor(predictedMask) == component
+    msk = image2tensor(trueMask) == component
     intersect = pred&msk
     total = pred.sum() + msk.sum()
     if total > 0:
@@ -34,17 +36,15 @@ def get_generic_series(image,
         end=180,
         step=30,
         log_steps=False,
-        prep_function=None
     ):
     series = []
     steps = np.arange(start,end,step,)
     if log_steps:
         steps = np.exp(np.linspace(log(start),log(end),int((end-start)/step)))
     for param in tqdm(steps, leave=False):
-        img = image.clone()
-        img = transform_function(img, param)
-        if prep_function:
-            img = prep_function(img)
+        img = transform_function(image, param)
+        if hasattr(model,"prepareSize"):
+            img = model.prepareSize(img)
         pred = model.predict(img)[0]
         series.append([param,img,pred])
     return series
@@ -59,12 +59,15 @@ def plot_series(
     fig, axs = plt.subplots(nrow,math.ceil(len(series)/nrow),figsize=figsize)
     for element, ax in zip(series, axs.flatten()):
         param,img,pred = element
-        img.show(ax=ax, title=f'{param_name}={param:.2f}', y = pred)
+        img.show(ax=ax, title=f'{param_name}={param:.2f}')
+        pred.show(ax=ax)
 
 # Cell
 @gif.frame
 def plot_frame(param, img, pred, param_name="param",**kwargs):
-    img.show(title=f'{param_name}={param:.2f}', y = pred, **kwargs)
+    _,ax = plt.subplots(**kwargs)
+    img.show(ax,title=f'{param_name}={param:.2f}')
+    pred.show(ax)
 
 # Cell
 def gif_series(series, fname, duration=150, param_name="param"):
@@ -82,19 +85,17 @@ def eval_generic_series(
         step=5,
         param_name="param",
         mask_transform_function=None,
-        prep_function=None,
         components=['bg', 'c1','c2']
     ):
     results = list()
     for param in tqdm(np.arange(start, end, step), leave=False):
-        img = image.clone()
-        trueMask = mask.clone()
-        img = transform_function(img, param)
+        img = transform_function(image, param)
+        trueMask = mask
         if mask_transform_function:
             trueMask = mask_transform_function(trueMask, param)
-        if prep_function:
-            img = prep_function(img)
-            trueMask = prep_function(trueMask)
+        if hasattr(trainedModel,"prepareSize"):
+            img = model.prepareSize(img)
+            trueMask = model.prepareSize(trueMask)
         prediction = model.predict(img)[0]
         # prediction._px = prediction._px.float()
         result = [param]
@@ -107,7 +108,9 @@ def eval_generic_series(
 
 # Cell
 def rotationTransform(image, deg):
-    return image.rotate(degrees=int(deg))
+    imType = type(image)
+    image = image.rotate(int(deg))
+    return imType(image)
 
 def get_rotation_series(image, model, start=0, end=360, step=60, **kwargs):
     return get_generic_series(image,model,rotationTransform, start=start, end=end, step=step, **kwargs)
