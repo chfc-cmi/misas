@@ -132,21 +132,15 @@ def eval_rotation_series(image, mask, model, step=5, start=0, end=360, **kwargs)
 
 # Cell
 def cropTransform(image, pxls):
-    image.resize(256)
-    image.crop(int(pxls))
-    image.rotate(180)
-    image.crop_pad(256,padding_mode='zeros')
-    image.rotate(180)
-    return image
+    imType = type(image)
+    image = image.crop_pad(int(pxls))
+    return imType(image)
 
 def get_crop_series(image, model, start=56, end=256, step=50, **kwargs):
     return get_generic_series(image,model,cropTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_crop_series(image, mask, model, start=56, end=256,step=5,crop_mask=False,**kwargs):
-    mask_transform_function = None
-    if crop_mask:
-        mask_transform_function = cropTransform
+def eval_crop_series(image, mask, model, step=5, start=56, end=256, **kwargs):
     return eval_generic_series(
         image,
         mask,
@@ -155,8 +149,8 @@ def eval_crop_series(image, mask, model, start=56, end=256,step=5,crop_mask=Fals
         start=start,
         end=end,
         step=step,
-        param_name='pixels',
-        mask_transform_function=mask_transform_function,
+        mask_transform_function=rotationTransform,
+        param_name="pixels",
         **kwargs
     )
 
