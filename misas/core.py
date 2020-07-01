@@ -2,9 +2,9 @@
 
 __all__ = ['get_generic_series', 'plot_series', 'plot_frame', 'gif_series', 'eval_generic_series', 'rotationTransform',
            'get_rotation_series', 'eval_rotation_series', 'cropTransform', 'get_crop_series', 'eval_crop_series',
-           'brightnessTransform', 'get_brightness_series', 'eval_bright_series', 'contrastTransform',
-           'get_contrast_series', 'eval_contrast_series', 'zoomTransform', 'get_zoom_series', 'eval_zoom_series',
-           'dihedralTransform', 'get_dihedral_series', 'eval_dihedral_series', 'resizeTransform']
+           'get_brightness_series', 'eval_bright_series', 'contrastTransform', 'get_contrast_series',
+           'eval_contrast_series', 'zoomTransform', 'get_zoom_series', 'eval_zoom_series', 'dihedralTransform',
+           'get_dihedral_series', 'eval_dihedral_series', 'resizeTransform']
 
 # Internal Cell
 from fastai2.vision.all import *
@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import gif
 import math
 import numpy as np
+import torchvision
 
 # Internal Cell
 def dice_by_component(predictedMask, trueMask, component = 1):
@@ -31,22 +32,31 @@ def dice_by_component(predictedMask, trueMask, component = 1):
 # Cell
 def get_generic_series(image,
         model,
-        transform_function,
+        transform,
+        truth=None,
+        tfm_y=False,
         start=0,
         end=180,
         step=30,
         log_steps=False,
     ):
     series = []
-    steps = np.arange(start,end,step,)
+    steps = np.arange(start,end,step)
     if log_steps:
         steps = np.exp(np.linspace(log(start),log(end),int((end-start)/step)))
     for param in tqdm(steps, leave=False):
-        img = transform_function(image, param)
+        img = transform(image, param)
         if hasattr(model,"prepareSize"):
             img = model.prepareSize(img)
         pred = model.predict(img)[0]
         series.append([param,img,pred])
+        if truth:
+            if tfm_y:
+                truth = transform(truth, param)
+            if hasattr(model,"prepareSize"):
+                truth = model.prepareSize(truth)
+            truth = PILMask(truth)
+        series[-1].append(truth)
     return series
 
 # Cell
@@ -54,13 +64,16 @@ def plot_series(
         series,
         nrow=1,
         figsize=(16,6),
-        param_name='param'
+        param_name='param',
+        overlay_truth=False
     ):
     fig, axs = plt.subplots(nrow,math.ceil(len(series)/nrow),figsize=figsize)
     for element, ax in zip(series, axs.flatten()):
-        param,img,pred = element
+        param,img,pred,truth = element
         img.show(ax=ax, title=f'{param_name}={param:.2f}')
         pred.show(ax=ax)
+        if overlay_truth and truth:
+            truth.show(ax=ax,alpha=.2)
 
 # Cell
 @gif.frame
@@ -71,7 +84,7 @@ def plot_frame(param, img, pred, param_name="param",**kwargs):
 
 # Cell
 def gif_series(series, fname, duration=150, param_name="param"):
-    frames = [plot_frame(*x, param_name=param_name) for x in series]
+    frames = [plot_frame(*x[:3], param_name=param_name) for x in series]
     gif.save(frames, fname, duration=duration)
 
 # Cell
@@ -134,9 +147,12 @@ def eval_rotation_series(image, mask, model, step=5, start=0, end=360, **kwargs)
 def cropTransform(image, pxls):
     imType = type(image)
     image = image.crop_pad(int(pxls))
+    image = image.rotate(180)
+    image = image.crop_pad(256)
+    image = image.rotate(180)
     return imType(image)
 
-def get_crop_series(image, model, start=56, end=256, step=50, **kwargs):
+def get_crop_series(image, model, start=56, end=257, step=50, **kwargs):
     return get_generic_series(image,model,cropTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
@@ -155,19 +171,16 @@ def eval_crop_series(image, mask, model, step=5, start=56, end=256, **kwargs):
     )
 
 # Cell
-def brightnessTransform(image, light):
-    return image.brightness(light)
-
-def get_brightness_series(image, model, start=0.05, end=0.95, step=.2, **kwargs):
-    return get_generic_series(image,model,brightnessTransform, start=start, end=end, step=step, **kwargs)
+def get_brightness_series(image, model, start=0.05, end=5.95, step=.5, **kwargs):
+    return get_generic_series(image,model,torchvision.transforms.functional.adjust_brightness, start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_bright_series(image, mask, model, start=0.05, end=0.95, step=0.05, param_name="brightness", **kwargs):
+def eval_bright_series(image, mask, model, start=0.05, end=.95, step=0.05, param_name="brightness", **kwargs):
     return eval_generic_series(
         image,
         mask,
         model,
-        brightnessTransform,
+        torchvision.transforms.functional.adjust_brightness,
         start=start,
         end=end,
         step=step,
