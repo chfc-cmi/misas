@@ -208,25 +208,25 @@ def eval_contrast_series(image, mask, model, start=0.1, end=7.0, step=0.5, param
 
 # Cell
 def zoomTransform(image, scale):
-    image = TensorImage(image2tensor(image))
-    image = image.zoom(scale)
-    return PILImage(image)
+    imType = type(image)
+    image = image.crop_pad(int(scale))
+    return imType(image)
 
-def get_zoom_series(image, model, start=1.00, end=3, step=.5, **kwargs):
+def get_zoom_series(image, model, start=56, end=500, step=50, **kwargs):
     return get_generic_series(image,model,zoomTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_zoom_series(image, mask, model, start=1, end=3, step=.1, param_name="scale", **kwargs):
+def eval_zoom_series(image, mask, model, step=40, start=56, end=500, **kwargs):
     return eval_generic_series(
         image,
         mask,
         model,
-        zoomTransform,
+        cropTransform,
         start=start,
         end=end,
         step=step,
-        param_name=param_name,
         mask_transform_function=zoomTransform,
+        param_name="scale",
         **kwargs
     )
 
