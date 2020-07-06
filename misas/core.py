@@ -4,7 +4,7 @@ __all__ = ['get_generic_series', 'plot_series', 'plot_frame', 'gif_series', 'eva
            'get_rotation_series', 'eval_rotation_series', 'cropTransform', 'get_crop_series', 'eval_crop_series',
            'get_brightness_series', 'eval_bright_series', 'get_contrast_series', 'eval_contrast_series',
            'zoomTransform', 'get_zoom_series', 'eval_zoom_series', 'dihedralTransform', 'get_dihedral_series',
-           'eval_dihedral_series', 'resizeTransform']
+           'eval_dihedral_series', 'resizeTransform', 'eval_resize_series']
 
 # Internal Cell
 from fastai2.vision.all import *
@@ -208,9 +208,9 @@ def eval_contrast_series(image, mask, model, start=0.1, end=7.0, step=0.5, param
 
 # Cell
 def zoomTransform(image, scale):
-    imType = type(image)
-    image = image.zoom(int(deg))
-    return imType(image)
+    image = TensorImage(image2tensor(image))
+    image = image.zoom(scale)
+    return PILImage(image)
 
 def get_zoom_series(image, model, start=1.00, end=3, step=.5, **kwargs):
     return get_generic_series(image,model,zoomTransform, start=start, end=end, step=step, **kwargs)
@@ -232,6 +232,8 @@ def eval_zoom_series(image, mask, model, start=1, end=3, step=.1, param_name="sc
 
 # Cell
 def dihedralTransform(image, sym_im):
+    if type(image) == PILMask:
+        return PILMask(PILImage(image).dihedral(k=int(sym_im)))
     return image.dihedral(k=int(sym_im))
 
 def get_dihedral_series(image, model, start=0, end=8, step=1, **kwargs):
@@ -254,5 +256,20 @@ def eval_dihedral_series(image, mask, model, start=0, end=8, step=1, param_name=
 
 # Cell
 def resizeTransform(image, size):
-    image.resize(int(size))
-    return image.clone()
+    imType = type(image)
+    return imType(image.resize((int(size),int(size))))
+
+# Cell
+def eval_resize_series(image, mask, model, start=25, end=260, step=5, param_name="px", **kwargs):
+    return eval_generic_series(
+        image,
+        mask,
+        model,
+        resizeTransform,
+        start=start,
+        end=end,
+        step=step,
+        param_name=param_name,
+        mask_transform_function=resizeTransform,
+        **kwargs
+    )
