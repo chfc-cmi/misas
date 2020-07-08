@@ -7,9 +7,7 @@ __all__ = ['get_generic_series', 'plot_series', 'plot_frame', 'gif_series', 'eva
            'eval_dihedral_series', 'resizeTransform', 'eval_resize_series']
 
 # Internal Cell
-from fastai2.vision.all import *
-from fastai.vision import load_learner
-from fastai.vision import Image
+from fastai.vision import *
 import pandas as pd
 from tqdm.notebook import tqdm
 import matplotlib.pyplot as plt
@@ -21,8 +19,8 @@ import torchvision
 # Internal Cell
 def dice_by_component(predictedMask, trueMask, component = 1):
     dice = Tensor([1])
-    pred = image2tensor(predictedMask) == component
-    msk = image2tensor(trueMask) == component
+    pred = predictedMask.data == component
+    msk = trueMask.data == component
     intersect = pred&msk
     total = pred.sum() + msk.sum()
     if total > 0:
@@ -41,22 +39,24 @@ def get_generic_series(image,
         log_steps=False,
     ):
     series = []
+    trueMask = None
     steps = np.arange(start,end,step)
     if log_steps:
         steps = np.exp(np.linspace(log(start),log(end),int((end-start)/step)))
     for param in tqdm(steps, leave=False):
-        img = transform(image, param)
+        img = image.clone()
+        img = transform(img, param)
         if hasattr(model,"prepareSize"):
             img = model.prepareSize(img)
         pred = model.predict(img)[0]
         series.append([param,img,pred])
         if truth:
+            trueMask = truth.clone()
             if tfm_y:
-                truth = transform(truth, param)
+                trueMask = transform(trueMask, param)
             if hasattr(model,"prepareSize"):
-                truth = model.prepareSize(truth)
-            truth = PILMask(truth)
-        series[-1].append(truth)
+                trueMask = model.prepareSize(trueMask)
+        series[-1].append(trueMask)
     return series
 
 # Cell
@@ -121,9 +121,7 @@ def eval_generic_series(
 
 # Cell
 def rotationTransform(image, deg):
-    imType = type(image)
-    image = image.rotate(int(deg))
-    return imType(image)
+    return image.rotate(int(deg))
 
 def get_rotation_series(image, model, start=0, end=360, step=60, **kwargs):
     return get_generic_series(image,model,rotationTransform, start=start, end=end, step=step, **kwargs)
@@ -145,12 +143,11 @@ def eval_rotation_series(image, mask, model, step=5, start=0, end=360, **kwargs)
 
 # Cell
 def cropTransform(image, pxls):
-    imType = type(image)
     image = image.crop_pad(int(pxls))
     image = image.rotate(180)
-    image = image.crop_pad(256)
+    image = image.crop_pad(256, padding_mode="zeros")
     image = image.rotate(180)
-    return imType(image)
+    return image
 
 def get_crop_series(image, model, start=56, end=257, step=50, **kwargs):
     return get_generic_series(image,model,cropTransform, start=start, end=end, step=step, **kwargs)
