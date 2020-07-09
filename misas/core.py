@@ -2,9 +2,9 @@
 
 __all__ = ['get_generic_series', 'plot_series', 'plot_frame', 'gif_series', 'eval_generic_series', 'rotationTransform',
            'get_rotation_series', 'eval_rotation_series', 'cropTransform', 'get_crop_series', 'eval_crop_series',
-           'brightnessTransform', 'get_brightness_series', 'eval_bright_series', 'get_contrast_series',
-           'eval_contrast_series', 'zoomTransform', 'get_zoom_series', 'eval_zoom_series', 'dihedralTransform',
-           'get_dihedral_series', 'eval_dihedral_series', 'resizeTransform', 'eval_resize_series']
+           'brightnessTransform', 'get_brightness_series', 'eval_bright_series', 'contrastTransform',
+           'get_contrast_series', 'eval_contrast_series', 'zoomTransform', 'get_zoom_series', 'eval_zoom_series',
+           'dihedralTransform', 'get_dihedral_series', 'eval_dihedral_series', 'resizeTransform', 'eval_resize_series']
 
 # Internal Cell
 from fastai.vision import *
@@ -190,16 +190,19 @@ def eval_bright_series(image, mask, model, start=0.05, end=.95, step=0.05, param
     )
 
 # Cell
-def get_contrast_series(image, model, start=0.1, end=7.00, step=1, **kwargs):
-    return get_generic_series(image,model,torchvision.transforms.functional.adjust_contrast, start=start, end=end, step=step, **kwargs)
+def contrastTransform(image, scale):
+    return image.contrast(scale)
+
+def get_contrast_series(image, model, start=0.1, end=7.01, step=1, **kwargs):
+    return get_generic_series(image,model,contrastTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_contrast_series(image, mask, model, start=0.1, end=7.0, step=0.5, param_name="contrast", **kwargs):
+def eval_contrast_series(image, mask, model, start=0.1, end=7.1, step=0.5, param_name="contrast", **kwargs):
     return eval_generic_series(
         image,
         mask,
         model,
-        torchvision.transforms.functional.adjust_contrast,
+        contrastTransform,
         start=start,
         end=end,
         step=step,
@@ -209,20 +212,19 @@ def eval_contrast_series(image, mask, model, start=0.1, end=7.0, step=0.5, param
 
 # Cell
 def zoomTransform(image, scale):
-    imType = type(image)
-    image = image.crop_pad(int(scale))
-    return imType(image)
+    image = image.crop_pad(int(scale), padding_mode="zeros")
+    return image
 
 def get_zoom_series(image, model, start=56, end=500, step=50, **kwargs):
     return get_generic_series(image,model,zoomTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_zoom_series(image, mask, model, step=40, start=56, end=500, **kwargs):
+def eval_zoom_series(image, mask, model, step=10, start=56, end=500, **kwargs):
     return eval_generic_series(
         image,
         mask,
         model,
-        cropTransform,
+        zoomTransform,
         start=start,
         end=end,
         step=step,
