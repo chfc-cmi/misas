@@ -2,9 +2,9 @@
 
 __all__ = ['get_generic_series', 'plot_series', 'plot_frame', 'gif_series', 'eval_generic_series', 'rotationTransform',
            'get_rotation_series', 'eval_rotation_series', 'cropTransform', 'get_crop_series', 'eval_crop_series',
-           'get_brightness_series', 'eval_bright_series', 'get_contrast_series', 'eval_contrast_series',
-           'zoomTransform', 'get_zoom_series', 'eval_zoom_series', 'dihedralTransform', 'get_dihedral_series',
-           'eval_dihedral_series', 'resizeTransform', 'eval_resize_series']
+           'brightnessTransform', 'get_brightness_series', 'eval_bright_series', 'get_contrast_series',
+           'eval_contrast_series', 'zoomTransform', 'get_zoom_series', 'eval_zoom_series', 'dihedralTransform',
+           'get_dihedral_series', 'eval_dihedral_series', 'resizeTransform', 'eval_resize_series']
 
 # Internal Cell
 from fastai.vision import *
@@ -102,8 +102,9 @@ def eval_generic_series(
     ):
     results = list()
     for param in tqdm(np.arange(start, end, step), leave=False):
-        img = transform_function(image, param)
-        trueMask = mask
+        img = image.clone()
+        img = transform_function(img, param)
+        trueMask = mask.clone()
         if mask_transform_function:
             trueMask = mask_transform_function(trueMask, param)
         if hasattr(trainedModel,"prepareSize"):
@@ -168,8 +169,11 @@ def eval_crop_series(image, mask, model, step=5, start=56, end=256, **kwargs):
     )
 
 # Cell
-def get_brightness_series(image, model, start=0.05, end=5.95, step=.5, **kwargs):
-    return get_generic_series(image,model,torchvision.transforms.functional.adjust_brightness, start=start, end=end, step=step, **kwargs)
+def brightnessTransform(image, light):
+    return image.brightness(light)
+
+def get_brightness_series(image, model, start=0.05, end=1, step=.1, **kwargs):
+    return get_generic_series(image,model,brightnessTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
 def eval_bright_series(image, mask, model, start=0.05, end=.95, step=0.05, param_name="brightness", **kwargs):
@@ -177,7 +181,7 @@ def eval_bright_series(image, mask, model, start=0.05, end=.95, step=0.05, param
         image,
         mask,
         model,
-        torchvision.transforms.functional.adjust_brightness,
+        brightnessTransform,
         start=start,
         end=end,
         step=step,
@@ -229,8 +233,6 @@ def eval_zoom_series(image, mask, model, step=40, start=56, end=500, **kwargs):
 
 # Cell
 def dihedralTransform(image, sym_im):
-    if type(image) == PILMask:
-        return PILMask(PILImage(image).dihedral(k=int(sym_im)))
     return image.dihedral(k=int(sym_im))
 
 def get_dihedral_series(image, model, start=0, end=8, step=1, **kwargs):
