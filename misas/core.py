@@ -176,7 +176,7 @@ def eval_crop_series(image, mask, model, step=5, start=56, end=256, **kwargs):
         start=start,
         end=end,
         step=step,
-        mask_transform_function=rotationTransform,
+        mask_transform_function=cropTransform,
         param_name="pixels",
         **kwargs
     )
