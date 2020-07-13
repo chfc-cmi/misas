@@ -5,7 +5,7 @@ __all__ = ['Fastai1_model', 'get_generic_series', 'plot_series', 'plot_frame', '
            'eval_crop_series', 'brightnessTransform', 'get_brightness_series', 'eval_bright_series',
            'contrastTransform', 'get_contrast_series', 'eval_contrast_series', 'zoomTransform', 'get_zoom_series',
            'eval_zoom_series', 'dihedralTransform', 'get_dihedral_series', 'eval_dihedral_series', 'resizeTransform',
-           'eval_resize_series']
+           'get_resize_series', 'eval_resize_series']
 
 # Internal Cell
 from fastai.vision import *
@@ -272,6 +272,10 @@ def eval_dihedral_series(image, mask, model, start=0, end=8, step=1, param_name=
 # Cell
 def resizeTransform(image, size):
     return image.resize(int(size)).clone()
+
+# Cell
+def get_resize_series(image, model, start=10, end=200, step=30, **kwargs):
+    return get_generic_series(image,model,resizeTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
 def eval_resize_series(image, mask, model, start=25, end=260, step=5, param_name="px", **kwargs):
