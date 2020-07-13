@@ -226,6 +226,7 @@ def eval_contrast_series(image, mask, model, start=0.1, end=7.1, step=0.5, param
 # Cell
 def zoomTransform(image, scale):
     image = image.crop_pad(int(scale), padding_mode="zeros")
+    image = image.resize(256).clone()
     return image
 
 def get_zoom_series(image, model, start=56, end=500, step=50, **kwargs):
