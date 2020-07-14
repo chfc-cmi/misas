@@ -278,7 +278,7 @@ def get_resize_series(image, model, start=10, end=200, step=30, **kwargs):
     return get_generic_series(image,model,resizeTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_resize_series(image, mask, model, start=25, end=260, step=5, param_name="px", **kwargs):
+def eval_resize_series(image, mask, model, start=22, end=3000, step=100, param_name="px", **kwargs):
     return eval_generic_series(
         image,
         mask,
