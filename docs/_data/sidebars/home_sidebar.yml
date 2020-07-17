@@ -13,7 +13,7 @@ entries:
       title: Local Interpretability
       url: /local_interpret
     - output: web,pdf
-      title: ukbb_cardiac predictions on kaggle
+      title: Real-world data tutorial
       url: /ukbb_on_kaggle
     output: web
     title: misas

@@ -2,6 +2,6 @@
   "misas": {
     "Overview": "/",
     "Local Interpretability": "/local_interpret",
-    "ukbb_cardiac predictions on kaggle": "/ukbb_on_kaggle"
+    "Real-world data tutorial": "/ukbb_on_kaggle"
   }
 }
