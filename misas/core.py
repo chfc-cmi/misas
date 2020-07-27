@@ -78,9 +78,10 @@ def plot_series(
         nrow=1,
         figsize=(16,6),
         param_name='param',
-        overlay_truth=False
+        overlay_truth=False,
+        **kwargs
     ):
-    fig, axs = plt.subplots(nrow,math.ceil(len(series)/nrow),figsize=figsize)
+    fig, axs = plt.subplots(nrow,math.ceil(len(series)/nrow),figsize=figsize,**kwargs)
     for element, ax in zip(series, axs.flatten()):
         param,img,pred,truth = element
         img.show(ax=ax, title=f'{param_name}={param:.2f}')
