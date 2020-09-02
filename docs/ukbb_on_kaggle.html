@@ -2,11 +2,13 @@
 
 title: Case Study: Model Suitability
 
+
 keywords: fastai
 sidebar: home_sidebar
 
 
 
+nb_path: "02_ukbb_on_kaggle.ipynb"
 ---
 <!--
 
@@ -29,7 +31,7 @@ sidebar: home_sidebar
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Aim:-Can-I-use-a-given-model-on-a-given-dataset">Aim: Can I use a given model on a given dataset<a class="anchor-link" href="#Aim:-Can-I-use-a-given-model-on-a-given-dataset"> </a></h2><p>We often find ourselves in a situation where we have a pre-trained model for a certain task (e.g. cardiac segmentation) and we have a data set where we want to perform that task. We know the model was not trained on that specific dataset. So we wonder, how will the model perform? Is it usable at all? Do we need to pre-process our data in a certain way to use it?</p>
+<h2 id="Aim:-Can-I-use-a-given-model-on-a-given-dataset?">Aim: Can I use a given model on a given dataset?<a class="anchor-link" href="#Aim:-Can-I-use-a-given-model-on-a-given-dataset?"> </a></h2><p>We often find ourselves in a situation where we have a pre-trained model for a certain task (e.g. cardiac segmentation) and we have a data set where we want to perform that task. We know the model was not trained on that specific dataset. So we wonder, how will the model perform? Is it usable at all? Do we need to pre-process our data in a certain way to use it?</p>
 <p>In this case study we demonstrate how <code>misas</code> helps answer these questions with a concrete example:</p>
 <ul>
 <li><strong>Model</strong>: <a href="https://github.com/baiwenjia/ukbb_cardiac"><code>ukbb_cardiac</code> network</a> by <a href="https://doi.org/10.1186/s12968-018-0471-x">Bai et al. 2018 [1]</a>, trained on <a href="https://www.ukbiobank.ac.uk/">UK Biobank</a> cardiac MRI images</li>

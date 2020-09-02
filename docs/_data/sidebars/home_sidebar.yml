@@ -11,10 +11,13 @@ entries:
       url: /
     - output: web,pdf
       title: Local Interpretability
-      url: /local_interpret
+      url: local_interpret.html
     - output: web,pdf
       title: 'Case Study: Model Suitability'
-      url: /ukbb_on_kaggle
+      url: ukbb_on_kaggle.html
+    - output: web,pdf
+      title: 'Case Study: Model Robustness'
+      url: transversals.html
     output: web
     title: misas
   output: web
