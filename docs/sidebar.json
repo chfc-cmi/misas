@@ -1,7 +1,8 @@
 {
   "misas": {
     "Overview": "/",
-    "Local Interpretability": "/local_interpret",
-    "Case Study: Model Suitability": "/ukbb_on_kaggle"
+    "Local Interpretability": "local_interpret.html",
+    "Case Study: Model Suitability": "ukbb_on_kaggle.html",
+    "Case Study: Model Robustness": "transversals.html"
   }
 }
