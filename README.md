@@ -19,43 +19,12 @@ from fastai.vision import *
 ```
 
 ```python
+#hide_output
 img = lambda: open_image("example/kaggle/images/1-frame014-slice005.png")
 trueMask = lambda: open_mask("example/kaggle/masks/1-frame014-slice005.png")
 trainedModel = Fastai1_model('chfc-cmi/cmr-seg-tl', 'cmr_seg_base')
 img().show(y=trueMask(), figsize=(8,8))
 ```
-
-    Using cache found in /home/ankenbrand/.cache/torch/hub/chfc-cmi_cmr-seg-tl_master
-
-
-    
-
-
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.loss.CrossEntropyLoss' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.container.ModuleList' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.container.Sequential' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.conv.Conv2d' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.batchnorm.BatchNorm2d' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.activation.ReLU' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.pooling.MaxPool2d' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.pixelshuffle.PixelShuffle' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.padding.ReplicationPad2d' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-    /home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class 'torch.nn.modules.pooling.AvgPool2d' has changed. you can retrieve the original source code by accessing the object's source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-      warnings.warn(msg, SourceChangeWarning)
-
-
-
-![png](docs/images/output_6_3.png)
-
 
 ### Rotation
 
@@ -102,17 +71,11 @@ def plot_rotation_frame(deg):
 ```
 
 ```python
+#hide_output
 interact(
     plot_rotation_frame,
     deg=widgets.IntSlider(min=0, max=360, step=10, value=90, continuous_update=False)
 )
 ```
-
-
-
-
-    <function __main__.plot_rotation_frame(deg)>
-
-
 
 There are lots of other transformations to try (e.g. cropping, brightness, contrast, ...). For a complete list see the local_interpret documentation.
