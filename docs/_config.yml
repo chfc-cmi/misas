@@ -58,7 +58,7 @@ defaults:
 
 sidebars:
 - home_sidebar
-permalink: pretty
+#permalink: pretty
 
 theme: jekyll-theme-cayman
 baseurl: /misas/
