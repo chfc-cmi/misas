@@ -73,7 +73,8 @@ nb_path: "03_transversals.ipynb"
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Fastai1_model</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">trainedModel</span> <span class="o">=</span> <span class="n">load_learner</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trainedModel</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">model</span><span class="p">)</span>
+        <span class="c1"># self.trainedModel = load_learner(path,model) # if it were local</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resize256</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">prepareSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
@@ -82,7 +83,8 @@ nb_path: "03_transversals.ipynb"
     <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">trainedModel</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 
-<span class="n">model</span> <span class="o">=</span> <span class="n">Fastai1_model</span><span class="p">(</span><span class="s1">&#39;example/b0&#39;</span><span class="p">,</span><span class="s1">&#39;b0_transversal_5_5&#39;</span><span class="p">)</span>
+<span class="c1"># model = Fastai1_model(&#39;example/b0&#39;,&#39;b0_transversal_5_5&#39;) # if it were local</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Fastai1_model</span><span class="p">(</span><span class="s1">&#39;chfc-cmi/transversal-cmr-seg&#39;</span><span class="p">,</span><span class="s1">&#39;b0_transversal_5_5&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -95,26 +97,15 @@ nb_path: "03_transversals.ipynb"
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.loss.CrossEntropyLoss&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
-/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.container.ModuleList&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
-/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.container.Sequential&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
-/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.conv.Conv2d&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
-/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.batchnorm.BatchNorm2d&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
-/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.activation.ReLU&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
-/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.pooling.MaxPool2d&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
-/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.pixelshuffle.PixelShuffle&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
-/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.padding.ReplicationPad2d&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
-/home/ankenbrand/miniconda3/envs/misas/lib/python3.7/site-packages/torch/serialization.py:649: SourceChangeWarning: source code of class &#39;torch.nn.modules.pooling.AvgPool2d&#39; has changed. you can retrieve the original source code by accessing the object&#39;s source attribute or set `torch.nn.Module.dump_patches = True` and use the patch tool to revert the changes.
-  warnings.warn(msg, SourceChangeWarning)
+<pre>Downloading: &#34;https://github.com/chfc-cmi/transversal-cmr-seg/archive/master.zip&#34; to /home/ankenbrand/.cache/torch/hub/master.zip
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
 </pre>
 </div>
 </div>
