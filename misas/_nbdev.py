@@ -11,7 +11,7 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "eval_generic_series": "01_local_interpret.ipynb",
          "rotationTransform": "01_local_interpret.ipynb",
          "get_rotation_series": "01_local_interpret.ipynb",
-         "eval_rotation_series": "01_local_interpret.ipynb",
+         "eval_rotation_series": "04_mr_artifacts.ipynb",
          "cropTransform": "01_local_interpret.ipynb",
          "get_crop_series": "01_local_interpret.ipynb",
          "eval_crop_series": "01_local_interpret.ipynb",
@@ -29,9 +29,12 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "eval_dihedral_series": "01_local_interpret.ipynb",
          "resizeTransform": "01_local_interpret.ipynb",
          "get_resize_series": "01_local_interpret.ipynb",
-         "eval_resize_series": "01_local_interpret.ipynb"}
+         "eval_resize_series": "01_local_interpret.ipynb",
+         "spikeTransform": "04_mr_artifacts.ipynb",
+         "get_spike_series": "04_mr_artifacts.ipynb"}
 
-modules = ["core.py"]
+modules = ["core.py",
+           "mri.py"]
 
 doc_url = "https://chfc-cmi.github.io/misas/"
 

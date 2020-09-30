@@ -18,6 +18,15 @@ entries:
     - output: web,pdf
       title: 'Case Study: Model Robustness'
       url: transversals.html
+    - output: web,pdf
+      title: Simulated MR artifacts (torchio)
+      url: mr_artifacts.html
+    - output: web,pdf
+      title: CamVid Demo
+      url: camvid.html
+    - output: web,pdf
+      title: Pneumothorax demo
+      url: pneumothorax.html
     output: web
     title: misas
   output: web
