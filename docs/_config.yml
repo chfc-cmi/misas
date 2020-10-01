@@ -62,3 +62,6 @@ sidebars:
 
 theme: jekyll-theme-cayman
 baseurl: /misas/
+
+default_badges:
+  colab: true
