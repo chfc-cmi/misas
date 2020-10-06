@@ -32,7 +32,10 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "eval_resize_series": "01_local_interpret.ipynb",
          "spikeTransform": "04_mr_artifacts.ipynb",
          "get_spike_series": "04_mr_artifacts.ipynb",
-         "eval_spike_series": "04_mr_artifacts.ipynb"}
+         "eval_spike_series": "04_mr_artifacts.ipynb",
+         "biasfieldTransform": "04_mr_artifacts.ipynb",
+         "get_biasfield_series": "04_mr_artifacts.ipynb",
+         "eval_biasfield_series": "04_mr_artifacts.ipynb"}
 
 modules = ["core.py",
            "mri.py"]
