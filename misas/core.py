@@ -159,10 +159,12 @@ def eval_rotation_series(image, mask, model, step=5, start=0, end=360, **kwargs)
     )
 
 # Cell
-def cropTransform(image, pxls):
+def cropTransform(image, pxls, finalSize=256):
+    image = image.clone()
+    image = image.resize(finalSize)
     image = image.crop_pad(int(pxls))
     image = image.rotate(180)
-    image = image.crop_pad(256, padding_mode="zeros")
+    image = image.crop_pad(finalSize, padding_mode="zeros")
     image = image.rotate(180)
     return image
 
@@ -227,7 +229,8 @@ def eval_contrast_series(image, mask, model, start=0.1, end=7.1, step=0.5, param
     )
 
 # Cell
-def zoomTransform(image, scale):
+def zoomTransform(image, scale, finalSize=256):
+    image = image.resize(256).clone()
     image = image.crop_pad(int(scale), padding_mode="zeros")
     image = image.resize(256).clone()
     return image
