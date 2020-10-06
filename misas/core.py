@@ -16,6 +16,8 @@ import gif
 import math
 import numpy as np
 import torchvision
+import warnings
+warnings.filterwarnings('ignore')
 
 # Internal Cell
 def dice_by_component(predictedMask, trueMask, component = 1):
