@@ -13,7 +13,7 @@ entries:
       title: Local Interpretability
       url: local_interpret.html
     - output: web,pdf
-      title: 'Case Study: Model Suitability'
+      title: Case Study - Model Suitability
       url: ukbb_on_kaggle.html
     - output: web,pdf
       title: Case Study - Model Robustness

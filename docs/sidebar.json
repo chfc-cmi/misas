@@ -2,7 +2,7 @@
   "misas": {
     "Overview": "/",
     "Local Interpretability": "local_interpret.html",
-    "Case Study: Model Suitability": "ukbb_on_kaggle.html",
+    "Case Study - Model Suitability": "ukbb_on_kaggle.html",
     "Case Study - Model Robustness": "transversals.html",
     "Simulated MR artifacts (torchio)": "mr_artifacts.html",
     "CamVid Demo": "camvid.html",
