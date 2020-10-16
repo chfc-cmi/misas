@@ -16,7 +16,7 @@ entries:
       title: 'Case Study: Model Suitability'
       url: ukbb_on_kaggle.html
     - output: web,pdf
-      title: 'Case Study: Model Robustness'
+      title: Case Study - Model Robustness
       url: transversals.html
     - output: web,pdf
       title: Simulated MR artifacts (torchio)
