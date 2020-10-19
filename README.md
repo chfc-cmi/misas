@@ -80,10 +80,11 @@ interact(
 )
 ```
 
-There are lots of other transformations to try (e.g. cropping, brightness, contrast, ...). For a complete list see the local_interpret documentation.
+There are lots of other transformations to try (e.g. cropping, brightness, contrast, ...) as well as MR specific artifacts.
 
 ## Overview
 
+This is the schematic overview of how `misas` works. Created with the amazing [Excalidraw](https://excalidraw.com/).
 ![schema](schema.svg)
 
 ## Logo

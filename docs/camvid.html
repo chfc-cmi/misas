@@ -332,7 +332,7 @@ nb_path: "05_camvid.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cam_img</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">cam_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">cam_img</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">cam_img</span><span class="p">())[</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 
     </div>
@@ -401,7 +401,7 @@ nb_path: "05_camvid.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_series</span><span class="p">(</span><span class="n">get_rotation_series</span><span class="p">(</span><span class="n">cam_img</span><span class="p">,</span> <span class="n">learn</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_series</span><span class="p">(</span><span class="n">get_rotation_series</span><span class="p">(</span><span class="n">cam_img</span><span class="p">(),</span> <span class="n">learn</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -436,7 +436,7 @@ nb_path: "05_camvid.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_series</span><span class="p">(</span><span class="n">get_zoom_series</span><span class="p">(</span><span class="n">cam_img</span><span class="p">,</span> <span class="n">learn</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">257</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot_series</span><span class="p">(</span><span class="n">get_zoom_series</span><span class="p">(</span><span class="n">cam_img</span><span class="p">(),</span> <span class="n">learn</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="mi">257</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -471,7 +471,7 @@ nb_path: "05_camvid.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">found_classes</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">cam_img</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">found_classes</span> <span class="o">=</span> <span class="n">learn</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">cam_img</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -521,7 +521,7 @@ nb_path: "05_camvid.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">eval_rotation_series</span><span class="p">(</span><span class="n">cam_img</span><span class="p">,</span><span class="n">mask</span><span class="p">,</span><span class="n">learn</span><span class="p">,</span><span class="n">components</span><span class="o">=</span><span class="n">codes</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">eval_rotation_series</span><span class="p">(</span><span class="n">cam_img</span><span class="p">(),</span><span class="n">mask</span><span class="p">(),</span><span class="n">learn</span><span class="p">,</span><span class="n">components</span><span class="o">=</span><span class="n">codes</span><span class="p">)</span>
 </pre></div>
 
     </div>
