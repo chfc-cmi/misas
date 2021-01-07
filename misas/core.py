@@ -42,6 +42,14 @@ class Fastai1_model:
     def predict(self, image):
         return self.trainedModel.predict(image)
 
+# Internal Cell
+from matplotlib import cm
+from matplotlib.colors import ListedColormap
+
+default_cmap = cm.viridis(np.arange(cm.inferno.N))
+default_cmap[0][-1] = 0
+default_cmap = ListedColormap(default_cmap)
+
 # Cell
 def get_generic_series(image,
         model,
@@ -81,26 +89,28 @@ def plot_series(
         figsize=(16,6),
         param_name='param',
         overlay_truth=False,
+        vmax=None,
+        cmap=default_cmap,
         **kwargs
     ):
     fig, axs = plt.subplots(nrow,math.ceil(len(series)/nrow),figsize=figsize,**kwargs)
     for element, ax in zip(series, axs.flatten()):
         param,img,pred,truth = element
         img.show(ax=ax, title=f'{param_name}={param:.2f}')
-        pred.show(ax=ax)
+        pred.show(ax=ax,vmax=vmax,cmap=cmap)
         if overlay_truth and truth:
             truth.show(ax=ax,alpha=.2)
 
 # Cell
 @gif.frame
-def plot_frame(param, img, pred, param_name="param",**kwargs):
+def plot_frame(param, img, pred, param_name="param",vmax=None,cmap=default_cmap,**kwargs):
     _,ax = plt.subplots(**kwargs)
     img.show(ax,title=f'{param_name}={param:.2f}')
-    pred.show(ax)
+    pred.show(ax, vmax=vmax, cmap=cmap)
 
 # Cell
-def gif_series(series, fname, duration=150, param_name="param"):
-    frames = [plot_frame(*x[:3], param_name=param_name) for x in series]
+def gif_series(series, fname, duration=150, param_name="param", vmax=None, cmap=default_cmap):
+    frames = [plot_frame(*x[:3], param_name=param_name, vmax=vmax, cmap=cmap) for x in series]
     gif.save(frames, fname, duration=duration)
 
 # Cell
@@ -168,20 +178,20 @@ def cropTransform(image, pxls, finalSize=256):
     image = image.rotate(180)
     return image
 
-def get_crop_series(image, model, start=56, end=257, step=50, **kwargs):
-    return get_generic_series(image,model,cropTransform, start=start, end=end, step=step, **kwargs)
+def get_crop_series(image, model, start=56, end=257, step=50, finalSize=256, **kwargs):
+    return get_generic_series(image,model,partial(cropTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_crop_series(image, mask, model, step=5, start=56, end=256, **kwargs):
+def eval_crop_series(image, mask, model, step=5, start=56, end=256, finalSize=256, **kwargs):
     return eval_generic_series(
         image,
         mask,
         model,
-        cropTransform,
+        partial(cropTransform,finalSize=finalSize),
         start=start,
         end=end,
         step=step,
-        mask_transform_function=cropTransform,
+        mask_transform_function=partial(cropTransform,finalSize=finalSize),
         param_name="pixels",
         **kwargs
     )
@@ -211,7 +221,7 @@ def eval_bright_series(image, mask, model, start=0.05, end=.95, step=0.05, param
 def contrastTransform(image, scale):
     return image.contrast(scale)
 
-def get_contrast_series(image, model, start=0.1, end=7.01, step=1, **kwargs):
+def get_contrast_series(image, model, start=0.1, end=7.11, step=1, **kwargs):
     return get_generic_series(image,model,contrastTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
@@ -230,25 +240,25 @@ def eval_contrast_series(image, mask, model, start=0.1, end=7.1, step=0.5, param
 
 # Cell
 def zoomTransform(image, scale, finalSize=256):
-    image = image.resize(256).clone()
+    image = image.resize(finalSize).clone()
     image = image.crop_pad(int(scale), padding_mode="zeros")
-    image = image.resize(256).clone()
+    image = image.resize(finalSize).clone()
     return image
 
-def get_zoom_series(image, model, start=56, end=500, step=50, **kwargs):
-    return get_generic_series(image,model,zoomTransform, start=start, end=end, step=step, **kwargs)
+def get_zoom_series(image, model, start=56, end=500, step=50, finalSize=256, **kwargs):
+    return get_generic_series(image,model,partial(zoomTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_zoom_series(image, mask, model, step=10, start=56, end=500, **kwargs):
+def eval_zoom_series(image, mask, model, step=10, start=56, end=500, finalSize=256, **kwargs):
     return eval_generic_series(
         image,
         mask,
         model,
-        zoomTransform,
+        partial(zoomTransform,finalSize=finalSize),
         start=start,
         end=end,
         step=step,
-        mask_transform_function=zoomTransform,
+        mask_transform_function=partial(zoomTransform,finalSize=finalSize),
         param_name="scale",
         **kwargs
     )

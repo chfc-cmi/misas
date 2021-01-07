@@ -6,6 +6,7 @@
     "Case Study - Model Robustness": "transversals.html",
     "Simulated MR artifacts (torchio)": "mr_artifacts.html",
     "CamVid Demo": "camvid.html",
-    "Pneumothorax demo": "pneumothorax.html"
+    "Pneumothorax demo": "pneumothorax.html",
+    "Case Study: MyoPS - myocardial pathology segmentation": "myops.html"
   }
 }

@@ -18,6 +18,7 @@ Example with kaggle data
 
 ```python
 from fastai.vision import *
+from misas.core import default_cmap
 ```
 
 ```python
@@ -25,7 +26,9 @@ from fastai.vision import *
 img = lambda: open_image("example/kaggle/images/1-frame014-slice005.png")
 trueMask = lambda: open_mask("example/kaggle/masks/1-frame014-slice005.png")
 trainedModel = Fastai1_model('chfc-cmi/cmr-seg-tl', 'cmr_seg_base')
-img().show(y=trueMask(), figsize=(8,8))
+fig, ax = plt.subplots(figsize=(8,8))
+img().show(ax=ax)
+trueMask().show(ax=ax, cmap=default_cmap)
 ```
 
 ### Rotation
@@ -48,7 +51,7 @@ plt.axis([0,360,0,1])
 
 
 
-    [0, 360, 0, 1]
+    (0.0, 360.0, 0.0, 1.0)
 
 
 

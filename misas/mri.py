@@ -4,7 +4,7 @@ __all__ = ['spikeTransform', 'get_spike_series', 'eval_spike_series', 'biasfield
            'eval_biasfield_series']
 
 # Internal Cell
-from torchio.transforms import RandomSpike
+from torchio.transforms import Spike
 
 # Internal Cell
 from fastai.vision import open_image, Image, open_mask
@@ -16,7 +16,7 @@ import torch
 def spikeTransform(image, intensityFactor, spikePosition=[.1,.1]):
     data = image.data[0].unsqueeze(0)
     spikePosition = [[0.0] + spikePosition]
-    spike = RandomSpike()
+    spike = Spike(spikePosition, intensityFactor)
     data = spike.add_artifact(data, spikePosition, intensityFactor)[0]
     data = torch.stack((data,data,data))
     return Image(torch.clamp(data,0,1))
@@ -40,22 +40,23 @@ def eval_spike_series(image, mask, model, step=.1, start=0, end=2.5, spikePositi
     )
 
 # Internal Cell
-from torchio import RandomBiasField
+from torchio import RandomBiasField, BiasField
 
 # Cell
 def biasfieldTransform(image, coef, order=3):
     data = image.data[0].unsqueeze(0).unsqueeze(0)
-    coefficients = RandomBiasField.get_params(3,[coef,coef])
-    bf = RandomBiasField.generate_bias_field(data, order=3, coefficients=coefficients)
+    coefficients = RandomBiasField().get_params(3,[coef,coef])
+    bf = BiasField.generate_bias_field(data, order=3, coefficients=coefficients)
+    bf[0] = torch.clamp(torch.Tensor(bf[0]),0,1)
     data = data[0][0] * bf[0]
     data = torch.stack((data,data,data))
-    return Image(torch.clamp(data,0,1))
+    return Image(data)
 
-def get_biasfield_series(image, model, start=-.5, end=.5, step=.2, order=3, **kwargs):
+def get_biasfield_series(image, model, start=0, end=-.6, step=-.2, order=3, **kwargs):
     return get_generic_series(image,model,partial(biasfieldTransform,order=order), start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_biasfield_series(image, mask, model, step=.05, start=-.5, end=.55, order=3, **kwargs):
+def eval_biasfield_series(image, mask, model, step=-.05, start=0, end=-.55, order=3, **kwargs):
     return eval_generic_series(
         image,
         mask,
