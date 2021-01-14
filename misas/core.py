@@ -5,7 +5,7 @@ __all__ = ['Fastai1_model', 'get_generic_series', 'plot_series', 'plot_frame', '
            'get_crop_series', 'eval_crop_series', 'brightnessTransform', 'get_brightness_series', 'eval_bright_series',
            'contrastTransform', 'get_contrast_series', 'eval_contrast_series', 'zoomTransform', 'get_zoom_series',
            'eval_zoom_series', 'dihedralTransform', 'get_dihedral_series', 'eval_dihedral_series', 'resizeTransform',
-           'get_resize_series', 'eval_resize_series']
+           'get_resize_series', 'eval_resize_series', 'get_confusion', 'plot_confusion', 'plot_confusion_series']
 
 # Internal Cell
 from fastai.vision import *
@@ -119,6 +119,7 @@ def plot_series(
         **kwargs
     ):
     fig, axs = plt.subplots(nrow,math.ceil(len(series)/nrow),figsize=figsize,**kwargs)
+    #fig.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9)
     for element, ax in zip(series, axs.flatten()):
         param,img,pred,truth = element
         img.show(ax=ax, title=f'{param_name}={param:.2f}')
@@ -353,3 +354,59 @@ def eval_resize_series(image, mask, model, start=22, end=3000, step=100, param_n
         mask_transform_function=resizeTransform,
         **kwargs
     )
+
+# Cell
+def get_confusion(prediction, truth, max_class=None):
+    if not max_class:
+        max_class = max(prediction.data.max(), truth.data.max())
+    # https://stackoverflow.com/a/50023660
+    cm = np.zeros((max_class+1, max_class+1), dtype=int)
+    np.add.at(cm, (prediction.data, truth.data), 1)
+    return cm
+
+# Cell
+def plot_confusion(confusion_matrix, norm_axis=0, components=None, ax=None, ax_label=True, cmap="Blues"):
+    cm = confusion_matrix / confusion_matrix.sum(axis=norm_axis, keepdims=True)
+    if not components:
+        components = ["c" + str(i) for i in range(cm.shape[0])]
+    if not ax:
+        _, ax = plt.subplots()
+    ax.imshow(cm, cmap=cmap)
+
+    # We want to show all ticks...
+    ax.set_xticks(np.arange(len(components)))
+    ax.set_yticks(np.arange(len(components)))
+
+    # ... and label them with the respective list entries
+    ax.set_xticklabels(components)
+    ax.set_yticklabels(components)
+
+    # label axes
+    if ax_label:
+        ax.set_xlabel("truth")
+        ax.set_ylabel("prediction")
+
+    # label cells
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            text = ax.text(j, i, round(cm[i, j],2),
+                           ha="center", va="center")
+
+    return ax
+
+# Cell
+def plot_confusion_series(
+        series,
+        nrow=1,
+        figsize=(16,6),
+        param_name='param',
+        cmap="Blues",
+        components=None,
+        norm_axis=0,
+        **kwargs
+    ):
+    fig, axs = plt.subplots(nrow,math.ceil(len(series)/nrow),figsize=figsize,**kwargs)
+    for element, ax in zip(series, axs.flatten()):
+        param,img,pred,truth = element
+        cm = get_confusion(pred,truth)
+        plot_confusion(cm, ax=ax, components=components, ax_label=False, norm_axis=norm_axis, cmap=cmap)
