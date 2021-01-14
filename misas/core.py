@@ -31,6 +31,30 @@ def dice_by_component(predictedMask, trueMask, component = 1):
         dice = 2 * intersect.sum().float() / total
     return dice.item()
 
+# Internal Cell
+def recall_by_component(predictedMask, trueMask, component = 1):
+    recall = Tensor([1])
+    pred = predictedMask.data == component
+    msk = trueMask.data == component
+    intersect = pred&msk
+    total = pred.sum() + msk.sum()
+    if total > 0:
+        recall = intersect.sum().float() / msk.sum()
+    return recall.item()
+
+# Internal Cell
+def precision_by_component(predictedMask, trueMask, component = 1):
+    precision = Tensor([1])
+    pred = predictedMask.data == component
+    msk = trueMask.data == component
+    intersect = pred&msk
+    total = pred.sum() + msk.sum()
+    if total > 0:
+        precision = Tensor([0])
+        if pred.sum() > 0:
+            precision = intersect.sum().float() / pred.sum()
+    return precision.item()
+
 # Cell
 class Fastai1_model:
     def __init__(self, github, model):
@@ -125,7 +149,8 @@ def eval_generic_series(
         step=5,
         param_name="param",
         mask_transform_function=None,
-        components=['bg', 'c1','c2']
+        components=['bg', 'c1','c2'],
+        eval_function=dice_by_component
     ):
     results = list()
     for param in tqdm(np.arange(start, end, step), leave=False):
@@ -141,7 +166,7 @@ def eval_generic_series(
         # prediction._px = prediction._px.float()
         result = [param]
         for i in range(len(components)):
-            result.append(dice_by_component(prediction, trueMask, component = i))
+            result.append(eval_function(prediction, trueMask, component = i))
         results.append(result)
 
     results = pd.DataFrame(results,columns = [param_name, *components])

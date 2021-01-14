@@ -3,6 +3,8 @@
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
 index = {"dice_by_component": "01_local_interpret.ipynb",
+         "recall_by_component": "01_local_interpret.ipynb",
+         "precision_by_component": "01_local_interpret.ipynb",
          "Fastai1_model": "01_local_interpret.ipynb",
          "default_cmap": "01_local_interpret.ipynb",
          "get_generic_series": "01_local_interpret.ipynb",
