@@ -7,10 +7,24 @@
 Input alterations currently include:
  - rotation
  - cropping
+ - brightness
+ - contrast
+ - zooming
+ - flipping (dihedral)
+ - resizing
+ - MR artifacts (via [`torchio`](https://github.com/fepegar/torchio))
 
 ## Install
 
 `pip install misas`
+
+## Cite
+
+If you use `misas` in your research, please cite:
+> Ankenbrand, M. J., Shainberg, L., Hock, M., Lohr, D., & Schreiber, L. M. Sensitivity analysis for interpretation of machine learning based segmentation models in cardiac MRI. BMC Medical Imaging, 21(27). https://doi.org/10.1186/s12880-021-00551-1
+
+If you use the simulated MR artifacts, please also cite `torchio`:
+> F. Pérez-García, R. Sparks, and S. Ourselin. TorchIO:a Python library for efficient loading, preprocessing, augmentation and patch-based sampling of medical images in deep learning. Computer Methods and Programs in Biomedicine (June 2021), p. 106236. ISSN: 0169-2607. https://doi.org/10.1016/j.cmpb.2021.106236
 
 ## How to use
 
@@ -38,7 +52,7 @@ plot_series(get_rotation_series(img(), trainedModel))
 ```
 
 
-![png](docs/images/output_9_0.png)
+![png](docs/images/output_11_0.png)
 
 
 ```python
@@ -56,7 +70,7 @@ plt.axis([0,360,0,1])
 
 
 
-![png](docs/images/output_10_1.png)
+![png](docs/images/output_12_1.png)
 
 
 You can use interactive elements to manually explore the impact of rotation

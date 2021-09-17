@@ -42,6 +42,12 @@ nb_path: "index.ipynb"
 <ul>
 <li>rotation</li>
 <li>cropping</li>
+<li>brightness</li>
+<li>contrast</li>
+<li>zooming</li>
+<li>flipping (dihedral)</li>
+<li>resizing</li>
+<li>MR artifacts (via <code>torchio</code>)</li>
 </ul>
 
 </div>
@@ -56,6 +62,24 @@ nb_path: "index.ipynb"
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><code>pip install misas</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Cite">Cite<a class="anchor-link" href="#Cite"> </a></h2><p>If you use <code>misas</code> in your research, please cite:</p>
+<blockquote><p>Ankenbrand, M. J., Shainberg, L., Hock, M., Lohr, D., &amp; Schreiber, L. M. Sensitivity analysis for interpretation of machine learning based segmentation models in cardiac MRI. BMC Medical Imaging, 21(27). <a href="https://doi.org/10.1186/s12880-021-00551-1">https://doi.org/10.1186/s12880-021-00551-1</a></p>
+</blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>If you use the simulated MR artifacts, please also cite <code>torchio</code>:</p>
+<blockquote><p>F. Pérez-García, R. Sparks, and S. Ourselin. TorchIO:a Python library for efficient loading, preprocessing, augmentation and patch-based sampling of medical images in deep learning. Computer Methods and Programs in Biomedicine (June 2021), p. 106236. ISSN: 0169-2607. <a href="https://doi.org/10.1016/j.cmpb.2021.106236">https://doi.org/10.1016/j.cmpb.2021.106236</a></p>
+</blockquote>
 
 </div>
 </div>
@@ -85,21 +109,6 @@ nb_path: "index.ipynb"
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/opt/conda/lib/python3.7/site-packages/torch/cuda/__init__.py:52: UserWarning: CUDA initialization: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx (Triggered internally at  /pytorch/c10/cuda/CUDAFunctions.cpp:100.)
-  return torch._C._cuda_getDeviceCount() &gt; 0
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
