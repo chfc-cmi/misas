@@ -1,0 +1,58 @@
+cff-version: 1.2.0
+message: If you use this software, please cite both the software and the paper (see preferred-citation).
+authors:
+  - family-names: Ankenbrand
+    given-names: "Markus J"
+    orcid: 0000-0002-6620-807X
+    affiliation: "Chair for Cellular and Molecular Imaging, Comprehensive Heart Failure Center, University Hospital Würzburg, Germany"
+    email: markus.ankenbrand@uni-wuerzburg.de
+  - family-names: Shainberg
+    given-names: Liliia
+    affiliation: "Chair for Cellular and Molecular Imaging, Comprehensive Heart Failure Center, University Hospital Würzburg, Germany"
+  - family-names: Hock
+    given-names: Michael
+    affiliation: "Chair for Cellular and Molecular Imaging, Comprehensive Heart Failure Center, University Hospital Würzburg, Germany"
+  - family-names: Lohr
+    given-names: David
+    orcid: 0000-0002-6509-3776
+    affiliation: "Chair for Cellular and Molecular Imaging, Comprehensive Heart Failure Center, University Hospital Würzburg, Germany"
+  - family-names: Schreiber
+    given-names: "Laura M"
+    orcid: 0000-0002-8827-1838
+    affiliation: "Chair for Cellular and Molecular Imaging, Comprehensive Heart Failure Center, University Hospital Würzburg, Germany"
+title: misas
+version: 0.0.4
+doi: 10.5281/zenodo.4438133
+date-released: 2021-01-14
+repository-code: https://github.com/chfc-cmi/misas
+keywords:
+  - Deep Learning
+  - Neural Networks
+  - Cardiac Magnetic Resonance
+  - Sensitivity Analysis
+  - Transformations
+  - Augmentation
+  - Segmentation
+license: MIT
+url: https://chfc-cmi.github.io/misas/
+preferred-citation:
+  type: article
+  scope: Cite this paper if you used misas in your research
+  authors:
+    - family-names: Ankenbrand
+      given-names: Markus J
+    - family-names: Shainberg
+      given-names: Liliia
+    - family-names: Hock
+      given-names: Michael
+    - family-names: Lohr
+      given-names: David
+    - family-names: Schreiber
+      given-names: Laura M
+  title: "Sensitivity analysis for interpretation of machine learning based segmentation models in cardiac MRI"
+  year: 2021
+  journal: BMC Medical Imaging
+  volume: 21
+  issue: 27
+  doi: 10.1186/s12880-021-00551-1
+  url: https://bmcmedimaging.biomedcentral.com/articles/10.1186/s12880-021-00551-1
