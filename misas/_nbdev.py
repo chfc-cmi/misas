@@ -40,12 +40,12 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "spikeTransform": "04_mr_artifacts.ipynb",
          "get_spike_series": "04_mr_artifacts.ipynb",
          "eval_spike_series": "04_mr_artifacts.ipynb",
-         "biasfieldTransform": "04_mr_artifacts.ipynb",
-         "get_biasfield_series": "04_mr_artifacts.ipynb",
-         "eval_biasfield_series": "04_mr_artifacts.ipynb",
          "spikePosTransform": "04_mr_artifacts.ipynb",
          "get_spike_pos_series": "04_mr_artifacts.ipynb",
-         "eval_spike_pos_series": "04_mr_artifacts.ipynb"}
+         "eval_spike_pos_series": "04_mr_artifacts.ipynb",
+         "biasfieldTransform": "04_mr_artifacts.ipynb",
+         "get_biasfield_series": "04_mr_artifacts.ipynb",
+         "eval_biasfield_series": "04_mr_artifacts.ipynb"}
 
 modules = ["core.py",
            "mri.py"]
