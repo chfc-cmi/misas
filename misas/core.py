@@ -123,6 +123,11 @@ def plot_series(
     for element, ax in zip(series, axs.flatten()):
         param,img,pred,truth = element
         img.show(ax=ax, title=f'{param_name}={param:.2f}')
+        if vmax is None:
+            vmax = max([x[2].data.max() for x in series])
+            if truth:
+                vmax_truth = max([x[3].data.max() for x in series])
+                vmax = max(vmax_truth, vmax_pred)
         pred.show(ax=ax,vmax=vmax,cmap=cmap)
         if overlay_truth and truth:
             truth.show(ax=ax,alpha=.2)
@@ -136,6 +141,8 @@ def plot_frame(param, img, pred, param_name="param",vmax=None,cmap=default_cmap,
 
 # Cell
 def gif_series(series, fname, duration=150, param_name="param", vmax=None, cmap=default_cmap):
+    if vmax is None:
+        vmax = max([x[2].data.max() for x in series])
     frames = [plot_frame(*x[:3], param_name=param_name, vmax=vmax, cmap=cmap) for x in series]
     gif.save(frames, fname, duration=duration)
 
