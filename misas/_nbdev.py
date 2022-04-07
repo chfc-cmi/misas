@@ -45,10 +45,18 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "eval_spike_pos_series": "04_mr_artifacts.ipynb",
          "biasfieldTransform": "04_mr_artifacts.ipynb",
          "get_biasfield_series": "04_mr_artifacts.ipynb",
-         "eval_biasfield_series": "04_mr_artifacts.ipynb"}
+         "eval_biasfield_series": "04_mr_artifacts.ipynb",
+         "prepareImage": "08_batch_mode.ipynb",
+         "batch_results": "08_batch_mode.ipynb",
+         "plot_batch": "08_batch_mode.ipynb",
+         "plot_avg_and_dots": "08_batch_mode.ipynb",
+         "plot_avg_and_errorbars": "08_batch_mode.ipynb",
+         "plot_area": "08_batch_mode.ipynb",
+         "plot_boxplot": "08_batch_mode.ipynb"}
 
 modules = ["core.py",
-           "mri.py"]
+           "mri.py",
+           "batch.py"]
 
 doc_url = "https://chfc-cmi.github.io/misas/"
 

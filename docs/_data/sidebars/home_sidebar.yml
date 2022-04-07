@@ -30,6 +30,9 @@ entries:
     - output: web,pdf
       title: 'Case Study: MyoPS - myocardial pathology segmentation'
       url: myops.html
+    - output: web,pdf
+      title: Prepare Model for Misas
+      url: batch_mode.html
     output: web
     title: misas
   output: web
