@@ -127,7 +127,7 @@ def plot_series(
             vmax = max([x[2].data.max() for x in series])
             if truth:
                 vmax_truth = max([x[3].data.max() for x in series])
-                vmax = max(vmax_truth, vmax_pred)
+                vmax = max(vmax_truth, vmax)
         pred.show(ax=ax,vmax=vmax,cmap=cmap)
         if overlay_truth and truth:
             truth.show(ax=ax,alpha=.2)
