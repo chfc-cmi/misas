@@ -208,7 +208,7 @@ def get_rotation_series(image, model, start=0, end=360, step=60, **kwargs):
     return get_generic_series(image,model,rotationTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_rotation_series(image, mask, model, step=5, start=0, end=360, **kwargs):
+def eval_rotation_series(image, mask, model, step=5, start=0, end=360,  param_name="deg", **kwargs):
     return eval_generic_series(
         image,
         mask,
@@ -218,7 +218,7 @@ def eval_rotation_series(image, mask, model, step=5, start=0, end=360, **kwargs)
         end=end,
         step=step,
         mask_transform_function=rotationTransform,
-        param_name="deg",
+        param_name=param_name,
         **kwargs
     )
 
@@ -236,7 +236,7 @@ def get_crop_series(image, model, start=56, end=257, step=50, finalSize=256, **k
     return get_generic_series(image,model,partial(cropTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_crop_series(image, mask, model, step=5, start=56, end=256, finalSize=256, **kwargs):
+def eval_crop_series(image, mask, model, step=5, start=56, end=256, finalSize=256, param_name="pixels", **kwargs):
     return eval_generic_series(
         image,
         mask,
@@ -246,7 +246,7 @@ def eval_crop_series(image, mask, model, step=5, start=56, end=256, finalSize=25
         end=end,
         step=step,
         mask_transform_function=partial(cropTransform,finalSize=finalSize),
-        param_name="pixels",
+        param_name=param_name,
         **kwargs
     )
 
@@ -303,7 +303,7 @@ def get_zoom_series(image, model, start=56, end=500, step=50, finalSize=256, **k
     return get_generic_series(image,model,partial(zoomTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_zoom_series(image, mask, model, step=10, start=56, end=500, finalSize=256, **kwargs):
+def eval_zoom_series(image, mask, model, step=10, start=56, end=500, finalSize=256, param_name="scale", **kwargs):
     return eval_generic_series(
         image,
         mask,
@@ -313,7 +313,7 @@ def eval_zoom_series(image, mask, model, step=10, start=56, end=500, finalSize=2
         end=end,
         step=step,
         mask_transform_function=partial(zoomTransform,finalSize=finalSize),
-        param_name="scale",
+        param_name=param_name,
         **kwargs
     )
 
