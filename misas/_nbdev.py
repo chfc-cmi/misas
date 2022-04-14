@@ -46,12 +46,11 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "biasfieldTransform": "04_mr_artifacts.ipynb",
          "get_biasfield_series": "04_mr_artifacts.ipynb",
          "eval_biasfield_series": "04_mr_artifacts.ipynb",
-         "prepareImage": "08_batch_mode.ipynb",
+         "dicom_to_Image": "08_batch_mode.ipynb",
          "batch_results": "08_batch_mode.ipynb",
          "plot_batch": "08_batch_mode.ipynb",
          "plot_avg_and_dots": "08_batch_mode.ipynb",
          "plot_avg_and_errorbars": "08_batch_mode.ipynb",
-         "plot_area": "08_batch_mode.ipynb",
          "plot_boxplot": "08_batch_mode.ipynb"}
 
 modules = ["core.py",
