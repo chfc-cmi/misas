@@ -26,7 +26,7 @@ def get_spike_series(image, model, start=0, end=2.5, step=.5, spikePosition=[.1,
     return get_generic_series(image,model,partial(spikeTransform,spikePosition=spikePosition), start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_spike_series(image, mask, model, step=.1, start=0, end=2.5, spikePosition=[.1,.1], param_name="intensity" **kwargs):
+def eval_spike_series(image, mask, model, step=.1, start=0, end=2.5, spikePosition=[.1,.1], param_name="intensity", **kwargs):
     return eval_generic_series(
         image,
         mask,
@@ -60,7 +60,7 @@ def get_spike_pos_series(image, model, start=0.1, end=0.9, step=.1, intensityFac
                               **kwargs)
 
 # Cell
-def eval_spike_pos_series(image, mask, model, step=0.1, start=0.1, end=0.9, intensityFactor=0.1, param_name="Spike X Position" **kwargs):
+def eval_spike_pos_series(image, mask, model, step=0.1, start=0.1, end=0.9, intensityFactor=0.1, param_name="Spike X Position", **kwargs):
     return eval_generic_series(
         image,
         mask,
