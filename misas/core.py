@@ -208,7 +208,7 @@ def get_rotation_series(image, model, start=0, end=360, step=60, **kwargs):
     return get_generic_series(image,model,rotationTransform, start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_rotation_series(image, mask, model, step=5, start=0, end=360,  param_name="Degree", **kwargs):
+def eval_rotation_series(image, mask, model, step=5, start=0, end=360,  param_name="deg", **kwargs):
     return eval_generic_series(
         image,
         mask,
