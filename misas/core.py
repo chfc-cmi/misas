@@ -181,11 +181,11 @@ def eval_generic_series(
     return results
 
 # Cell
-def plot_eval_series(results, chart_type="line", value_vars=None):
+def plot_eval_series(results, chart_type="line", value_vars=None, value_name='Dice Score'):
     id_var = results.columns[0]
     if not value_vars:
         value_vars = results.columns[2:]
-    plot = alt.Chart(results.melt(id_vars=[id_var],value_vars=value_vars))
+    plot = alt.Chart(results.melt(id_vars=[id_var],value_vars=value_vars, value_name=value_name))
     if chart_type=="line":
         plot = plot.mark_line()
     elif chart_type=="point":
@@ -194,9 +194,9 @@ def plot_eval_series(results, chart_type="line", value_vars=None):
         raise ValueError(f'chart_type must be one of "line" or "point"')
     plot = plot.encode(
       x=id_var,
-      y="value",
+      y=value_name,
       color=alt.Color("variable"),#,legend=None),
-      tooltip="value"
+      tooltip=value_name
     ).properties(width=700,height=300).interactive()
     return plot#.configure_axis(title=None,labels=False,ticks=False)
 
