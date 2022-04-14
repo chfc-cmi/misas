@@ -236,7 +236,7 @@ def get_crop_series(image, model, start=56, end=257, step=50, finalSize=256, **k
     return get_generic_series(image,model,partial(cropTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
 
 # Cell
-def eval_crop_series(image, mask, model, step=5, start=56, end=256, finalSize=256, param_name="Pixel", **kwargs):
+def eval_crop_series(image, mask, model, step=5, start=56, end=256, finalSize=256, param_name="pixels", **kwargs):
     return eval_generic_series(
         image,
         mask,
