@@ -465,7 +465,7 @@ def dice_by_component(predictedMask, trueMask, component = 1):
     total = np.sum(pred) + np.sum(msk)
     #print(total)
     if total > 0:
-        dice = 2 * intersect.sum().astype(float) / total
+        dice = 2 * np.sum(intersect).astype(float) / total
     return dice
 
 # Internal Cell
@@ -480,7 +480,7 @@ def recall_by_component(predictedMask, trueMask, component = 1):
     intersect = pred&msk
     total = np.sum(pred) + np.sum(msk)
     if total > 0:
-        recall = intersect.sum().astype(float) / np.sum(msk)
+        recall = np.sum(intersect).astype(float) / np.sum(msk)
     return recall
 
 # Internal Cell
@@ -495,9 +495,9 @@ def precision_by_component(predictedMask, trueMask, component = 1):
     intersect = pred&msk
     total = np.sum(pred) + np.sum(msk)
     if total > 0:
-        precision = Tensor([0])
+        precision = 1.0
         if np.sum(pred) > 0:
-            precision = intersect.sum().astype(float) / np.sum(pred)
+            precision = np.sum(intersect).astype(float) / np.sum(pred)
     return precision
 
 # Cell
@@ -591,7 +591,7 @@ def plot_series(
         #ax.imshow(img)
         ax.imshow(np.array(img))
         #pred.show(ax=ax,vmax=vmax,cmap=cmap)
-        ax.imshow(np.array(pred), vmax=vmax,cmap=cmap)
+        ax.imshow(np.array(pred), vmax=vmax,cmap=cmap) #don't forget to uncomment this line
 
         if overlay_truth and truth:
             #ax.imshow(truth, alpha=.2)
