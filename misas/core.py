@@ -8,7 +8,7 @@ __all__ = ['Fastai2_model', 'get_generic_series', 'plot_series', 'plot_frame', '
            'get_resize_series', 'eval_resize_series', 'get_confusion', 'plot_confusion', 'plot_confusion_series']
 
 # Internal Cell
-from fastai.vision.all import *
+from fastai.vision.all import Learner #for loading the sample model
 from PIL import Image, ImageEnhance, ImageShow, ImageOps
 from matplotlib.pyplot import imshow
 from functools import partial
@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import gif
 import math
 import numpy as np
-import torchvision
+#import torchvision
 import altair as alt
 import warnings
 import torch #for loading the sample model
@@ -40,17 +40,10 @@ def dice_by_component(predictedMask, trueMask, component = 1):
     eval_generic_series)
     """
     dice = 1.0
-    #dice = Tensor([1])
-    #example = Tensor([1])
-    #print (example)
     pred = np.array(predictedMask) == component
-    #print (pred)
     msk = np.array(trueMask) == component
-    #print(msk)
     intersect = pred&msk
-    #print(intersect)
     total = np.sum(pred) + np.sum(msk)
-    #print(total)
     if total > 0:
         dice = 2 * np.sum(intersect).astype(float) / total
     return dice
@@ -91,41 +84,20 @@ def precision_by_component(predictedMask, trueMask, component = 1):
 class Fastai2_model:
     def __init__(self, github, model):
         self.trainedModel = torch.hub.load(github,model, force_reload = False)
-        #self.resize256 = lambda x: x.ImageOps.fit ((256,256))
         self.resize256 = lambda x: x.resize ((256,256))
         self.trainedModel.remove_cbs(ProgressCallback)
 
 
     def prepareSize(self, item):
         return self.resize256(item)
-        #return self
+
     def predict(self, image):
-        #return [trueMask()]
-        #image=PILImage.create (image)
-        #image.save("example/kaggle/images/test.png")
-        #image = PILImage.create("example/kaggle/images/test.png")
         image = PILImage.create(np.array(image))
         output = self.trainedModel.predict(image)
-        #return self.trainedModel.predict(image)
         output = PILImage.create(output [0])
-        #output.save("example/kaggle/images/test.png")
-        #output=Image.open ("example/kaggle/images/test.png")
-        output = Image.fromarray(np.array(output))
+        output = Image.fromarray(np.array(output)) #mode="I"
         return output
-        #Image.open(image)
-        #return image
 
-# Cell
-#class Fastai1_model:
-#    def __init__(self, github, model):
-#        self.trainedModel = torch.hub.load(github,model)
-#        self.resize256 = lambda x: x.resize(256)
-#
-#    def prepareSize(self, item):
-#        return self.resize256(item)
-#
-#    def predict(self, image):
-#        return self.trainedModel.predict(image)
 
 # Internal Cell
 from matplotlib import cm
@@ -216,25 +188,19 @@ def plot_series(
     fig, axs = plt.subplots(nrow,math.ceil(len(series)/nrow),figsize=figsize,**kwargs)
     #fig.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9)
     if vmax is None:
-        #vmax = max([x[2].data.max() for x in series])
         vmax = max([x[2].getextrema()[1] for x in series])
-        #x = pred.getextrema()
         #vmax = x[1]
         if series[0][3]:
             vmax_truth = max([x[3].getextrema()[1] for x in series])
             vmax = max(vmax_truth, vmax)
     for element, ax in zip(series, axs.flatten()):
         param,img,pred,truth = element
-        #img.show(ax=ax, title=f'{param_name}={param:.2f}')
-        #ax.imshow(img)
         ax.imshow(np.array(img))
-        #pred.show(ax=ax,vmax=vmax,cmap=cmap)
-        ax.imshow(np.array(pred), vmax=vmax,cmap=cmap) #don't forget to uncomment this line
+        ax.imshow(np.array(pred), vmax=vmax,cmap=cmap)
 
         if overlay_truth and truth:
-            #ax.imshow(truth, alpha=.2)
             ax.imshow(np.array(truth), alpha = 0.2, cmap = cmap_true_mask)
-            #truth.show(ax=ax,alpha=.2)
+
 
 # Cell
 @gif.frame
@@ -243,9 +209,7 @@ def plot_frame(param, img, pred, param_name="param",vmax=None,cmap=default_cmap,
     plots the transformed images and prediction overlayed for the gif_series function
     """
     _,ax = plt.subplots(**kwargs)
-    #img.show(ax,title=f'{param_name}={param:.2f}')
     ax.imshow(img)
-    #pred.show(ax, vmax=vmax, cmap=cmap)
     ax.imshow(np.array(pred), vmax=vmax,cmap=cmap)
 
 # Cell
@@ -254,7 +218,6 @@ def gif_series(series, fname, duration=150, param_name="param", vmax=None, cmap=
     creates a gif from the output of plot_frame
     """
     if vmax is None:
-        #vmax = max([x[2].data.max() for x in series])
         vmax = max([x[2].getextrema()[1] for x in series])
     frames = [plot_frame(*x[:3], param_name=param_name, vmax=vmax, cmap=cmap) for x in series]
     gif.save(frames, fname, duration=duration)
@@ -352,39 +315,6 @@ def eval_rotation_series(image, mask, model, step=5, start=0, end=360,  param_na
     )
 
 # Cell
-#def cropTransform(image, pxls, finalSize=256):
-#    image = ImageOps.fit(image, (finalSize ,finalSize))
-#    image = ImageOps.crop(image, (finalSize)//2-pxls)
-#    image = ImageOps.crop(image, (-(finalSize//2-pxls)))
-#    return image
-
-
-
-#def cropTransform(image, pxls, finalSize=256):
-    #image = image.contain(finalSize)
-    #return image
-    #image = image.clone()
-    #image = image.resize(finalSize)
-    #image = image.crop_pad(int(pxls))
-    #image = image.rotate(180)
-    #image = image.crop_pad(finalSize, padding_mode="zeros")
-    #image = image.rotate(180)
-
-#PIL.ImageOps.crop(image, border=0)[source]¶
-#PIL.ImageOps.contain(image, size, method=Resampling.BICUBIC)[source]¶
-#np.min
-#is number -> make tuple
-# is tuple -> stay tuple
-#finalSize = min (tuple)/2
-
-#def get_crop_series(image, model, start=20, end=257, step=20, finalSize=256, **kwargs):
-#    if end >= finalSize//2:
-#        end = finalSize//2
-#        #print(type(finalSize//2))
-#    return get_generic_series(image,model,partial(cropTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
-    #return get_generic_series(image,model,cropTransform(finalSize=finalSize), start=start, end=end, step=step, **kwargs)
-
-# Cell
 def cropTransform(image, pxls, finalSize = None):
     image = ImageOps.fit(image, (finalSize))
     image = ImageOps.crop(image, (min(finalSize)//2-pxls))
@@ -392,24 +322,6 @@ def cropTransform(image, pxls, finalSize = None):
     return image
 
 
-
-
-#def cropTransform(image, pxls, finalSize=(230, 256)):
-#    image = ImageOps.fit(image, (finalSize))
-#    image = ImageOps.crop(image, (min(finalSize)//2-pxls))
-#    image = ImageOps.crop(image, (-(min(finalSize)//2-pxls)))
-#    return image
-
-#finalSize = img().size
-#print (finalSize)
-
-
-#PIL.ImageOps.crop(image, border=0)[source]¶
-#PIL.ImageOps.contain(image, size, method=Resampling.BICUBIC)[source]¶
-
-#is number -> make tuple
-# is tuple -> stay tuple
-#finalSize = min (tuple)/2
 
 def get_crop_series(image, model, start=20, end=257, step=10, finalSize = None, **kwargs):
     if finalSize == None:
@@ -419,7 +331,6 @@ def get_crop_series(image, model, start=20, end=257, step=10, finalSize = None, 
     if end >= min(finalSize)//2:
         end = min(finalSize)//2
     return get_generic_series(image,model,partial(cropTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
-    #return get_generic_series(image,model,cropTransform(finalSize=finalSize), start=start, end=end, step=step, **kwargs)
 
 # Cell
 def eval_crop_series(image, mask, model, step=20, start=20, end=256, finalSize=None, param_name="pixels", **kwargs):
@@ -444,7 +355,6 @@ def eval_crop_series(image, mask, model, step=20, start=20, end=256, finalSize=N
 
 # Cell
 def brightnessTransform(image, light):
-    #return image.brightness(light)
     enhancer = ImageEnhance.Brightness(image)
     image = enhancer.enhance (light)
     return image
@@ -468,7 +378,6 @@ def eval_bright_series(image, mask, model, start=0.05, end=.95, step=0.05, param
 
 # Cell
 def contrastTransform(image, scale):
-    #return image.contrast(scale)
     enhancer = ImageEnhance.Contrast(image)
     image = enhancer.enhance (scale)
     return image
@@ -491,13 +400,6 @@ def eval_contrast_series(image, mask, model, start=0.25, end=8, step=np.sqrt(2),
 
 # Cell
 def zoomTransform(image, zoom, finalSize= None):
-    #image = image.resize(finalSize).clone()
-    #image = image.crop_pad(int(scale), padding_mode="zeros")
-    #image = image.resize(finalSize).clone()
-    #if scale >= finalSize//2 :
-    #    scale = (finalSize//2-1)
-    #    print ("You should lower your end value")
-    #image = ImageOps.fit(image, (finalSize))
     max_zoom = ((image.size[0]//2-1),(image.size[1]//2)-1)
     min_zoom = (0,0)
     zoom_factor = []
@@ -509,8 +411,6 @@ def zoomTransform(image, zoom, finalSize= None):
     return image
 
 def get_zoom_series(image, model, start=0, end=1, step=.1, finalSize= None, **kwargs):
-    #return get_generic_series(image,model,partial(zoomTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
-#def get_zoom_series(image, model, start=10, end=127, step=10, finalSize=256, **kwargs):
     if finalSize == None:
         finalSize = image.size
     if type(finalSize) == int:
@@ -518,31 +418,6 @@ def get_zoom_series(image, model, start=0, end=1, step=.1, finalSize= None, **kw
     if end > 1:
         end = 1
     return get_generic_series(image,model,partial(zoomTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
-
-
-#ZoomTrue = True , **kwargs
-#->
-#get_generic_series
-# if ZoomTrue == True
-#    pred = ImageOps.fit(pred, (finalSize,finalSize)
-
-# Cell
-#def zoomTransform(image, scale, finalSize=256):
-#    #if scale >= finalSize//2 :
-#    #    scale = (finalSize//2-1)
-#    #    print ("You should lower your end value")
-#    image = ImageOps.fit(image, (finalSize ,finalSize))
-#    image = ImageOps.crop (image, scale) # finalSize/2 - 1 ist die Grenze
-#    image = ImageOps.pad (image ,(finalSize ,finalSize))
-#
-#    return image
-#
-#def get_zoom_series(image, model, start=-30, end=140, step=10, finalSize=256, **kwargs):
-#    return get_generic_series(image,model,partial(zoomTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
-#def get_zoom_series(image, model, start=10, end=127, step=10, finalSize=256, **kwargs):
-#    if end >= finalSize//2:
-#        end = (finalSize//2-1)
-#    return get_generic_series(image,model,partial(zoomTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
 
 # Cell
 def eval_zoom_series(image, mask, model, step=0.1, start=0, end=1, finalSize=None, param_name="scale", **kwargs):
@@ -567,7 +442,6 @@ def eval_zoom_series(image, mask, model, step=0.1, start=0, end=1, finalSize=Non
 
 # Cell
 def dihedralTransform(image, sym_im):
-    #return image.dihedral(k=int(sym_im))
     rot = [0, 90, 180, 270]
     flip = [True, False]
     dihedral = list (itertools.product (rot, flip))
@@ -576,8 +450,6 @@ def dihedralTransform(image, sym_im):
         #image = ImageOps.flip(image)
         image = ImageOps.mirror(image)
     return image
-##PIL.ImageOps.flip(image)[source]¶
-#PIL.ImageOps.mirror(image)[source]¶
 
 
 def get_dihedral_series(image, model, start=0, end=8, step=1, **kwargs):
@@ -604,8 +476,7 @@ def resizeTransform(image, size):
     image=ImageOps.contain (image, (size,size))
     image = ImageOps.fit(image, size_original)
     return image
-    #image.resize(int(size)).clone()
-    #image.resize
+
 
 # Cell
 def get_resize_series(image, model, start=10, end=200, step=30, **kwargs):
@@ -629,8 +500,6 @@ def eval_resize_series(image, mask, model, start=22, end=3000, step=100, param_n
 # Cell
 def get_confusion(prediction, truth, max_class=None):
     if not max_class:
-        #max_class = max(prediction.data.max(), truth.data.max())
-        #getextrema()
         max_class = max(np.array(prediction).max(), np.array(truth).max())
     # https://stackoverflow.com/a/50023660
     cm = np.zeros((max_class+1, max_class+1), dtype=int)
