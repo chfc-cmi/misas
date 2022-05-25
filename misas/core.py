@@ -8,7 +8,7 @@ __all__ = ['Fastai2_model', 'get_generic_series', 'plot_series', 'plot_frame', '
            'get_resize_series', 'eval_resize_series', 'get_confusion', 'plot_confusion', 'plot_confusion_series']
 
 # Internal Cell
-from fastai.vision.all import Learner #for loading the sample model
+from fastai.vision.all import Learner, ProgressCallback, PILImage #for loading the sample model
 from PIL import Image, ImageEnhance, ImageShow, ImageOps
 from matplotlib.pyplot import imshow
 from functools import partial
@@ -297,7 +297,7 @@ def get_rotation_series(image, model, start=0, end=360, step=60, **kwargs):
     """
     runs the get_generic_series with rotationTransform as transform
     """
-    return get_generic_series(image,model,rotationTransform, start=start, end=end, step=step, **kwargs)
+    return get_generic_series(image,model,rotationTransform, start=start, end=end, step=step, tfm_y = True, **kwargs)
 
 # Cell
 def eval_rotation_series(image, mask, model, step=5, start=0, end=360,  param_name="deg", **kwargs):
@@ -330,7 +330,7 @@ def get_crop_series(image, model, start=20, end=257, step=10, finalSize = None, 
         finalSize = (finalSize, finalSize)
     if end >= min(finalSize)//2:
         end = min(finalSize)//2
-    return get_generic_series(image,model,partial(cropTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
+    return get_generic_series(image,model,partial(cropTransform,finalSize=finalSize), start=start, end=end, step=step, tfm_y = True, **kwargs)
 
 # Cell
 def eval_crop_series(image, mask, model, step=20, start=20, end=256, finalSize=None, param_name="pixels", **kwargs):
@@ -417,7 +417,7 @@ def get_zoom_series(image, model, start=0, end=1, step=.1, finalSize= None, **kw
         finalSize = (finalSize, finalSize)
     if end > 1:
         end = 1
-    return get_generic_series(image,model,partial(zoomTransform,finalSize=finalSize), start=start, end=end, step=step, **kwargs)
+    return get_generic_series(image,model,partial(zoomTransform,finalSize=finalSize), start=start, end=end, step=step, tfm_y = True, **kwargs)
 
 # Cell
 def eval_zoom_series(image, mask, model, step=0.1, start=0, end=1, finalSize=None, param_name="scale", **kwargs):
@@ -453,7 +453,7 @@ def dihedralTransform(image, sym_im):
 
 
 def get_dihedral_series(image, model, start=0, end=8, step=1, **kwargs):
-    return get_generic_series(image,model,dihedralTransform, start=start, end=end, step=step, **kwargs)
+    return get_generic_series(image,model,dihedralTransform, start=start, end=end, step=step, tfm_y = True, **kwargs)
 
 # Cell
 def eval_dihedral_series(image, mask, model, start=0, end=8, step=1, param_name="k", **kwargs):
@@ -472,15 +472,15 @@ def eval_dihedral_series(image, mask, model, start=0, end=8, step=1, param_name=
 
 # Cell
 def resizeTransform(image, size):
-    size_original = image.size
+    #size_original = image.size
     image=ImageOps.contain (image, (size,size))
-    image = ImageOps.fit(image, size_original)
+    #image = ImageOps.fit(image, size_original)
     return image
 
 
 # Cell
 def get_resize_series(image, model, start=10, end=200, step=30, **kwargs):
-    return get_generic_series(image,model,resizeTransform, start=start, end=end, step=step, **kwargs)
+    return get_generic_series(image,model,resizeTransform, start=start, end=end, step=step, tfm_y = True, **kwargs)
 
 # Cell
 def eval_resize_series(image, mask, model, start=22, end=3000, step=100, param_name="px", **kwargs):
