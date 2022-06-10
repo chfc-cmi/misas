@@ -11,7 +11,8 @@ from .core import gif_series
 #from fastai.vision import open_image, Image, open_mask
 from PIL import Image, ImageEnhance, ImageShow, ImageOps
 import numpy as np
-from .core import Fastai2_model, get_generic_series, plot_series, eval_generic_series
+from .core import get_generic_series, plot_series, eval_generic_series
+from .fastai_model import Fastai2_model
 from functools import partial
 import torch
 
@@ -54,12 +55,6 @@ def eval_spike_series(image, mask, model, step=.1, start=0, end=2.5, spikePositi
 
 # Cell
 def spikePosTransform(image, spikePositionX, spikePositionY=0.1, intensityFactor=0.5):
-    #data = image.data[0].unsqueeze(0)
-    #spikePosition = [[0.0] + [spikePositionX, spikePositionY]]
-    #spike = Spike(spikePosition, intensityFactor)
-    #data = spike.add_artifact(data, spikePosition, intensityFactor)[0]
-    #data = torch.stack((data,data,data))
-    #return Image(torch.clamp(data,0,1))
     image = np.array(image)[:,:,0]
     image = np.expand_dims(np.array(image), 0)
     image = image/255
@@ -104,13 +99,6 @@ from torchio import RandomBiasField, BiasField
 
 # Cell
 def biasfieldTransform(image, coef, order=3):
-    #data = image.data[0].unsqueeze(0).unsqueeze(0)
-    #coefficients = RandomBiasField().get_params(3,[coef,coef])
-    #bf = BiasField.generate_bias_field(data, order=3, coefficients=coefficients)
-    #bf[0] = torch.clamp(torch.Tensor(bf[0]),0,1)
-    #data = data[0][0] * bf[0]
-    #data = torch.stack((data,data,data))
-    #return Image(data)
     image = np.array(image)[:,:,0]
     image = np.expand_dims(np.array(image), 0)
     image = np.expand_dims(np.array(image), 0)

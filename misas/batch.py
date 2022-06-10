@@ -18,6 +18,14 @@ import matplotlib.pyplot as plt
 import math
 from shutil import rmtree
 
+# Internal Cell
+def dicom_to_Image(fname):
+    ds = dcmread(fname)
+    img = (ds.pixel_array.astype(np.int16))
+    img = (img/img.max()*255).astype(np.uint8)
+    img = Image.fromarray(np.array(img))
+    return img.convert("RGB")
+
 # Cell
 def batch_results(images, model, eval_functions, true_masks=None, components=['bg','LV','MY','RV']):
     ''' Evaluation of the models performance across multiple images and transformations
