@@ -318,7 +318,7 @@ def cropTransform(image, pxls, finalSize = None):
 
 
 
-def get_crop_series(image, model, start=0, end=256, step=10, finalSize = None, **kwargs): #start=20, end=257, step=10
+def get_crop_series(image, model, start=0, end=256, step=10, finalSize = None, **kwargs):
     if finalSize == None:
         finalSize = image.size
     if type(finalSize) == int:
