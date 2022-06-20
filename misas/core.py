@@ -8,23 +8,16 @@ __all__ = ['get_generic_series', 'plot_series', 'plot_frame', 'gif_series', 'eva
            'get_resize_series', 'eval_resize_series', 'get_confusion', 'plot_confusion', 'plot_confusion_series']
 
 # Internal Cell
-from PIL import Image, ImageEnhance, ImageShow, ImageOps
-from matplotlib.pyplot import imshow
+from PIL import Image, ImageEnhance, ImageOps
 from functools import partial
 import itertools
 import pandas as pd
 from tqdm.notebook import tqdm
 import matplotlib.pyplot as plt
-#import gif
 import math
 import numpy as np
-#import torchvision
 import altair as alt
-import warnings
-warnings.filterwarnings('ignore')
 from io import BytesIO as Buffer
-
-
 
 # Internal Cell
 def dice_by_component(predictedMask, trueMask, component = 1):
