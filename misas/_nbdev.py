@@ -52,15 +52,16 @@ index = {"dice_by_component": "01_local_interpret_pillow_rewrite.ipynb",
          "plot_boxplot": "08_batch_mode_pillow_rewrite.ipynb",
          "plot_batch": "08_batch_mode_pillow_rewrite.ipynb",
          "Fastai2_model": "09_fastai_model.ipynb",
-         "ukbb_model": "10_torchvision_model.ipynb",
-         "crop_pad_pil": "10_torchvision_model.ipynb",
+         "ukbb_model": "10_tensorflow_model.ipynb",
+         "crop_pad_pil": "10_tensorflow_model.ipynb",
          "dicom_to_Image": "08_batch_mode_pillow_rewrite.ipynb"}
 
 modules = ["core.py",
            "mri.py",
            "batch.py",
            "fastai_model.py",
-           "torchvision_model.py"]
+           "torchvision_model.py",
+           "tensorflow_model.py"]
 
 doc_url = "https://chfc-cmi.github.io/misas/"
 

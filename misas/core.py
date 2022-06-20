@@ -15,14 +15,15 @@ import itertools
 import pandas as pd
 from tqdm.notebook import tqdm
 import matplotlib.pyplot as plt
-import gif
+#import gif
 import math
 import numpy as np
 #import torchvision
 import altair as alt
 import warnings
-
 warnings.filterwarnings('ignore')
+from io import BytesIO as Buffer
+
 
 
 # Internal Cell
@@ -182,14 +183,13 @@ def plot_series(
         ax.imshow(np.array(img))
         ax.imshow(np.array(pred), vmax=vmax,cmap=cmap, vmin=vmin)
         ax.set_title(f"{param_name}:{np.around(param,decimals=2)}")
-
+        ax.axes.xaxis.set_visible(False)
+        ax.axes.yaxis.set_visible(False)
 
         if overlay_truth and truth:
             ax.imshow(np.array(truth), alpha = 0.2, cmap = cmap_true_mask)
 
-
 # Cell
-@gif.frame
 def plot_frame(param, img, pred, param_name="param",vmax=None, vmin=0, cmap=default_cmap,**kwargs):
     """
     plots the transformed images and prediction overlayed for the gif_series function
@@ -198,6 +198,14 @@ def plot_frame(param, img, pred, param_name="param",vmax=None, vmin=0, cmap=defa
     ax.imshow(img)
     ax.imshow(np.array(pred), vmax=vmax,cmap=cmap, vmin=vmin)
     ax.set_title(f"{param_name}:{np.around(param,decimals=2)}")
+    ax.axes.xaxis.set_visible(False)
+    ax.axes.yaxis.set_visible(False)
+    buffer = Buffer() #thanks to https://github.com/maxhumber/gif/
+    plt.savefig(buffer, format="png")
+    plt.close()
+    buffer.seek(0)
+    img = Image.open(buffer)
+    return img
 
 
 

@@ -8,7 +8,6 @@ from torchio.transforms import Spike
 from .core import gif_series
 
 # Internal Cell
-#from fastai.vision import open_image, Image, open_mask
 from PIL import Image, ImageEnhance, ImageShow, ImageOps
 import numpy as np
 from .core import get_generic_series, plot_series, eval_generic_series
