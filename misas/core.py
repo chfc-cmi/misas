@@ -173,13 +173,13 @@ def plot_series(
     for element, ax in zip(series, axs.flatten()):
         param,img,pred,truth = element
         ax.imshow(np.array(img))
-        ax.imshow(np.array(pred), vmax=vmax,cmap=cmap, vmin=vmin)
+        ax.imshow(np.array(pred), vmax=vmax,cmap=cmap, vmin=vmin, alpha=.5, interpolation="nearest")
         ax.set_title(f"{param_name}:{np.around(param,decimals=2)}")
         ax.axes.xaxis.set_visible(False)
         ax.axes.yaxis.set_visible(False)
 
         if overlay_truth and truth:
-            ax.imshow(np.array(truth), alpha = 0.2, cmap = cmap_true_mask)
+            ax.imshow(np.array(truth), alpha = 0.2, cmap = cmap_true_mask, interpolation="nearest")
 
 # Cell
 def plot_frame(param, img, pred, param_name="param",vmax=None, vmin=0, cmap=default_cmap,**kwargs):
@@ -188,7 +188,7 @@ def plot_frame(param, img, pred, param_name="param",vmax=None, vmin=0, cmap=defa
     """
     _,ax = plt.subplots(**kwargs)
     ax.imshow(img)
-    ax.imshow(np.array(pred), vmax=vmax,cmap=cmap, vmin=vmin)
+    ax.imshow(np.array(pred), vmax=vmax,cmap=cmap, vmin=vmin, alpha=.5, interpolation="nearest")
     ax.set_title(f"{param_name}:{np.around(param,decimals=2)}")
     ax.axes.xaxis.set_visible(False)
     ax.axes.yaxis.set_visible(False)
