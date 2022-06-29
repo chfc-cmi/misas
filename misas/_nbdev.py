@@ -46,21 +46,20 @@ index = {"dice_by_component": "01_local_interpret.ipynb",
          "biasfieldTransform": "04_mr_artifacts.ipynb",
          "get_biasfield_series": "04_mr_artifacts.ipynb",
          "eval_biasfield_series": "04_mr_artifacts.ipynb",
-         "batch_results": "08_batch_mode_pillow_rewrite.ipynb",
-         "plot_avg_and_dots": "08_batch_mode_pillow_rewrite.ipynb",
-         "plot_avg_and_errorbars": "08_batch_mode_pillow_rewrite.ipynb",
-         "plot_boxplot": "08_batch_mode_pillow_rewrite.ipynb",
-         "plot_batch": "08_batch_mode_pillow_rewrite.ipynb",
+         "dicom_to_Image": "08_batch_mode.ipynb",
+         "batch_results": "08_batch_mode.ipynb",
+         "plot_avg_and_dots": "08_batch_mode.ipynb",
+         "plot_avg_and_errorbars": "08_batch_mode.ipynb",
+         "plot_boxplot": "08_batch_mode.ipynb",
+         "plot_batch": "08_batch_mode.ipynb",
          "Fastai2_model": "09_fastai_model.ipynb",
-         "ukbb_model": "10_tensorflow_model.ipynb",
          "crop_pad_pil": "10_tensorflow_model.ipynb",
-         "dicom_to_Image": "08_batch_mode_pillow_rewrite.ipynb"}
+         "ukbb_model": "10_tensorflow_model.ipynb"}
 
 modules = ["core.py",
            "mri.py",
            "batch.py",
            "fastai_model.py",
-           "torchvision_model.py",
            "tensorflow_model.py"]
 
 doc_url = "https://chfc-cmi.github.io/misas/"

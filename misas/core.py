@@ -541,7 +541,7 @@ def plot_confusion_series(
         norm_axis=0,
         **kwargs
     ):
-    fig, axs = plt.subplots(nrow,np.ceil(len(series)/nrow),figsize=figsize,**kwargs)
+    fig, axs = plt.subplots(nrow,int(np.ceil(len(series)/nrow)),figsize=figsize,**kwargs)
     for element, ax in zip(series, axs.flatten()):
         param,img,pred,truth = element
         cm = get_confusion(pred,truth)
