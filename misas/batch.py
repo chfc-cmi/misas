@@ -13,9 +13,8 @@ from tempfile import mkdtemp
 from functools import partial
 
 import numpy as np
-from PIL import Image, ImageOps
+from PIL import Image
 import matplotlib.pyplot as plt
-import math
 from shutil import rmtree
 
 # Internal Cell
@@ -43,7 +42,6 @@ def batch_results(images, model, eval_functions, true_masks=None, components=['b
         trfm_result = []
         for index, i in enumerate(images):
             img = lambda: dicom_to_Image(i)
-            #tmp = tempfile.mkdtemp()
             tmp = mkdtemp()
             if true_masks == None:
                 truth_path = os.path.join(tmp, "current_truth.png")
@@ -57,7 +55,6 @@ def batch_results(images, model, eval_functions, true_masks=None, components=['b
             df["File"] = i
             df["Transformation"] = list(eval_functions.keys())[number]
             trfm_result.append(df)
-            #shutil.rmtree(tmp)
             rmtree(tmp)
         trfm_result = pd.concat(trfm_result)
         results.append(trfm_result)
