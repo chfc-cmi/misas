@@ -437,7 +437,7 @@ def eval_zoom_series(image, mask, model, step=0.1, start=0, end=1, finalSize=Non
 # Cell
 def dihedralTransform(image, sym_im):
     rot = [0, 90, 180, 270]
-    flip = [True, False]
+    flip = [False, True]
     dihedral = list (itertools.product (rot, flip))
     image = image.rotate (dihedral[sym_im][0])
     if dihedral [sym_im][1] == True:
