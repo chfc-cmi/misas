@@ -6,12 +6,11 @@ __all__ = ['crop_pad_pil', 'ukbb_model']
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow.compat.v1 as tf
-from PIL import Image, ImageEnhance, ImageShow, ImageOps
+from PIL import Image, ImageOps
 import numpy as np
-import math
 
 # Cell
-def crop_pad_pil (image, size):
+def crop_pad_pil(image, size):
     to_cut_w=((image.size[0]-size[0])/2)
     to_cut_h=((image.size[1]-size[1])/2)
     image = ImageOps.crop(image, (np.floor(to_cut_w), np.floor(to_cut_h), np.ceil(to_cut_w), np.ceil(to_cut_h)))
@@ -28,7 +27,7 @@ class ukbb_model:
 
     def prepareSize(self, image):
         X, Y = image.size
-        image=crop_pad_pil(image,(int(math.ceil(X / 16.0)) * 16, int(math.ceil(Y / 16.0)) * 16))
+        image=crop_pad_pil(image,(int(np.ceil(X / 16.0)) * 16, int(np.ceil(Y / 16.0)) * 16))
         return image
 
     def image_to_input(self, image):
@@ -47,5 +46,4 @@ class ukbb_model:
         preds = np.argmax(preds, axis = 2)
         preds = preds.astype(np.uint8)
         preds = Image.fromarray(preds)
-        #classes = ImageSegment(ByteTensor(classes))
-        return preds #classes,
+        return preds

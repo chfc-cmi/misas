@@ -5,9 +5,8 @@ __all__ = ['Fastai2_model']
 # Internal Cell
 from fastai.vision.all import Learner, ProgressCallback, PILImage #for loading the sample model
 import torch #for loading the sample model
-from PIL import Image, ImageEnhance, ImageShow, ImageOps
+from PIL import Image
 import numpy as np
-import torch
 
 # Cell
 class Fastai2_model:
