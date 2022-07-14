@@ -228,7 +228,8 @@ def eval_generic_series(
         param_name="param",
         mask_transform_function=None,
         components=['bg', 'c1','c2'],
-        eval_function=dice_by_component
+        eval_function=dice_by_component,
+        mask_prepareSize=True
     ):
     """
     Perform the transformation on the sample, creates a prediction and
@@ -244,7 +245,8 @@ def eval_generic_series(
             trueMask = mask_transform_function(trueMask, param)
         if hasattr(model,"prepareSize"):
             img = model.prepareSize(img)
-            trueMask = model.prepareSize(trueMask)
+            if mask_prepareSize:
+                trueMask = model.prepareSize(trueMask)
         #prediction = model.predict(img)[0]
         prediction = model.predict(img)
         # prediction._px = prediction._px.float()
@@ -287,7 +289,7 @@ def rotationTransform(image, deg):
     return image.rotate(int(deg))
 
 
-def get_rotation_series(image, model, start=0, end=360, step=60, **kwargs):
+def get_rotation_series(image, model, start=0, end=361, step=60, **kwargs):
     """
     runs the get_generic_series with rotationTransform as transform
     """
@@ -329,10 +331,13 @@ def get_crop_series(image, model, start=0, end=256, step=10, finalSize = None, *
 
 # Cell
 def eval_crop_series(image, mask, model, step=10, start=0, end=256, finalSize=None, param_name="pixels", **kwargs):
+    finalmaskSize = finalSize
     if finalSize == None:
         finalSize = image.size
+        finalmaskSize = mask.size
     if type(finalSize) == int:
         finalSize = (finalSize, finalSize)
+        finalmaskSize = mask.size
     if end >= min(finalSize)//2:
         end = min(finalSize)//2
     return eval_generic_series(
@@ -343,7 +348,7 @@ def eval_crop_series(image, mask, model, step=10, start=0, end=256, finalSize=No
         start=start,
         end=end,
         step=step,
-        mask_transform_function=partial(cropTransform,finalSize=finalSize),
+        mask_transform_function=partial(cropTransform,finalSize=finalmaskSize),
         param_name=param_name,
         **kwargs
     )
@@ -415,10 +420,13 @@ def get_zoom_series(image, model, start=0, end=1, step=.1, finalSize= None, **kw
 
 # Cell
 def eval_zoom_series(image, mask, model, step=0.1, start=0, end=1, finalSize=None, param_name="scale", **kwargs):
+    finalmaskSize = finalSize
     if finalSize == None:
         finalSize = image.size
+        finalmaskSize = mask.size
     if type(finalSize) == int:
         finalSize = (finalSize, finalSize)
+        finalmaskSize = mask.size
     if end > 1:
         end = 1
     return eval_generic_series(
@@ -429,7 +437,7 @@ def eval_zoom_series(image, mask, model, step=0.1, start=0, end=1, finalSize=Non
         start=start,
         end=end,
         step=step,
-        mask_transform_function=partial(zoomTransform,finalSize=finalSize),
+        mask_transform_function=partial(zoomTransform,finalSize=finalmaskSize),
         param_name=param_name,
         **kwargs
     )
