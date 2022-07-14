@@ -31,18 +31,40 @@ If you use the simulated MR artifacts, please also cite `torchio`:
 Example with kaggle data
 
 ```
-from fastai.vision import *
-from misas.core import default_cmap
+from misas.core import *
+from misas.core import default_cmap, default_cmap_true_mask
+from misas.fastai_model import Fastai2_model
+from PIL import Image, ImageEnhance, ImageOps
+from functools import partial
+from tqdm.notebook import tqdm
+import matplotlib.pyplot as plt
+import numpy as np
+
+```
+
+```
+def label_func(x):
+    pass
+def acc_seg(input, target):
+    pass
+def diceComb(input, targs):
+    pass
+def diceLV(input, targs):
+    pass
+def diceMY(input, targs):
+    pass
 ```
 
 ```
 #hide_output
-img = lambda: open_image("example/kaggle/images/1-frame014-slice005.png")
-trueMask = lambda: open_mask("example/kaggle/masks/1-frame014-slice005.png")
-trainedModel = Fastai1_model('chfc-cmi/cmr-seg-tl', 'cmr_seg_base')
+img = lambda: Image.open("example/kaggle/images/1-frame014-slice005.png").convert("RGB")
+trueMask = lambda: Image.open("example/kaggle/masks/1-frame014-slice005.png").convert("I")
+trainedModel = Fastai2_model("chfc-cmi/cmr-seg-tl", "cmr_seg_base", force_reload=False)
 fig, ax = plt.subplots(figsize=(8,8))
-img().show(ax=ax)
-trueMask().show(ax=ax, cmap=default_cmap)
+ax.imshow(np.array(img()))
+ax.imshow(np.array(trueMask()), cmap=default_cmap_true_mask, alpha=.5, interpolation="nearest")
+ax.axes.xaxis.set_visible(False)
+ax.axes.yaxis.set_visible(False)
 ```
 
 ### Rotation
@@ -51,9 +73,12 @@ trueMask().show(ax=ax, cmap=default_cmap)
 plot_series(get_rotation_series(img(), trainedModel))
 ```
 
+    [W NNPACK.cpp:51] Could not initialize NNPACK! Reason: Unsupported hardware.
+
+
 
     
-![png](docs/images/output_11_0.png)
+![png](docs/images/output_12_1.png)
     
 
 
@@ -73,7 +98,7 @@ plt.axis([0,360,0,1])
 
 
     
-![png](docs/images/output_12_1.png)
+![png](docs/images/output_13_1.png)
     
 
 

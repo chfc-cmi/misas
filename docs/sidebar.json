@@ -8,6 +8,8 @@
     "CamVid Demo": "camvid.html",
     "Pneumothorax demo": "pneumothorax.html",
     "Case Study: MyoPS - myocardial pathology segmentation": "myops.html",
-    "Prepare Model for Misas": "batch_mode.html"
+    "Batch Mode": "batch_mode.html",
+    "Fastai Model (misas)": "fastai_model.html",
+    "Tensorflow Model (misas)": "tensorflow_model.html"
   }
 }

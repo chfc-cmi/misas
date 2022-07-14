@@ -31,8 +31,14 @@ entries:
       title: 'Case Study: MyoPS - myocardial pathology segmentation'
       url: myops.html
     - output: web,pdf
-      title: Prepare Model for Misas
+      title: Batch Mode
       url: batch_mode.html
+    - output: web,pdf
+      title: Fastai Model (misas)
+      url: fastai_model.html
+    - output: web,pdf
+      title: Tensorflow Model (misas)
+      url: tensorflow_model.html
     output: web
     title: misas
   output: web
