@@ -1,0 +1,27 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 01_local_interpret.ipynb
+      - 02_ukbb_on_kaggle.ipynb
+      - 03_transversals.ipynb
+      - 04_mr_artifacts.ipynb
+      - 05_camvid.ipynb
+      - 06_pneumothorax.ipynb
+      - 07_myops.ipynb
+      - 08_batch_mode.ipynb
+      - 09_fastai_model.ipynb
+      - 10_tensorflow_model.ipynb
+      - section: docs
+        contents:
+          - docs/index.html
+          - docs/batch_mode.html
+          - docs/camvid.html
+          - docs/fastai_model.html
+          - docs/local_interpret.html
+          - docs/mr_artifacts.html
+          - docs/myops.html
+          - docs/pneumothorax.html
+          - docs/tensorflow_model.html
+          - docs/transversals.html
+          - docs/ukbb_on_kaggle.html
