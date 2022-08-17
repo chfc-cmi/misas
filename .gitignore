@@ -1,3 +1,5 @@
+_docs/
+
 *.bak
 .last_checked
 .gitconfig
