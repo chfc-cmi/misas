@@ -20,6 +20,7 @@ website:
   description: "Model Interpretation through Sensitivity Analysis for Segmentation"
   twitter-card: true
   open-graph: true
+  reader-mode: true
   repo-branch: master
   repo-url: "https://github.com/chfc-cmi/misas/"
   repo-actions: [issue]
