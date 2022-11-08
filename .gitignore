@@ -144,3 +144,4 @@ models
 
 /.quarto/
 conda
+conda_test
