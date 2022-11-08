@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>misas - Case Study - Model Suitability</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="misas - Case Study - Model Suitability">
+<meta property="og:description" content="We often find ourselves in a situation where we have a pre-trained model for a certain task (e.g.&nbsp;cardiac segmentation) and we have a data set where we want to perform that task.">
+<meta property="og:site-name" content="misas">
+<meta name="twitter:title" content="misas - Case Study - Model Suitability">
+<meta name="twitter:description" content="We often find ourselves in a situation where we have a pre-trained model for a certain task (e.g.&nbsp;cardiac segmentation) and we have a data set where we want to perform that task.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">misas</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Case Study - Model Suitability</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Model Interpretation through Sensitivity Analysis for Segmentation</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./local_interpret.html" class="sidebar-item-text sidebar-link">Local Interpretability</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ukbb_on_kaggle.html" class="sidebar-item-text sidebar-link active">Case Study - Model Suitability</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transversals.html" class="sidebar-item-text sidebar-link">Case Study - Model Robustness</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mr_artifacts.html" class="sidebar-item-text sidebar-link">Simulated MR artifacts (torchio)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./camvid.html" class="sidebar-item-text sidebar-link">CamVid Demo</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pneumothorax.html" class="sidebar-item-text sidebar-link">Pneumothorax demo</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./myops.html" class="sidebar-item-text sidebar-link">Case Study: MyoPS - myocardial pathology segmentation</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./batch_mode.html" class="sidebar-item-text sidebar-link">Batch Mode</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fastai_model.html" class="sidebar-item-text sidebar-link">Fastai Model (misas)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tensorflow_model.html" class="sidebar-item-text sidebar-link">Tensorflow Model (misas)</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#aim-can-i-use-a-given-model-on-a-given-dataset" id="toc-aim-can-i-use-a-given-model-on-a-given-dataset" class="nav-link active" data-scroll-target="#aim-can-i-use-a-given-model-on-a-given-dataset">Aim: Can I use a given model on a given dataset?</a></li>
+  <li><a href="#prepare-model-for-misas" id="toc-prepare-model-for-misas" class="nav-link" data-scroll-target="#prepare-model-for-misas">Prepare Model for <code>misas</code></a></li>
+  <li><a href="#prepare-dataset-for-misas" id="toc-prepare-dataset-for-misas" class="nav-link" data-scroll-target="#prepare-dataset-for-misas">Prepare Dataset for <code>misas</code></a></li>
+  <li><a href="#how-does-the-model-perform-out-of-the-box" id="toc-how-does-the-model-perform-out-of-the-box" class="nav-link" data-scroll-target="#how-does-the-model-perform-out-of-the-box">How does the model perform out of the box?</a></li>
+  <li><a href="#analysis-of-one-image" id="toc-analysis-of-one-image" class="nav-link" data-scroll-target="#analysis-of-one-image">Analysis of one image</a>
+  <ul class="collapse">
+  <li><a href="#sensitivity-to-orientation" id="toc-sensitivity-to-orientation" class="nav-link" data-scroll-target="#sensitivity-to-orientation">Sensitivity to orientation</a></li>
+  <li><a href="#sensitivity-to-resize" id="toc-sensitivity-to-resize" class="nav-link" data-scroll-target="#sensitivity-to-resize">Sensitivity to resize</a></li>
+  <li><a href="#sensitivity-to-rotation" id="toc-sensitivity-to-rotation" class="nav-link" data-scroll-target="#sensitivity-to-rotation">Sensitivity to rotation</a></li>
+  <li><a href="#sensitivity-to-cropping" id="toc-sensitivity-to-cropping" class="nav-link" data-scroll-target="#sensitivity-to-cropping">Sensitivity to cropping</a></li>
+  <li><a href="#sensitivity-to-brightness" id="toc-sensitivity-to-brightness" class="nav-link" data-scroll-target="#sensitivity-to-brightness">Sensitivity to brightness</a></li>
+  <li><a href="#sensitivity-to-contrast" id="toc-sensitivity-to-contrast" class="nav-link" data-scroll-target="#sensitivity-to-contrast">Sensitivity to contrast</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#supplemental-information" id="toc-supplemental-information" class="nav-link" data-scroll-target="#supplemental-information">Supplemental Information</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/chfc-cmi/misas/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Case Study - Model Suitability</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="aim-can-i-use-a-given-model-on-a-given-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="aim-can-i-use-a-given-model-on-a-given-dataset">Aim: Can I use a given model on a given dataset?</h2>
+<p>We often find ourselves in a situation where we have a pre-trained model for a certain task (e.g.&nbsp;cardiac segmentation) and we have a data set where we want to perform that task. We know the model was not trained on that specific dataset. So we wonder, how will the model perform? Is it usable at all? Do we need to pre-process our data in a certain way to use it?</p>
+<p>In this case study we demonstrate how <code>misas</code> helps answer these questions with a concrete example: - <strong>Model</strong>: <a href="https://github.com/baiwenjia/ukbb_cardiac"><code>ukbb_cardiac</code> network</a> by <a href="https://doi.org/10.1186/s12968-018-0471-x">Bai et al.&nbsp;2018 [1]</a>, trained on <a href="https://www.ukbiobank.ac.uk/">UK Biobank</a> cardiac MRI images - <strong>Data</strong>: Kaggle <a href="https://www.kaggle.com/c/second-annual-data-science-bowl">Data Science Bowl Cardiac Challenge Data</a> MRI images</p>
+</section>
+<section id="prepare-model-for-misas" class="level2">
+<h2 class="anchored" data-anchor-id="prepare-model-for-misas">Prepare Model for <code>misas</code></h2>
+<p>The used model was trained on UK Biobank cardiac imaging data to segment short-axis images of the heart into left ventricle (LV), right ventricle (RV) and myocardium (MY). For details about the model please read <a href="https://doi.org/10.1186/s12968-018-0471-x">the paper (Bai et al.&nbsp;2018)</a> and cite it if you use it. For implementation, training and usage see the <a href="https://github.com/baiwenjia/ukbb_cardiac">GitHub repository</a>. We downloaded the pre-trained model for short-axis images from https://www.doc.ic.ac.uk/~wbai/data/ukbb_cardiac/trained_model/ (local copy in <code>example/kaggle/FCN_sa</code>). In order to use it with <code>misas</code> we need to wrap it in a class that implements the desired interface (<code>prepareSize</code> and <code>predict</code> taking <code>Image</code> as input, see the main docu for more details).</p>
+<p><code>ukbb_cardiac</code> is written in <code>tensorflow</code> v1. With <code>tensorflow</code> v2 make sure to import the compat module.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> misas.tensorflow_model <span class="im">import</span> ukbb_model, crop_pad_pil</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> ukbb_model(<span class="st">'example/kaggle/FCN_sa'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>INFO:tensorflow:Restoring parameters from example/kaggle/FCN_sa</code></pre>
+</div>
+</div>
+<p>The model requires images to be a multiple of 16 in each dimension. We pad images accordingly in <code>prepareSize</code>. Additionally code in <code>image_to_input</code> takes care of the specifics of transforming a three-channel image into a single-item batch of single-channel images. In <code>predict</code> the output is converted to <code>ImageSegment</code> class.</p>
+</section>
+<section id="prepare-dataset-for-misas" class="level2">
+<h2 class="anchored" data-anchor-id="prepare-dataset-for-misas">Prepare Dataset for <code>misas</code></h2>
+<p>The <a href="https://www.kaggle.com/c/second-annual-data-science-bowl">Data Science Bowl Cardiac Challenge Data</a> consists of MRI cine images from 1140 patients in dicom format. Multiple slices in short axis are available for each patient. Additionally, end-systolic and end-diastolic volumes are given (the original Kaggle challenge asked participants to predict these from the images).</p>
+<p>You can download and unpack the dataset from the above website. Some example images are included in the <code>example/kaggle/dicom</code> folder.</p>
+<p>We use <code>pydicom</code> to read the images and convert them to pillow <code>Image</code> objects.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydicom <span class="im">import</span> dcmread</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> misas.core <span class="im">import</span> default_cmap, default_cmap_true_mask</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#import warnings</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#warnings.filterwarnings('ignore')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We use the window information within the dicom file to scale pixel intensities accordingly.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prepareImage(fname):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    ds <span class="op">=</span> dcmread(fname)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    img <span class="op">=</span> (ds.pixel_array.astype(np.int16))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    img <span class="op">=</span> (img<span class="op">/</span>img.<span class="bu">max</span>()<span class="op">*</span><span class="dv">255</span>).astype(np.uint8)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    img <span class="op">=</span> Image.fromarray(np.array(img))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> img.convert(<span class="st">"RGB"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Okay, let’s look at an example:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> prepareImage(<span class="st">"example/kaggle/117_sax_76_IM-11654-0005.dcm"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.imshow(img)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.array(img).shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(256, 192, 3)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="02_ukbb_on_kaggle_files/figure-html/cell-6-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="how-does-the-model-perform-out-of-the-box" class="level2">
+<h2 class="anchored" data-anchor-id="how-does-the-model-perform-out-of-the-box">How does the model perform out of the box?</h2>
+<p>Time to apply the model to the example image and see how it works (we need to call <code>prepareSize</code> manually here):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> model.prepareSize(img)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fig,ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>))</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>plt.imshow(img)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>pred<span class="op">=</span>model.predict(img)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>plt.imshow(pred, cmap<span class="op">=</span>default_cmap, alpha<span class="op">=</span><span class="fl">.5</span>, interpolation<span class="op">=</span><span class="st">"nearest"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="02_ukbb_on_kaggle_files/figure-html/cell-7-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>The model identified the left ventricle and myocardium partially. It failed to identify the right ventricle. So this result is promising in that it shows some kind of success but it is not usable as it is.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is neither surprising nor a critique on the <code>ukbb_cardiac</code> network. That network was trained specifically for UK Biobank images and not to be applied generally.</p>
+</div>
+</div>
+<p>Still, we might be able to use it on the kaggle dataset if we understand why it fails and properly pre-process the data. This is where <code>misas</code> comes in. But first look at some more examples to see if we selected a bad example by chance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> glob <span class="im">import</span> glob</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dcm_files <span class="op">=</span> glob(<span class="st">"example/kaggle/sample_images/*.dcm"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>,<span class="dv">5</span>, figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">10</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, ax <span class="kw">in</span> <span class="bu">enumerate</span>(axs.flatten()):</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    tmp <span class="op">=</span> model.prepareSize(prepareImage(dcm_files[i]))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    ax.imshow(tmp)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">#model.predict(tmp)[0].show(ax=ax, cmap=default_cmap)</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    ax.imshow(model.predict(tmp), cmap<span class="op">=</span>default_cmap, vmax<span class="op">=</span><span class="dv">3</span>, alpha<span class="op">=</span><span class="fl">.5</span>, interpolation<span class="op">=</span><span class="st">"nearest"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="02_ukbb_on_kaggle_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Apparently our first impression that it does not work out of the box applies to most images. This also shows a bit of the variety of images and quality and also some inconsistencies in orientation.</p>
+</section>
+<section id="analysis-of-one-image" class="level2">
+<h2 class="anchored" data-anchor-id="analysis-of-one-image">Analysis of one image</h2>
+<p>In order to get more detailed insights into what’s happening we select a specific example and define two helper functions that will open the image and true mask for that example. We use functions to get the image from file again instead of loading the image once and passing it around to avoid working with an accidentally modified version of the image.</p>
+<p>In this case we have the true mask from a previous experiment but it would be possible to create that mask manually as well, it just needs to be saved as png with pixel values <code>0</code> for background and <code>1</code> to <code>n</code> for the <code>n</code> classes. As there are only three clases in this case looking at the png image in a standard image viewer will look like a purely black image.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> misas.core <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> img():</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Opens the sample image as a PIL image</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Image.<span class="bu">open</span>(<span class="st">"example/kaggle/images/1-frame014-slice006.png"</span>).convert(<span class="st">"RGB"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trueMask():</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Opens the true mask as a PIL image</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Image.<span class="bu">open</span>(<span class="st">"example/kaggle/masks_full/1-frame014-slice006.png"</span>).convert(<span class="st">"I"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sensitivity-to-orientation" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-orientation">Sensitivity to orientation</h3>
+<p>There are eight posible orientations an image can be in (four rotations by 90° and a flipped variant for each). In misas a series with these 8 items is available via <a href="https://chfc-cmi.github.io/misas/local_interpret.html#get_dihedral_series"><code>get_dihedral_series</code></a>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dihedral_series <span class="op">=</span> get_dihedral_series(img(),model, truth<span class="op">=</span>trueMask())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>plot_series(dihedral_series, nrow<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">12</span>), param_name<span class="op">=</span><span class="st">"orientation"</span>, overlay_truth <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="02_ukbb_on_kaggle_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>In the default orientation (0) the network is not successful, however when rotated by 90° clockwise (orientation 7) the prediction looks perfect. This can be explained by the different ways the pixel data is stored in the NifTi and DICOM formats. See <a href="https://nipy.org/nibabel/dicom/dicom_orientation.html#dicom-voxel-to-patient-coordinate-system-mapping">this page</a> to learn more.</p>
+<p>Anyway, as we now know, that (at least for this image) applying a dihedral transformation with parameter 7 yields optimal results we can include this transformation into the preparation function. This way aditional transformations will already use the correctly oriented image as starting point.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prep_with_dihedral(image):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    X, Y <span class="op">=</span> image.size</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    image<span class="op">=</span>crop_pad_pil(image,(<span class="bu">int</span>(np.ceil(X <span class="op">/</span> <span class="fl">16.0</span>)) <span class="op">*</span> <span class="dv">16</span>, <span class="bu">int</span>(np.ceil(Y <span class="op">/</span> <span class="fl">16.0</span>)) <span class="op">*</span> <span class="dv">16</span>))</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dihedralTransform(image, <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>model.prepareSize <span class="op">=</span> prep_with_dihedral</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sensitivity-to-resize" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-resize">Sensitivity to resize</h3>
+<p>The next thing that comes to mind when <a href="https://github.com/chfc-cmi/cmr-seg-tl/blob/master/code/kaggle/kaggle_metadata.ipynb">exploring the images from the kaggle dataset</a> is that image size varies (120px-736px). Being fully convolutional, the <code>ukbb_cardiac</code> modell can handle various sizes. Still kernels are trained to work with features of a certain size in pixels so the network cannot be expected to work well with images scaled to arbitrary sizes. Let’s explore:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_resize_series(img(),model, start<span class="op">=</span><span class="dv">50</span>, end<span class="op">=</span><span class="dv">401</span>,step<span class="op">=</span><span class="dv">50</span>), sharex<span class="op">=</span><span class="va">True</span>, sharey<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">10</span>), nrow<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="02_ukbb_on_kaggle_files/figure-html/cell-16-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>In fact predictions are very good even for small images (100px), they fail on very small images (50px). For large images, performance starts to get worse for right ventricle with images of 350px and for all other classes at 400px. Given the size range of the images in the dataset we have to worry about some of the larger images. But first we want to get a more quantitative view of the performance depending on size. So we can use the ground truth for the first time to calculate dice scores for each class and each parameter value. This can then be visualized as a line graph:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_resize_series(img(),trueMask(),model,end<span class="op">=</span><span class="dv">600</span>,step<span class="op">=</span><span class="dv">30</span>, components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> altair <span class="im">as</span> alt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'px'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>],value_name<span class="op">=</span><span class="st">'dice score'</span>))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"px"</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"dice score"</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"dice score"</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-1e143198f6a0476681ea1952c1495283"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-1e143198f6a0476681ea1952c1495283") {
+      outputDiv = document.getElementById("altair-viz-1e143198f6a0476681ea1952c1495283");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-f67a69917253623999560bbb2e9b6a5b"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "dice score", "type": "quantitative"}, "x": {"field": "px", "type": "quantitative"}, "y": {"field": "dice score", "type": "quantitative"}}, "height": 300, "selection": {"selector001": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-f67a69917253623999560bbb2e9b6a5b": [{"px": 22, "variable": "LV", "dice score": 0.0}, {"px": 52, "variable": "LV", "dice score": 0.0}, {"px": 82, "variable": "LV", "dice score": 0.0}, {"px": 112, "variable": "LV", "dice score": 0.8498727735368957}, {"px": 142, "variable": "LV", "dice score": 0.9090909090909091}, {"px": 172, "variable": "LV", "dice score": 0.9097222222222222}, {"px": 202, "variable": "LV", "dice score": 0.9059117402164862}, {"px": 232, "variable": "LV", "dice score": 0.9197452229299363}, {"px": 262, "variable": "LV", "dice score": 0.9401107196779064}, {"px": 292, "variable": "LV", "dice score": 0.9402061855670103}, {"px": 322, "variable": "LV", "dice score": 0.9320323014804845}, {"px": 352, "variable": "LV", "dice score": 0.9288750354207991}, {"px": 382, "variable": "LV", "dice score": 0.9148311306901615}, {"px": 412, "variable": "LV", "dice score": 0.8904458598726115}, {"px": 442, "variable": "LV", "dice score": 0.6802487668882694}, {"px": 472, "variable": "LV", "dice score": 0.465667635875643}, {"px": 502, "variable": "LV", "dice score": 0.2079583135954524}, {"px": 532, "variable": "LV", "dice score": 0.021789522484932777}, {"px": 562, "variable": "LV", "dice score": 0.0}, {"px": 592, "variable": "LV", "dice score": 0.0}, {"px": 22, "variable": "MY", "dice score": 0.0}, {"px": 52, "variable": "MY", "dice score": 0.0}, {"px": 82, "variable": "MY", "dice score": 0.0}, {"px": 112, "variable": "MY", "dice score": 0.7785234899328859}, {"px": 142, "variable": "MY", "dice score": 0.848}, {"px": 172, "variable": "MY", "dice score": 0.844566712517194}, {"px": 202, "variable": "MY", "dice score": 0.8951612903225806}, {"px": 232, "variable": "MY", "dice score": 0.8918083462132921}, {"px": 262, "variable": "MY", "dice score": 0.8857312018946122}, {"px": 292, "variable": "MY", "dice score": 0.9115514741420976}, {"px": 322, "variable": "MY", "dice score": 0.9151588258946521}, {"px": 352, "variable": "MY", "dice score": 0.9103214890016921}, {"px": 382, "variable": "MY", "dice score": 0.8461978273299028}, {"px": 412, "variable": "MY", "dice score": 0.7634523175279702}, {"px": 442, "variable": "MY", "dice score": 0.43596059113300495}, {"px": 472, "variable": "MY", "dice score": 0.248125}, {"px": 502, "variable": "MY", "dice score": 0.09569665964489919}, {"px": 532, "variable": "MY", "dice score": 0.0}, {"px": 562, "variable": "MY", "dice score": 0.0}, {"px": 592, "variable": "MY", "dice score": 0.0}, {"px": 22, "variable": "RV", "dice score": 0.0}, {"px": 52, "variable": "RV", "dice score": 0.0}, {"px": 82, "variable": "RV", "dice score": 0.0}, {"px": 112, "variable": "RV", "dice score": 0.9590643274853801}, {"px": 142, "variable": "RV", "dice score": 0.9577464788732394}, {"px": 172, "variable": "RV", "dice score": 0.9664}, {"px": 202, "variable": "RV", "dice score": 0.976905311778291}, {"px": 232, "variable": "RV", "dice score": 0.9764192139737992}, {"px": 262, "variable": "RV", "dice score": 0.976313079299691}, {"px": 292, "variable": "RV", "dice score": 0.9754618141714916}, {"px": 322, "variable": "RV", "dice score": 0.9762989972652689}, {"px": 352, "variable": "RV", "dice score": 0.9722543352601156}, {"px": 382, "variable": "RV", "dice score": 0.6855488939425264}, {"px": 412, "variable": "RV", "dice score": 0.4303189165574487}, {"px": 442, "variable": "RV", "dice score": 0.019203072491598656}, {"px": 472, "variable": "RV", "dice score": 0.0}, {"px": 502, "variable": "RV", "dice score": 0.0}, {"px": 532, "variable": "RV", "dice score": 0.0}, {"px": 562, "variable": "RV", "dice score": 0.0}, {"px": 592, "variable": "RV", "dice score": 0.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<p>Apparently, there is quite a suitable size range. A size of 256px is well within that range so we can include a resize as part of the preparation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prep_with_dihedral_and_resize(image):</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> prep_with_dihedral(image)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> image.resize((<span class="dv">256</span>,<span class="dv">256</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>model.prepareSize <span class="op">=</span> prep_with_dihedral_and_resize</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sensitivity-to-rotation" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-rotation">Sensitivity to rotation</h3>
+<p>We already know that orientation is really important. So we might wonder how much rotation will be tolerated. Is a rotation by 5° already a problem or will 30° still be fine? We use the same methods as before to address this question:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_rotation_series(img(),model, step<span class="op">=</span><span class="dv">30</span>), nrow<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="02_ukbb_on_kaggle_files/figure-html/cell-22-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_rotation_series(img(),trueMask(),model,start<span class="op">=-</span><span class="dv">180</span>,end<span class="op">=</span><span class="dv">180</span>,components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'deg'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>],value_name<span class="op">=</span><span class="st">'dice score'</span>))</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"deg"</span>,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"dice score"</span>,</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"dice score"</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-4adf4e6f76c741f597f2c06959ba9fa4"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-4adf4e6f76c741f597f2c06959ba9fa4") {
+      outputDiv = document.getElementById("altair-viz-4adf4e6f76c741f597f2c06959ba9fa4");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-34b5c7fa39aafb77cbc29dc8b4b93912"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "dice score", "type": "quantitative"}, "x": {"field": "deg", "type": "quantitative"}, "y": {"field": "dice score", "type": "quantitative"}}, "height": 300, "selection": {"selector002": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-34b5c7fa39aafb77cbc29dc8b4b93912": [{"deg": -180, "variable": "LV", "dice score": 0.026948989412897015}, {"deg": -175, "variable": "LV", "dice score": 0.0}, {"deg": -170, "variable": "LV", "dice score": 0.0}, {"deg": -165, "variable": "LV", "dice score": 0.0}, {"deg": -160, "variable": "LV", "dice score": 0.0}, {"deg": -155, "variable": "LV", "dice score": 0.0}, {"deg": -150, "variable": "LV", "dice score": 0.003996003996003996}, {"deg": -145, "variable": "LV", "dice score": 0.03461538461538462}, {"deg": -140, "variable": "LV", "dice score": 0.13686131386861314}, {"deg": -135, "variable": "LV", "dice score": 0.11369990680335508}, {"deg": -130, "variable": "LV", "dice score": 0.1937219730941704}, {"deg": -125, "variable": "LV", "dice score": 0.5233236151603499}, {"deg": -120, "variable": "LV", "dice score": 0.3105485232067511}, {"deg": -115, "variable": "LV", "dice score": 0.4272300469483568}, {"deg": -110, "variable": "LV", "dice score": 0.81199538638985}, {"deg": -105, "variable": "LV", "dice score": 0.898936170212766}, {"deg": -100, "variable": "LV", "dice score": 0.9274318064848173}, {"deg": -95, "variable": "LV", "dice score": 0.9343589743589743}, {"deg": -90, "variable": "LV", "dice score": 0.9377892030848329}, {"deg": -85, "variable": "LV", "dice score": 0.9317718940936863}, {"deg": -80, "variable": "LV", "dice score": 0.9344178952719878}, {"deg": -75, "variable": "LV", "dice score": 0.9428571428571428}, {"deg": -70, "variable": "LV", "dice score": 0.9436475409836066}, {"deg": -65, "variable": "LV", "dice score": 0.9453244762391415}, {"deg": -60, "variable": "LV", "dice score": 0.9501018329938901}, {"deg": -55, "variable": "LV", "dice score": 0.9454360020397756}, {"deg": -50, "variable": "LV", "dice score": 0.9519918283963228}, {"deg": -45, "variable": "LV", "dice score": 0.9540816326530612}, {"deg": -40, "variable": "LV", "dice score": 0.9533468559837728}, {"deg": -35, "variable": "LV", "dice score": 0.943943943943944}, {"deg": -30, "variable": "LV", "dice score": 0.9428284854563691}, {"deg": -25, "variable": "LV", "dice score": 0.9490670700958144}, {"deg": -20, "variable": "LV", "dice score": 0.9565656565656566}, {"deg": -15, "variable": "LV", "dice score": 0.9547534316217591}, {"deg": -10, "variable": "LV", "dice score": 0.9585253456221198}, {"deg": -5, "variable": "LV", "dice score": 0.9479535118746841}, {"deg": 0, "variable": "LV", "dice score": 0.9593082400813835}, {"deg": 5, "variable": "LV", "dice score": 0.9559877175025588}, {"deg": 10, "variable": "LV", "dice score": 0.9539240506329114}, {"deg": 15, "variable": "LV", "dice score": 0.9400503778337531}, {"deg": 20, "variable": "LV", "dice score": 0.9409368635437881}, {"deg": 25, "variable": "LV", "dice score": 0.9465648854961832}, {"deg": 30, "variable": "LV", "dice score": 0.9411172622043281}, {"deg": 35, "variable": "LV", "dice score": 0.9268537074148296}, {"deg": 40, "variable": "LV", "dice score": 0.929718875502008}, {"deg": 45, "variable": "LV", "dice score": 0.9248971193415638}, {"deg": 50, "variable": "LV", "dice score": 0.9279509453244762}, {"deg": 55, "variable": "LV", "dice score": 0.9295199182839632}, {"deg": 60, "variable": "LV", "dice score": 0.9191709844559586}, {"deg": 65, "variable": "LV", "dice score": 0.9242819843342036}, {"deg": 70, "variable": "LV", "dice score": 0.913312693498452}, {"deg": 75, "variable": "LV", "dice score": 0.8576104746317512}, {"deg": 80, "variable": "LV", "dice score": 0.6749688667496887}, {"deg": 85, "variable": "LV", "dice score": 0.6654205607476635}, {"deg": 90, "variable": "LV", "dice score": 0.6622675464907019}, {"deg": 95, "variable": "LV", "dice score": 0.2}, {"deg": 100, "variable": "LV", "dice score": 0.33024691358024694}, {"deg": 105, "variable": "LV", "dice score": 0.4392041267501842}, {"deg": 110, "variable": "LV", "dice score": 0.05758157389635317}, {"deg": 115, "variable": "LV", "dice score": 0.0}, {"deg": 120, "variable": "LV", "dice score": 0.027237354085603113}, {"deg": 125, "variable": "LV", "dice score": 0.12384473197781885}, {"deg": 130, "variable": "LV", "dice score": 0.2816666666666667}, {"deg": 135, "variable": "LV", "dice score": 0.27424749163879597}, {"deg": 140, "variable": "LV", "dice score": 0.04812319538017324}, {"deg": 145, "variable": "LV", "dice score": 0.001962708537782139}, {"deg": 150, "variable": "LV", "dice score": 0.12352406902815623}, {"deg": 155, "variable": "LV", "dice score": 0.015952143569292122}, {"deg": 160, "variable": "LV", "dice score": 0.013902681231380337}, {"deg": 165, "variable": "LV", "dice score": 0.043137254901960784}, {"deg": 170, "variable": "LV", "dice score": 0.0}, {"deg": 175, "variable": "LV", "dice score": 0.06773283160865474}, {"deg": -180, "variable": "MY", "dice score": 0.23279352226720648}, {"deg": -175, "variable": "MY", "dice score": 0.020454545454545454}, {"deg": -170, "variable": "MY", "dice score": 0.0022753128555176336}, {"deg": -165, "variable": "MY", "dice score": 0.0}, {"deg": -160, "variable": "MY", "dice score": 0.0}, {"deg": -155, "variable": "MY", "dice score": 0.0}, {"deg": -150, "variable": "MY", "dice score": 0.002288329519450801}, {"deg": -145, "variable": "MY", "dice score": 0.03185437997724687}, {"deg": -140, "variable": "MY", "dice score": 0.17758985200845667}, {"deg": -135, "variable": "MY", "dice score": 0.08333333333333333}, {"deg": -130, "variable": "MY", "dice score": 0.25468904244817375}, {"deg": -125, "variable": "MY", "dice score": 0.42611060743427015}, {"deg": -120, "variable": "MY", "dice score": 0.3247863247863248}, {"deg": -115, "variable": "MY", "dice score": 0.3383458646616541}, {"deg": -110, "variable": "MY", "dice score": 0.6529051987767585}, {"deg": -105, "variable": "MY", "dice score": 0.7020057306590258}, {"deg": -100, "variable": "MY", "dice score": 0.7624309392265194}, {"deg": -95, "variable": "MY", "dice score": 0.821917808219178}, {"deg": -90, "variable": "MY", "dice score": 0.8596825396825397}, {"deg": -85, "variable": "MY", "dice score": 0.8490687219010918}, {"deg": -80, "variable": "MY", "dice score": 0.8658227848101265}, {"deg": -75, "variable": "MY", "dice score": 0.8620037807183365}, {"deg": -70, "variable": "MY", "dice score": 0.8591282375236892}, {"deg": -65, "variable": "MY", "dice score": 0.8697819314641745}, {"deg": -60, "variable": "MY", "dice score": 0.8938212357528494}, {"deg": -55, "variable": "MY", "dice score": 0.8884870403857745}, {"deg": -50, "variable": "MY", "dice score": 0.9090909090909091}, {"deg": -45, "variable": "MY", "dice score": 0.9220701963117193}, {"deg": -40, "variable": "MY", "dice score": 0.9212934716290421}, {"deg": -35, "variable": "MY", "dice score": 0.9184549356223176}, {"deg": -30, "variable": "MY", "dice score": 0.9156479217603912}, {"deg": -25, "variable": "MY", "dice score": 0.9116392443631932}, {"deg": -20, "variable": "MY", "dice score": 0.9153567110036276}, {"deg": -15, "variable": "MY", "dice score": 0.9130434782608695}, {"deg": -10, "variable": "MY", "dice score": 0.9235364396654719}, {"deg": -5, "variable": "MY", "dice score": 0.9153754469606674}, {"deg": 0, "variable": "MY", "dice score": 0.9545454545454546}, {"deg": 5, "variable": "MY", "dice score": 0.9178972238629651}, {"deg": 10, "variable": "MY", "dice score": 0.8989424206815512}, {"deg": 15, "variable": "MY", "dice score": 0.9007817197835237}, {"deg": 20, "variable": "MY", "dice score": 0.8922518159806295}, {"deg": 25, "variable": "MY", "dice score": 0.8978851963746224}, {"deg": 30, "variable": "MY", "dice score": 0.8782505910165485}, {"deg": 35, "variable": "MY", "dice score": 0.8806584362139918}, {"deg": 40, "variable": "MY", "dice score": 0.8711006474396704}, {"deg": 45, "variable": "MY", "dice score": 0.8615751789976134}, {"deg": 50, "variable": "MY", "dice score": 0.8526946107784431}, {"deg": 55, "variable": "MY", "dice score": 0.8462484624846248}, {"deg": 60, "variable": "MY", "dice score": 0.7959442332065906}, {"deg": 65, "variable": "MY", "dice score": 0.690984170681349}, {"deg": 70, "variable": "MY", "dice score": 0.696927374301676}, {"deg": 75, "variable": "MY", "dice score": 0.5572755417956656}, {"deg": 80, "variable": "MY", "dice score": 0.44187963726298435}, {"deg": 85, "variable": "MY", "dice score": 0.4974958263772955}, {"deg": 90, "variable": "MY", "dice score": 0.4859375}, {"deg": 95, "variable": "MY", "dice score": 0.3187250996015936}, {"deg": 100, "variable": "MY", "dice score": 0.41897940913160253}, {"deg": 105, "variable": "MY", "dice score": 0.43996494303242767}, {"deg": 110, "variable": "MY", "dice score": 0.09832402234636871}, {"deg": 115, "variable": "MY", "dice score": 0.004705882352941176}, {"deg": 120, "variable": "MY", "dice score": 0.15286624203821655}, {"deg": 125, "variable": "MY", "dice score": 0.19076305220883535}, {"deg": 130, "variable": "MY", "dice score": 0.2591170825335892}, {"deg": 135, "variable": "MY", "dice score": 0.23159960745829244}, {"deg": 140, "variable": "MY", "dice score": 0.16596638655462184}, {"deg": 145, "variable": "MY", "dice score": 0.12472647702407003}, {"deg": 150, "variable": "MY", "dice score": 0.17819706498951782}, {"deg": 155, "variable": "MY", "dice score": 0.11062906724511931}, {"deg": 160, "variable": "MY", "dice score": 0.13404255319148936}, {"deg": 165, "variable": "MY", "dice score": 0.17525773195876287}, {"deg": 170, "variable": "MY", "dice score": 0.051627384960718295}, {"deg": 175, "variable": "MY", "dice score": 0.14347826086956522}, {"deg": -180, "variable": "RV", "dice score": 0.0}, {"deg": -175, "variable": "RV", "dice score": 0.0}, {"deg": -170, "variable": "RV", "dice score": 0.0}, {"deg": -165, "variable": "RV", "dice score": 0.0}, {"deg": -160, "variable": "RV", "dice score": 0.0}, {"deg": -155, "variable": "RV", "dice score": 0.0}, {"deg": -150, "variable": "RV", "dice score": 0.0}, {"deg": -145, "variable": "RV", "dice score": 0.0}, {"deg": -140, "variable": "RV", "dice score": 0.0}, {"deg": -135, "variable": "RV", "dice score": 0.0}, {"deg": -130, "variable": "RV", "dice score": 0.0}, {"deg": -125, "variable": "RV", "dice score": 0.0}, {"deg": -120, "variable": "RV", "dice score": 0.0}, {"deg": -115, "variable": "RV", "dice score": 0.0}, {"deg": -110, "variable": "RV", "dice score": 0.2375296912114014}, {"deg": -105, "variable": "RV", "dice score": 0.6245969599263013}, {"deg": -100, "variable": "RV", "dice score": 0.8597630875047765}, {"deg": -95, "variable": "RV", "dice score": 0.8980493191019506}, {"deg": -90, "variable": "RV", "dice score": 0.9582753824756607}, {"deg": -85, "variable": "RV", "dice score": 0.9542757417102967}, {"deg": -80, "variable": "RV", "dice score": 0.8747677443329617}, {"deg": -75, "variable": "RV", "dice score": 0.9456671251719395}, {"deg": -70, "variable": "RV", "dice score": 0.885317750182615}, {"deg": -65, "variable": "RV", "dice score": 0.850887127217818}, {"deg": -60, "variable": "RV", "dice score": 0.8012568735271013}, {"deg": -55, "variable": "RV", "dice score": 0.9509906152241918}, {"deg": -50, "variable": "RV", "dice score": 0.937652385928248}, {"deg": -45, "variable": "RV", "dice score": 0.9697986577181208}, {"deg": -40, "variable": "RV", "dice score": 0.977348434377082}, {"deg": -35, "variable": "RV", "dice score": 0.9755607633076665}, {"deg": -30, "variable": "RV", "dice score": 0.9785809906291834}, {"deg": -25, "variable": "RV", "dice score": 0.9803005008347245}, {"deg": -20, "variable": "RV", "dice score": 0.9792919171676687}, {"deg": -15, "variable": "RV", "dice score": 0.9764041209704221}, {"deg": -10, "variable": "RV", "dice score": 0.9816727757414195}, {"deg": -5, "variable": "RV", "dice score": 0.9829943314438147}, {"deg": 0, "variable": "RV", "dice score": 0.9916415914409896}, {"deg": 5, "variable": "RV", "dice score": 0.9701952723535457}, {"deg": 10, "variable": "RV", "dice score": 0.9752458460495083}, {"deg": 15, "variable": "RV", "dice score": 0.9679595278246206}, {"deg": 20, "variable": "RV", "dice score": 0.9743418860379873}, {"deg": 25, "variable": "RV", "dice score": 0.9457789979409746}, {"deg": 30, "variable": "RV", "dice score": 0.9501568490763332}, {"deg": 35, "variable": "RV", "dice score": 0.9725085910652921}, {"deg": 40, "variable": "RV", "dice score": 0.9341871220206333}, {"deg": 45, "variable": "RV", "dice score": 0.7898957497995188}, {"deg": 50, "variable": "RV", "dice score": 0.5583657587548638}, {"deg": 55, "variable": "RV", "dice score": 0.41821069348861833}, {"deg": 60, "variable": "RV", "dice score": 0.10714285714285714}, {"deg": 65, "variable": "RV", "dice score": 0.0}, {"deg": 70, "variable": "RV", "dice score": 0.0}, {"deg": 75, "variable": "RV", "dice score": 0.0}, {"deg": 80, "variable": "RV", "dice score": 0.0}, {"deg": 85, "variable": "RV", "dice score": 0.0}, {"deg": 90, "variable": "RV", "dice score": 0.0}, {"deg": 95, "variable": "RV", "dice score": 0.0}, {"deg": 100, "variable": "RV", "dice score": 0.0}, {"deg": 105, "variable": "RV", "dice score": 0.0}, {"deg": 110, "variable": "RV", "dice score": 0.0}, {"deg": 115, "variable": "RV", "dice score": 0.0}, {"deg": 120, "variable": "RV", "dice score": 0.0}, {"deg": 125, "variable": "RV", "dice score": 0.0}, {"deg": 130, "variable": "RV", "dice score": 0.0}, {"deg": 135, "variable": "RV", "dice score": 0.0}, {"deg": 140, "variable": "RV", "dice score": 0.0}, {"deg": 145, "variable": "RV", "dice score": 0.0}, {"deg": 150, "variable": "RV", "dice score": 0.0}, {"deg": 155, "variable": "RV", "dice score": 0.0}, {"deg": 160, "variable": "RV", "dice score": 0.0}, {"deg": 165, "variable": "RV", "dice score": 0.0}, {"deg": 170, "variable": "RV", "dice score": 0.0}, {"deg": 175, "variable": "RV", "dice score": 0.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<p>There is actually quite some tolerance to rotation. But it is not equal in both directions. Rotations by -80° are no problem for this particular image but only rotations up to +40° are possible without loss in performance.</p>
+<p>Another tool <code>misas</code> provides to see the effect of a transformation on the prediction more vividly is using gifs:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    get_rotation_series(img(),model, start<span class="op">=</span><span class="dv">0</span>, end<span class="op">=</span><span class="dv">360</span>,step<span class="op">=</span><span class="dv">10</span>),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/rotation_ukbb.gif"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"deg"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">400</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"b4001bcf46a840be9c72c97c725d38dd","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/rotation_ukbb.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to rotation</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="sensitivity-to-cropping" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-cropping">Sensitivity to cropping</h3>
+<p>Next up is the question of what features the network uses to make predictions? Does it use local features only or does it use the larger context, e.g.&nbsp;surrounding organs? As long as the region of interest is at the center of the image we can answer this question by successively cropping more and more contend from the border:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_crop_series(img(),model, start <span class="op">=</span> <span class="dv">0</span>, step <span class="op">=</span> <span class="dv">10</span>, end<span class="op">=</span><span class="dv">120</span>), nrow<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_crop_series(img(),trueMask(),model,start <span class="op">=</span> <span class="dv">5</span>, components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'pixels'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>],value_name<span class="op">=</span><span class="st">'dice score'</span>))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"pixels"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"dice score"</span>,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"dice score"</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This analysis indicates that not a lot of context is required for the network to reliably detect the heart (as long as at least the full left ventricle is part of the image). The dice score of 1.0 for MY and RV for very small sizes is due to the fact that the model does not predict anything and indeed there is no MY or RV left on the image. It remains 0.0 for LV as there is always LV on the center crop.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    get_crop_series(img(),model, start<span class="op">=</span><span class="dv">5</span>, end<span class="op">=</span><span class="dv">120</span>,step<span class="op">=</span><span class="dv">10</span>),</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/crop_ukbb.gif"</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"pixels"</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">400</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/crop_ukbb.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to rotation</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="sensitivity-to-brightness" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-brightness">Sensitivity to brightness</h3>
+<p>Next let’s see if the network is very sensitive to brightnes or contrast which would suggest some kind of pre processing, e.g.&nbsp;<a href="https://en.wikipedia.org/wiki/Adaptive_histogram_equalization">adaptive histogram equalization</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_brightness_series(img(),model, start<span class="op">=</span><span class="fl">0.25</span>, end<span class="op">=</span><span class="dv">4</span><span class="op">*</span>np.sqrt(<span class="dv">2</span>), step<span class="op">=</span>np.sqrt(<span class="dv">2</span>),log_steps <span class="op">=</span> <span class="va">True</span>), nrow<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">6</span>)) <span class="co">#nrow=2)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_bright_series(img(),trueMask(),model, end <span class="op">=</span> <span class="dv">8</span>, components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'brightness'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>],value_name<span class="op">=</span><span class="st">'dice score'</span>))</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"brightness"</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"dice score"</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"dice score"</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    get_brightness_series(img(),model, start<span class="op">=</span><span class="fl">0.25</span>, end<span class="op">=</span><span class="dv">8</span>, step<span class="op">=</span>np.sqrt(<span class="dv">2</span>),log_steps <span class="op">=</span> <span class="va">True</span>),</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/bright_ukbb.gif"</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"brightness"</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">400</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/bright_ukbb.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">sensitivity to brightness</figcaption><p></p>
+</figure>
+</div>
+<p>The network seems to be quite robust to differences in brightness.</p>
+</section>
+<section id="sensitivity-to-contrast" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-contrast">Sensitivity to contrast</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_contrast_series(img(),model, start<span class="op">=</span><span class="fl">0.25</span>, end<span class="op">=</span><span class="dv">8</span>, step<span class="op">=</span>np.sqrt(<span class="dv">2</span>),log_steps <span class="op">=</span> <span class="va">True</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_contrast_series(img(),trueMask(),model, end <span class="op">=</span> <span class="fl">2.5</span>, step<span class="op">=</span> <span class="fl">0.3</span>, components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'contrast'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>],value_name<span class="op">=</span><span class="st">'dice score'</span>))</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"contrast"</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"dice score"</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"dice score"</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    get_contrast_series(img(),model, start<span class="op">=</span><span class="fl">0.25</span>, end<span class="op">=</span><span class="dv">8</span>, step<span class="op">=</span>np.sqrt(<span class="dv">2</span>),log_steps <span class="op">=</span> <span class="va">True</span>),</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/contrast_ukbb.gif"</span>,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"contrast"</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">400</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/contrast_ukbb.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to contrast</figcaption><p></p>
+</figure>
+</div>
+<p>The network seems to be quite robust to differences in contrast.</p>
+</section>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>[1] W. Bai, et al.&nbsp;Automated cardiovascular magnetic resonance image analysis with fully convolutional networks. Journal of Cardiovascular Magnetic Resonance, 20:65, 2018.</p>
+</section>
+<section id="supplemental-information" class="level2">
+<h2 class="anchored" data-anchor-id="supplemental-information">Supplemental Information</h2>
+<p>If you have the full kaggle dataset you can draw a random sample using this code (omit the seed to really make it random)</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#nbdev_fulldata_test</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co"># As we cannot include the whole kaggle dataset in the repo I draw a sample like this:</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> glob <span class="im">import</span> glob</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shutil <span class="im">import</span> copy</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">42</span>)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>dcm_files <span class="op">=</span> glob(<span class="st">"kaggle/train/*/sax_*/*.dcm"</span>)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>os.makedirs(<span class="st">'example/kaggle/sample_images'</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> random.sample(dcm_files,<span class="dv">20</span>):</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    copy(f, <span class="st">'example/kaggle/sample_images'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{},"version_major":2,"version_minor":0}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

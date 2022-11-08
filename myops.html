@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>misas - Case Study: MyoPS - myocardial pathology segmentation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="misas - Case Study: MyoPS - myocardial pathology segmentation">
+<meta property="og:description" content="This is a more complex application of misas to a multi-channel input model with multiple output classes.">
+<meta property="og:site-name" content="misas">
+<meta name="twitter:title" content="misas - Case Study: MyoPS - myocardial pathology segmentation">
+<meta name="twitter:description" content="This is a more complex application of misas to a multi-channel input model with multiple output classes.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">misas</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Case Study: MyoPS - myocardial pathology segmentation</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Model Interpretation through Sensitivity Analysis for Segmentation</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./local_interpret.html" class="sidebar-item-text sidebar-link">Local Interpretability</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ukbb_on_kaggle.html" class="sidebar-item-text sidebar-link">Case Study - Model Suitability</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transversals.html" class="sidebar-item-text sidebar-link">Case Study - Model Robustness</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mr_artifacts.html" class="sidebar-item-text sidebar-link">Simulated MR artifacts (torchio)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./camvid.html" class="sidebar-item-text sidebar-link">CamVid Demo</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pneumothorax.html" class="sidebar-item-text sidebar-link">Pneumothorax demo</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./myops.html" class="sidebar-item-text sidebar-link active">Case Study: MyoPS - myocardial pathology segmentation</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./batch_mode.html" class="sidebar-item-text sidebar-link">Batch Mode</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fastai_model.html" class="sidebar-item-text sidebar-link">Fastai Model (misas)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tensorflow_model.html" class="sidebar-item-text sidebar-link">Tensorflow Model (misas)</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#aim-apply-to-myops-data" id="toc-aim-apply-to-myops-data" class="nav-link active" data-scroll-target="#aim-apply-to-myops-data">Aim: Apply to MyoPS data</a></li>
+  <li><a href="#prepare-model-for-misas" id="toc-prepare-model-for-misas" class="nav-link" data-scroll-target="#prepare-model-for-misas">Prepare Model for <code>misas</code></a></li>
+  <li><a href="#prepare-dataset-for-misas" id="toc-prepare-dataset-for-misas" class="nav-link" data-scroll-target="#prepare-dataset-for-misas">Prepare Dataset for <code>misas</code></a></li>
+  <li><a href="#how-does-the-trained-model-perform-on-this-training-example" id="toc-how-does-the-trained-model-perform-on-this-training-example" class="nav-link" data-scroll-target="#how-does-the-trained-model-perform-on-this-training-example">How does the trained model perform on this (training) example?</a></li>
+  <li><a href="#robustness-to-basic-transformations" id="toc-robustness-to-basic-transformations" class="nav-link" data-scroll-target="#robustness-to-basic-transformations">Robustness to basic transformations</a>
+  <ul class="collapse">
+  <li><a href="#sensitivity-to-orientation" id="toc-sensitivity-to-orientation" class="nav-link" data-scroll-target="#sensitivity-to-orientation">Sensitivity to orientation</a></li>
+  <li><a href="#sensitivity-to-rotation" id="toc-sensitivity-to-rotation" class="nav-link" data-scroll-target="#sensitivity-to-rotation">Sensitivity to rotation</a></li>
+  <li><a href="#sensitivity-to-cropping" id="toc-sensitivity-to-cropping" class="nav-link" data-scroll-target="#sensitivity-to-cropping">Sensitivity to cropping</a></li>
+  <li><a href="#sensitivity-to-brightness" id="toc-sensitivity-to-brightness" class="nav-link" data-scroll-target="#sensitivity-to-brightness">Sensitivity to brightness</a></li>
+  <li><a href="#sensitivity-to-contrast" id="toc-sensitivity-to-contrast" class="nav-link" data-scroll-target="#sensitivity-to-contrast">Sensitivity to contrast</a></li>
+  <li><a href="#sensitivity-to-zoom" id="toc-sensitivity-to-zoom" class="nav-link" data-scroll-target="#sensitivity-to-zoom">Sensitivity to zoom</a></li>
+  </ul></li>
+  <li><a href="#robustness-to-mr-artifacts" id="toc-robustness-to-mr-artifacts" class="nav-link" data-scroll-target="#robustness-to-mr-artifacts">Robustness to MR artifacts</a></li>
+  <li><a href="#package-versions" id="toc-package-versions" class="nav-link" data-scroll-target="#package-versions">Package Versions</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/chfc-cmi/misas/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Case Study: MyoPS - myocardial pathology segmentation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="aim-apply-to-myops-data" class="level2">
+<h2 class="anchored" data-anchor-id="aim-apply-to-myops-data">Aim: Apply to MyoPS data</h2>
+<p>This is a more complex application of <code>misas</code> to a multi-channel input model with multiple output classes. It uses data from the Myocardial pathology segmentation combining multi-sequence CMR challenge (<a href="http://www.sdspeople.fudan.edu.cn/zhuangxiahai/0/MyoPS20/">MyoPS 2020</a>).</p>
+<p>General results are published in <a href="https://doi.org/10.1007/978-3-030-65651-5">“Myocardial Pathology Segmentation Combining Multi-Sequence Cardiac Magnetic Resonance Images.” First Challenge, MyoPS 2020, Held in Conjunction with MICCAI 2020, Lima, Peru, October 4, 2020, Proceedings</a> and the specific model is described in &gt; <a href="https://doi.org/10.1007/978-3-030-65651-5_6">Ankenbrand M.J., Lohr D., Schreiber L.M. (2020) “Exploring Ensemble Applications for Multi-sequence Myocardial Pathology Segmentation.” In: Zhuang X., Li L. (eds) Myocardial Pathology Segmentation Combining Multi-Sequence Cardiac Magnetic Resonance Images. MyoPS 2020. Lecture Notes in Computer Science, vol 12554. Springer, Cham.</a></p>
+<p>supplemented by https://github.com/chfc-cmi/miccai2020-myops</p>
+<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>As this model uses a specific development version of <code>fastai v2</code> and data from the challenge can not be freely shared it is much harder to reproduce the results from this notebook. You need to request the data from <a href="http://www.sdspeople.fudan.edu.cn/zhuangxiahai/0/MyoPS20/data1.html">the challenge website</a>, download the model from zenodo</p>
+</div>
+</div>
+<p><a href="https://doi.org/10.5281/zenodo.3985837"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3985837.svg" class="img-fluid" alt="DOI"></a> and install the specific versions of packages listed at the bottom of the page (other versions might work too but are untested).</p>
+</section>
+<section id="prepare-model-for-misas" class="level2">
+<h2 class="anchored" data-anchor-id="prepare-model-for-misas">Prepare Model for <code>misas</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastai.vision.<span class="bu">all</span> <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastai.vision.models <span class="im">import</span> resnet34</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> AddMaskCodeMapping(Transform):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"Add mapping of pixel value to class for a `TensorMask`"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, mapping, codes<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">#print("init")</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.mapping <span class="op">=</span> mapping</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.codes <span class="op">=</span> codes</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> codes <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>: <span class="va">self</span>.vocab,<span class="va">self</span>.c <span class="op">=</span> codes,<span class="bu">len</span>(codes)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> encodes(<span class="va">self</span>, o:PILMask):</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">#print("encodes")</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        mo <span class="op">=</span> ToTensor()(o)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        mo <span class="op">=</span> mo.to(dtype<span class="op">=</span>torch.<span class="bu">long</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        mo <span class="op">=</span> <span class="va">self</span>.mapping.index_select(<span class="dv">0</span>,mo.flatten()).reshape(<span class="op">*</span>mo.shape)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        mo <span class="op">=</span> PILMask.create(mo.to(dtype<span class="op">=</span>torch.uint8))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> mo</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decodes(<span class="va">self</span>, o:TensorMask):</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># decoding of inputs works out of the box, but get_preds are not properly decoded</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(o.shape) <span class="op">&gt;</span> <span class="dv">2</span>:</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            o <span class="op">=</span> o.argmax(dim<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="va">self</span>.codes <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>: o._meta <span class="op">=</span> {<span class="st">'codes'</span>: <span class="va">self</span>.codes}</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> o</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> MappedMaskBlock(mapping,codes<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"A `TransformBlock` for segmentation masks, with mapping of pixel values to classes, potentially with `codes`"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> TransformBlock(type_tfms<span class="op">=</span>PILMask.create, item_tfms<span class="op">=</span>AddMaskCodeMapping(mapping<span class="op">=</span>mapping,codes<span class="op">=</span>codes), batch_tfms<span class="op">=</span>IntToFloatTensor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> getMappedMaskBlock(predefined_mapping_name):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    predefined_mappings <span class="op">=</span> {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">'full'</span>: ([<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>],[<span class="st">'bg'</span>,<span class="st">'lv'</span>,<span class="st">'my'</span>,<span class="st">'rv'</span>,<span class="st">'ed'</span>,<span class="st">'sc'</span>]),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">'edOnly'</span>: ([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>],[<span class="st">'bg'</span>,<span class="st">'ed'</span>]),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">'edScCombined'</span>: ([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>],[<span class="st">'bg'</span>,<span class="st">'edSc'</span>]),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">'scOnly'</span>: ([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>],[<span class="st">'bg'</span>,<span class="st">'sc'</span>]),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">'edScOnly'</span>: ([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>],[<span class="st">'bg'</span>,<span class="st">'ed'</span>,<span class="st">'sc'</span>]),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    mapping,codes <span class="op">=</span> predefined_mappings[predefined_mapping_name]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> MappedMaskBlock(mapping <span class="op">=</span> torch.LongTensor(mapping), codes<span class="op">=</span>codes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_train_files(path):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    items <span class="op">=</span> get_image_files(path)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    items <span class="op">=</span> L([x <span class="cf">for</span> x <span class="kw">in</span> items <span class="cf">if</span> x.name.startswith(<span class="st">"1"</span>)])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> items</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> getMyopsDls(mapping_name<span class="op">=</span><span class="st">"full"</span>, images<span class="op">=</span><span class="st">"images"</span>, path<span class="op">=</span><span class="st">"/storage/biomeds/data/myops/"</span>):</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    mmb <span class="op">=</span> getMappedMaskBlock(mapping_name)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    myopsData <span class="op">=</span> DataBlock(blocks<span class="op">=</span>(ImageBlock, mmb),<span class="co">#['bg','lv','my','rv','ed','sc'])),</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        get_items<span class="op">=</span>get_train_files,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        splitter<span class="op">=</span>FuncSplitter(<span class="kw">lambda</span> o: <span class="va">False</span>),</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        get_y<span class="op">=</span><span class="kw">lambda</span> o: <span class="bu">str</span>(o).replace(images,<span class="st">"masks"</span>),</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        item_tfms<span class="op">=</span>CropPad(<span class="dv">256</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        batch_tfms<span class="op">=</span>aug_transforms(max_rotate<span class="op">=</span><span class="dv">90</span>,pad_mode<span class="op">=</span><span class="st">"zeros"</span>))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    dls <span class="op">=</span> myopsData.dataloaders(<span class="ss">f'</span><span class="sc">{</span>path<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>images<span class="sc">}</span><span class="ss">'</span>,num_workers<span class="op">=</span><span class="dv">4</span>,batch_size<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    dls[<span class="dv">1</span>].bs <span class="op">=</span> <span class="dv">12</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> multi_dice(<span class="bu">input</span>:Tensor, targs:Tensor, class_id<span class="op">=</span><span class="dv">0</span>, inverse<span class="op">=</span><span class="va">False</span>)<span class="op">-&gt;</span>Tensor:</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> targs.shape[<span class="dv">0</span>]</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">input</span> <span class="op">=</span> <span class="bu">input</span>.argmax(dim<span class="op">=</span><span class="dv">1</span>).view(n,<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># replace all with class_id with 1 all else with 0 to have binary case</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    output <span class="op">=</span> (<span class="bu">input</span> <span class="op">==</span> class_id).<span class="bu">float</span>()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># same for targs</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    targs <span class="op">=</span> (targs.view(n,<span class="op">-</span><span class="dv">1</span>) <span class="op">==</span> class_id).<span class="bu">float</span>()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> inverse:</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        output <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> output</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        targs <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> targs</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    intersect <span class="op">=</span> (output <span class="op">*</span> targs).<span class="bu">sum</span>(dim<span class="op">=</span><span class="dv">1</span>).<span class="bu">float</span>()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    union <span class="op">=</span> (output<span class="op">+</span>targs).<span class="bu">sum</span>(dim<span class="op">=</span><span class="dv">1</span>).<span class="bu">float</span>()</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    res <span class="op">=</span> <span class="fl">2.</span> <span class="op">*</span> intersect <span class="op">/</span> union</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    res[torch.isnan(res)] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> res.mean()</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diceFG(<span class="bu">input</span>, targs): <span class="cf">return</span> multi_dice(<span class="bu">input</span>,targs,class_id<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diceLV(<span class="bu">input</span>, targs): <span class="cf">return</span> multi_dice(<span class="bu">input</span>,targs,class_id<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diceMY(<span class="bu">input</span>, targs): <span class="cf">return</span> multi_dice(<span class="bu">input</span>,targs,class_id<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diceRV(<span class="bu">input</span>, targs): <span class="cf">return</span> multi_dice(<span class="bu">input</span>,targs,class_id<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diceEd(<span class="bu">input</span>, targs): <span class="cf">return</span> multi_dice(<span class="bu">input</span>,targs,class_id<span class="op">=</span><span class="dv">4</span>)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diceSc(<span class="bu">input</span>, targs): <span class="cf">return</span> multi_dice(<span class="bu">input</span>,targs,class_id<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>dices <span class="op">=</span> [diceLV,diceMY,diceRV,diceEd,diceSc]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>getMyopsDls(<span class="st">"full"</span>, <span class="st">"images"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;fastai.data.core.DataLoaders&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>learn <span class="op">=</span> unet_learner(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>        getMyopsDls(<span class="st">"full"</span>, <span class="st">"images"</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        resnet34</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[W NNPACK.cpp:51] Could not initialize NNPACK! Reason: Unsupported hardware.</code></pre>
+</div>
+</div>
+</section>
+<section id="prepare-dataset-for-misas" class="level2">
+<h2 class="anchored" data-anchor-id="prepare-dataset-for-misas">Prepare Dataset for <code>misas</code></h2>
+<p>Data is available as png images and masks which is just fine for <code>misas</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> misas.core <span class="im">import</span> default_cmap</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> ImageOps</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> <span class="kw">lambda</span>: Image.<span class="bu">open</span>(<span class="st">"101-orig-4.png"</span>).convert(<span class="st">"RGB"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>trueMask <span class="op">=</span> <span class="kw">lambda</span>: Image.<span class="bu">open</span>(<span class="st">"101-orig-4.png"</span>).convert(<span class="st">"I"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>plt.imshow(img())</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>plt.imshow(np.array(trueMask()), cmap<span class="op">=</span>default_cmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-12-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Fastai2_model:</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, learner):</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.trainedModel <span class="op">=</span> learner</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> prepareSize(<span class="va">self</span>, item): <span class="co">#, asPIL=False):     </span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        to_cut_w<span class="op">=</span>((item.size[<span class="dv">0</span>]<span class="op">-</span><span class="dv">256</span>)<span class="op">/</span><span class="dv">2</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        to_cut_h<span class="op">=</span>((item.size[<span class="dv">1</span>]<span class="op">-</span><span class="dv">256</span>)<span class="op">/</span><span class="dv">2</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> ImageOps.crop(item, (np.floor(to_cut_w), np.floor(to_cut_h), np.ceil(to_cut_w), np.ceil(to_cut_h)))</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> image</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> predict(<span class="va">self</span>, image):</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> <span class="va">self</span>.prepareSize(image)<span class="co">#, #asPIL=True)</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> PILImage.create(np.array(image))</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> <span class="va">self</span>.trainedModel.no_bar():</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>            mask <span class="op">=</span> <span class="va">self</span>.trainedModel.predict(image)[<span class="dv">0</span>]<span class="co">#(pilimg) #mask,probs,rest </span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        output <span class="op">=</span> Image.fromarray(np.array(mask).astype(np.uint8))</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> output <span class="co">#mask, probs</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Fastai2_model(learn.load(<span class="st">"../../Downloads/multi_ce_full"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="how-does-the-trained-model-perform-on-this-training-example" class="level2">
+<h2 class="anchored" data-anchor-id="how-does-the-trained-model-perform-on-this-training-example">How does the trained model perform on this (training) example?</h2>
+<p>#Time to apply the model to the example image and see how it works (we need to call <code>prepareSize</code> manually here):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> misas.core <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> misas.core <span class="im">import</span> default_cmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>model.prepareSize(img())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>plt.imshow(np.array(model.prepareSize(trueMask())))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-17-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> model.predict(img())</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>plt.imshow(np.array(mask))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-18-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>fig,ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">4.5</span>,<span class="fl">4.5</span>))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>plt.imshow(model.prepareSize(img()))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>plt.imshow(mask, cmap<span class="op">=</span>default_cmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-19-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fig,ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">4.5</span>,<span class="fl">4.5</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>plt.imshow(model.prepareSize(img()))</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>plt.imshow(np.array(model.prepareSize((trueMask()))), cmap<span class="op">=</span>default_cmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-20-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="robustness-to-basic-transformations" class="level2">
+<h2 class="anchored" data-anchor-id="robustness-to-basic-transformations">Robustness to basic transformations</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#img = lambda: open_image(files[0]).resize(256)</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">#trueMask = lambda: open_mask(files[0].replace("image","mask"))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="sensitivity-to-orientation" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-orientation">Sensitivity to orientation</h3>
+<p>Changes in orientation are very common. Not because it is common to acquire images in different orientation but because the way data is stored in different file formats like nifti and dicom differs. So it is interesting to see how the model works in all possible orientations (including flips).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>dihed <span class="op">=</span> get_dihedral_series(img(),model)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>plot_series(dihed, nrow<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">20</span>,<span class="dv">12</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-22-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#plt.imshow(np.array(dihed [0][2].convert ("I")))</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co">#dihed[0][1]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="sensitivity-to-rotation" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-rotation">Sensitivity to rotation</h3>
+<p>Let’s get an impression of how quickly segmentation performance decreases with deviations in rotation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_rotation_series(img(),model, step<span class="op">=</span><span class="dv">30</span>), nrow<span class="op">=</span><span class="dv">2</span>, param_name<span class="op">=</span><span class="st">"deg"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-24-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_rotation_series(img(),model, step<span class="op">=</span><span class="dv">60</span>), nrow<span class="op">=</span><span class="dv">1</span>, param_name<span class="op">=</span><span class="st">"deg"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-25-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_rotation_series(img(),trueMask(),model,start<span class="op">=-</span><span class="dv">180</span>,end<span class="op">=</span><span class="dv">180</span>,components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>,<span class="st">"edema"</span>,<span class="st">"scar"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> altair <span class="im">as</span> alt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'deg'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>,<span class="st">'edema'</span>,<span class="st">'scar'</span>]))</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"deg"</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"value"</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"value"</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-9fe191202e704981994433ab925fbc56"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-9fe191202e704981994433ab925fbc56") {
+      outputDiv = document.getElementById("altair-viz-9fe191202e704981994433ab925fbc56");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-72abab49e9fb2cc23e8f84963346f613"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "value", "type": "quantitative"}, "x": {"field": "deg", "type": "quantitative"}, "y": {"field": "value", "type": "quantitative"}}, "height": 300, "selection": {"selector001": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-72abab49e9fb2cc23e8f84963346f613": [{"deg": -180, "variable": "LV", "value": 0.8257756563245824}, {"deg": -175, "variable": "LV", "value": 0.8371212121212122}, {"deg": -170, "variable": "LV", "value": 0.8969896519285042}, {"deg": -165, "variable": "LV", "value": 0.958323522486461}, {"deg": -160, "variable": "LV", "value": 0.9464980544747081}, {"deg": -155, "variable": "LV", "value": 0.9601139601139601}, {"deg": -150, "variable": "LV", "value": 0.9546742209631728}, {"deg": -145, "variable": "LV", "value": 0.9579990561585654}, {"deg": -140, "variable": "LV", "value": 0.9577201588413922}, {"deg": -135, "variable": "LV", "value": 0.9504811077211922}, {"deg": -130, "variable": "LV", "value": 0.9406077348066298}, {"deg": -125, "variable": "LV", "value": 0.9425826107335364}, {"deg": -120, "variable": "LV", "value": 0.9452571967909391}, {"deg": -115, "variable": "LV", "value": 0.9538390164694966}, {"deg": -110, "variable": "LV", "value": 0.9514608859566447}, {"deg": -105, "variable": "LV", "value": 0.9465364946536494}, {"deg": -100, "variable": "LV", "value": 0.9541627689429373}, {"deg": -95, "variable": "LV", "value": 0.9501770956316411}, {"deg": -90, "variable": "LV", "value": 0.9579363234952358}, {"deg": -85, "variable": "LV", "value": 0.9600554144539367}, {"deg": -80, "variable": "LV", "value": 0.9548960037391914}, {"deg": -75, "variable": "LV", "value": 0.9538175910884196}, {"deg": -70, "variable": "LV", "value": 0.9569086651053864}, {"deg": -65, "variable": "LV", "value": 0.9536361496822782}, {"deg": -60, "variable": "LV", "value": 0.9584409485794787}, {"deg": -55, "variable": "LV", "value": 0.9562628806961301}, {"deg": -50, "variable": "LV", "value": 0.9577333952624245}, {"deg": -45, "variable": "LV", "value": 0.9624621123805083}, {"deg": -40, "variable": "LV", "value": 0.9658559401309635}, {"deg": -35, "variable": "LV", "value": 0.9660537482319661}, {"deg": -30, "variable": "LV", "value": 0.961864406779661}, {"deg": -25, "variable": "LV", "value": 0.9628070175438597}, {"deg": -20, "variable": "LV", "value": 0.9562368359466417}, {"deg": -15, "variable": "LV", "value": 0.9536299765807963}, {"deg": -10, "variable": "LV", "value": 0.9537667214268951}, {"deg": -5, "variable": "LV", "value": 0.9489721886336154}, {"deg": 0, "variable": "LV", "value": 0.9544907295930652}, {"deg": 5, "variable": "LV", "value": 0.9536455818445195}, {"deg": 10, "variable": "LV", "value": 0.9474196689386563}, {"deg": 15, "variable": "LV", "value": 0.9503614457831325}, {"deg": 20, "variable": "LV", "value": 0.9494900437105391}, {"deg": 25, "variable": "LV", "value": 0.9488703923900119}, {"deg": 30, "variable": "LV", "value": 0.9559748427672956}, {"deg": 35, "variable": "LV", "value": 0.9495534636736664}, {"deg": 40, "variable": "LV", "value": 0.9512548262548263}, {"deg": 45, "variable": "LV", "value": 0.947798893432764}, {"deg": 50, "variable": "LV", "value": 0.9489820359281437}, {"deg": 55, "variable": "LV", "value": 0.9512548262548263}, {"deg": 60, "variable": "LV", "value": 0.9528820856254484}, {"deg": 65, "variable": "LV", "value": 0.9579318448883666}, {"deg": 70, "variable": "LV", "value": 0.9461538461538461}, {"deg": 75, "variable": "LV", "value": 0.9545023696682464}, {"deg": 80, "variable": "LV", "value": 0.9553719008264463}, {"deg": 85, "variable": "LV", "value": 0.9361196865352648}, {"deg": 90, "variable": "LV", "value": 0.9413167938931297}, {"deg": 95, "variable": "LV", "value": 0.9392712550607287}, {"deg": 100, "variable": "LV", "value": 0.9433414043583536}, {"deg": 105, "variable": "LV", "value": 0.9425451092117759}, {"deg": 110, "variable": "LV", "value": 0.9381418676856939}, {"deg": 115, "variable": "LV", "value": 0.9557480683680637}, {"deg": 120, "variable": "LV", "value": 0.9481376709099482}, {"deg": 125, "variable": "LV", "value": 0.9352657004830918}, {"deg": 130, "variable": "LV", "value": 0.9169435215946844}, {"deg": 135, "variable": "LV", "value": 0.851313219014543}, {"deg": 140, "variable": "LV", "value": 0.8495454545454545}, {"deg": 145, "variable": "LV", "value": 0.8376300316598824}, {"deg": 150, "variable": "LV", "value": 0.8267543859649122}, {"deg": 155, "variable": "LV", "value": 0.9087523277467412}, {"deg": 160, "variable": "LV", "value": 0.8369733068607986}, {"deg": 165, "variable": "LV", "value": 0.7242972660762418}, {"deg": 170, "variable": "LV", "value": 0.7876755397191364}, {"deg": 175, "variable": "LV", "value": 0.8200085506626763}, {"deg": -180, "variable": "MY", "value": 0.7086674303169148}, {"deg": -175, "variable": "MY", "value": 0.6757627439833238}, {"deg": -170, "variable": "MY", "value": 0.7280640668523677}, {"deg": -165, "variable": "MY", "value": 0.7593984962406015}, {"deg": -160, "variable": "MY", "value": 0.7341633101428048}, {"deg": -155, "variable": "MY", "value": 0.7565915170042032}, {"deg": -150, "variable": "MY", "value": 0.7477089956985226}, {"deg": -145, "variable": "MY", "value": 0.770949720670391}, {"deg": -140, "variable": "MY", "value": 0.7595831782657239}, {"deg": -135, "variable": "MY", "value": 0.7736143637782982}, {"deg": -130, "variable": "MY", "value": 0.7733333333333333}, {"deg": -125, "variable": "MY", "value": 0.7741811913426546}, {"deg": -120, "variable": "MY", "value": 0.7552936844043454}, {"deg": -115, "variable": "MY", "value": 0.7759722475807924}, {"deg": -110, "variable": "MY", "value": 0.7426856714178545}, {"deg": -105, "variable": "MY", "value": 0.7666968325791855}, {"deg": -100, "variable": "MY", "value": 0.7881202462875769}, {"deg": -95, "variable": "MY", "value": 0.7864710676446618}, {"deg": -90, "variable": "MY", "value": 0.7755180353031466}, {"deg": -85, "variable": "MY", "value": 0.7749729534799856}, {"deg": -80, "variable": "MY", "value": 0.7706321734377847}, {"deg": -75, "variable": "MY", "value": 0.764821078867723}, {"deg": -70, "variable": "MY", "value": 0.750373692077728}, {"deg": -65, "variable": "MY", "value": 0.7630724846736386}, {"deg": -60, "variable": "MY", "value": 0.8020381204000755}, {"deg": -55, "variable": "MY", "value": 0.7776375112714157}, {"deg": -50, "variable": "MY", "value": 0.8040616773223016}, {"deg": -45, "variable": "MY", "value": 0.816318246397402}, {"deg": -40, "variable": "MY", "value": 0.8163756773028297}, {"deg": -35, "variable": "MY", "value": 0.8104522613065327}, {"deg": -30, "variable": "MY", "value": 0.7848661702555846}, {"deg": -25, "variable": "MY", "value": 0.80320962888666}, {"deg": -20, "variable": "MY", "value": 0.8199401794616151}, {"deg": -15, "variable": "MY", "value": 0.8356269113149847}, {"deg": -10, "variable": "MY", "value": 0.8612762584225129}, {"deg": -5, "variable": "MY", "value": 0.877177700348432}, {"deg": 0, "variable": "MY", "value": 0.8985507246376812}, {"deg": 5, "variable": "MY", "value": 0.8790687648200043}, {"deg": 10, "variable": "MY", "value": 0.8351557664534763}, {"deg": 15, "variable": "MY", "value": 0.8581038469623713}, {"deg": 20, "variable": "MY", "value": 0.8568296426222319}, {"deg": 25, "variable": "MY", "value": 0.8630559225011009}, {"deg": 30, "variable": "MY", "value": 0.838310108383101}, {"deg": 35, "variable": "MY", "value": 0.8593576965669989}, {"deg": 40, "variable": "MY", "value": 0.8603854389721627}, {"deg": 45, "variable": "MY", "value": 0.8585449114572221}, {"deg": 50, "variable": "MY", "value": 0.8692240627724499}, {"deg": 55, "variable": "MY", "value": 0.8428633784373636}, {"deg": 60, "variable": "MY", "value": 0.8509859727586908}, {"deg": 65, "variable": "MY", "value": 0.8267453294001966}, {"deg": 70, "variable": "MY", "value": 0.7880807684767692}, {"deg": 75, "variable": "MY", "value": 0.7717225609756098}, {"deg": 80, "variable": "MY", "value": 0.7608576140736668}, {"deg": 85, "variable": "MY", "value": 0.7434670592565329}, {"deg": 90, "variable": "MY", "value": 0.7360120165227187}, {"deg": 95, "variable": "MY", "value": 0.7196604283233649}, {"deg": 100, "variable": "MY", "value": 0.7035156984395563}, {"deg": 105, "variable": "MY", "value": 0.7164628410159924}, {"deg": 110, "variable": "MY", "value": 0.704983769333588}, {"deg": 115, "variable": "MY", "value": 0.7283302063789868}, {"deg": 120, "variable": "MY", "value": 0.7612380250552689}, {"deg": 125, "variable": "MY", "value": 0.7310267857142857}, {"deg": 130, "variable": "MY", "value": 0.7277246653919694}, {"deg": 135, "variable": "MY", "value": 0.714975845410628}, {"deg": 140, "variable": "MY", "value": 0.6929858183211959}, {"deg": 145, "variable": "MY", "value": 0.6868726628616414}, {"deg": 150, "variable": "MY", "value": 0.697614203809876}, {"deg": 155, "variable": "MY", "value": 0.6504524886877828}, {"deg": 160, "variable": "MY", "value": 0.69473293768546}, {"deg": 165, "variable": "MY", "value": 0.6654960491659351}, {"deg": 170, "variable": "MY", "value": 0.6482958665699783}, {"deg": 175, "variable": "MY", "value": 0.6777372262773723}, {"deg": -180, "variable": "RV", "value": 0.6950232478043741}, {"deg": -175, "variable": "RV", "value": 0.6885530658328991}, {"deg": -170, "variable": "RV", "value": 0.7830514041714567}, {"deg": -165, "variable": "RV", "value": 0.8465499485066942}, {"deg": -160, "variable": "RV", "value": 0.730593607305936}, {"deg": -155, "variable": "RV", "value": 0.8624836980147804}, {"deg": -150, "variable": "RV", "value": 0.8697781619129934}, {"deg": -145, "variable": "RV", "value": 0.8646114504901264}, {"deg": -140, "variable": "RV", "value": 0.8869809992962703}, {"deg": -135, "variable": "RV", "value": 0.8937842009260558}, {"deg": -130, "variable": "RV", "value": 0.8735166425470333}, {"deg": -125, "variable": "RV", "value": 0.9071877180739707}, {"deg": -120, "variable": "RV", "value": 0.8993379273071207}, {"deg": -115, "variable": "RV", "value": 0.8996411006247508}, {"deg": -110, "variable": "RV", "value": 0.8973941368078175}, {"deg": -105, "variable": "RV", "value": 0.9118773946360154}, {"deg": -100, "variable": "RV", "value": 0.9008407847324169}, {"deg": -95, "variable": "RV", "value": 0.9195714091957141}, {"deg": -90, "variable": "RV", "value": 0.9156400642742367}, {"deg": -85, "variable": "RV", "value": 0.9140792291220556}, {"deg": -80, "variable": "RV", "value": 0.8922475570032573}, {"deg": -75, "variable": "RV", "value": 0.8873403019744484}, {"deg": -70, "variable": "RV", "value": 0.8768953996401954}, {"deg": -65, "variable": "RV", "value": 0.9027299231380864}, {"deg": -60, "variable": "RV", "value": 0.9260963724959393}, {"deg": -55, "variable": "RV", "value": 0.9196765498652291}, {"deg": -50, "variable": "RV", "value": 0.9208891343366008}, {"deg": -45, "variable": "RV", "value": 0.9238730763992918}, {"deg": -40, "variable": "RV", "value": 0.9197905181918412}, {"deg": -35, "variable": "RV", "value": 0.917098445595855}, {"deg": -30, "variable": "RV", "value": 0.9170475003462124}, {"deg": -25, "variable": "RV", "value": 0.9134116361649822}, {"deg": -20, "variable": "RV", "value": 0.9107852542140605}, {"deg": -15, "variable": "RV", "value": 0.916932464290667}, {"deg": -10, "variable": "RV", "value": 0.8970568650952191}, {"deg": -5, "variable": "RV", "value": 0.9460487392590505}, {"deg": 0, "variable": "RV", "value": 0.935309599667544}, {"deg": 5, "variable": "RV", "value": 0.9423862515847302}, {"deg": 10, "variable": "RV", "value": 0.9520359368207506}, {"deg": 15, "variable": "RV", "value": 0.9180817823665263}, {"deg": 20, "variable": "RV", "value": 0.9254901960784314}, {"deg": 25, "variable": "RV", "value": 0.9223399622586732}, {"deg": 30, "variable": "RV", "value": 0.9320803075608715}, {"deg": 35, "variable": "RV", "value": 0.9380787037037037}, {"deg": 40, "variable": "RV", "value": 0.93713163064833}, {"deg": 45, "variable": "RV", "value": 0.9354251295699678}, {"deg": 50, "variable": "RV", "value": 0.9331108329856765}, {"deg": 55, "variable": "RV", "value": 0.9266092660926609}, {"deg": 60, "variable": "RV", "value": 0.9252514270182115}, {"deg": 65, "variable": "RV", "value": 0.9208869422392554}, {"deg": 70, "variable": "RV", "value": 0.915180983252296}, {"deg": 75, "variable": "RV", "value": 0.9200271554650373}, {"deg": 80, "variable": "RV", "value": 0.9128384750101037}, {"deg": 85, "variable": "RV", "value": 0.9119060331019755}, {"deg": 90, "variable": "RV", "value": 0.9206306427705161}, {"deg": 95, "variable": "RV", "value": 0.9174486604107167}, {"deg": 100, "variable": "RV", "value": 0.9214489214489214}, {"deg": 105, "variable": "RV", "value": 0.9136104319478403}, {"deg": 110, "variable": "RV", "value": 0.9110556940980881}, {"deg": 115, "variable": "RV", "value": 0.9035320396481921}, {"deg": 120, "variable": "RV", "value": 0.9227379148877565}, {"deg": 125, "variable": "RV", "value": 0.9158772797964089}, {"deg": 130, "variable": "RV", "value": 0.8903496503496503}, {"deg": 135, "variable": "RV", "value": 0.7875742348104157}, {"deg": 140, "variable": "RV", "value": 0.7811211241790132}, {"deg": 145, "variable": "RV", "value": 0.720967228762329}, {"deg": 150, "variable": "RV", "value": 0.678386070651264}, {"deg": 155, "variable": "RV", "value": 0.6855926188786373}, {"deg": 160, "variable": "RV", "value": 0.5395882818685669}, {"deg": 165, "variable": "RV", "value": 0.40297202797202797}, {"deg": 170, "variable": "RV", "value": 0.5740740740740741}, {"deg": 175, "variable": "RV", "value": 0.5478599221789884}, {"deg": -180, "variable": "edema", "value": 0.0}, {"deg": -175, "variable": "edema", "value": 0.0}, {"deg": -170, "variable": "edema", "value": 0.0}, {"deg": -165, "variable": "edema", "value": 0.0}, {"deg": -160, "variable": "edema", "value": 0.0}, {"deg": -155, "variable": "edema", "value": 0.0}, {"deg": -150, "variable": "edema", "value": 0.0}, {"deg": -145, "variable": "edema", "value": 0.0}, {"deg": -140, "variable": "edema", "value": 0.0}, {"deg": -135, "variable": "edema", "value": 0.033648790746582544}, {"deg": -130, "variable": "edema", "value": 0.06230529595015576}, {"deg": -125, "variable": "edema", "value": 0.036016949152542374}, {"deg": -120, "variable": "edema", "value": 0.0}, {"deg": -115, "variable": "edema", "value": 0.0}, {"deg": -110, "variable": "edema", "value": 0.0}, {"deg": -105, "variable": "edema", "value": 0.0}, {"deg": -100, "variable": "edema", "value": 0.16996047430830039}, {"deg": -95, "variable": "edema", "value": 0.5675146771037182}, {"deg": -90, "variable": "edema", "value": 0.3233143785540211}, {"deg": -85, "variable": "edema", "value": 0.13319878910191726}, {"deg": -80, "variable": "edema", "value": 0.15612648221343872}, {"deg": -75, "variable": "edema", "value": 0.0}, {"deg": -70, "variable": "edema", "value": 0.11924119241192412}, {"deg": -65, "variable": "edema", "value": 0.0}, {"deg": -60, "variable": "edema", "value": 0.4010152284263959}, {"deg": -55, "variable": "edema", "value": 0.10365853658536585}, {"deg": -50, "variable": "edema", "value": 0.12815533980582525}, {"deg": -45, "variable": "edema", "value": 0.24682395644283123}, {"deg": -40, "variable": "edema", "value": 0.22791519434628976}, {"deg": -35, "variable": "edema", "value": 0.30220713073005095}, {"deg": -30, "variable": "edema", "value": 0.3952975753122704}, {"deg": -25, "variable": "edema", "value": 0.3865276663993585}, {"deg": -20, "variable": "edema", "value": 0.4969418960244648}, {"deg": -15, "variable": "edema", "value": 0.4720194647201946}, {"deg": -10, "variable": "edema", "value": 0.591467823571945}, {"deg": -5, "variable": "edema", "value": 0.7957532861476239}, {"deg": 0, "variable": "edema", "value": 0.8087912087912088}, {"deg": 5, "variable": "edema", "value": 0.8049663735126746}, {"deg": 10, "variable": "edema", "value": 0.6866059817945384}, {"deg": 15, "variable": "edema", "value": 0.7780914737436476}, {"deg": 20, "variable": "edema", "value": 0.7452025586353944}, {"deg": 25, "variable": "edema", "value": 0.6493975903614457}, {"deg": 30, "variable": "edema", "value": 0.6419612314709237}, {"deg": 35, "variable": "edema", "value": 0.44509948415622697}, {"deg": 40, "variable": "edema", "value": 0.37181663837011886}, {"deg": 45, "variable": "edema", "value": 0.3509075194468453}, {"deg": 50, "variable": "edema", "value": 0.34238683127572017}, {"deg": 55, "variable": "edema", "value": 0.38193343898573695}, {"deg": 60, "variable": "edema", "value": 0.3868797308662742}, {"deg": 65, "variable": "edema", "value": 0.3719298245614035}, {"deg": 70, "variable": "edema", "value": 0.22340425531914893}, {"deg": 75, "variable": "edema", "value": 0.15483870967741936}, {"deg": 80, "variable": "edema", "value": 0.01639344262295082}, {"deg": 85, "variable": "edema", "value": 0.0}, {"deg": 90, "variable": "edema", "value": 0.0}, {"deg": 95, "variable": "edema", "value": 0.0}, {"deg": 100, "variable": "edema", "value": 0.0}, {"deg": 105, "variable": "edema", "value": 0.0}, {"deg": 110, "variable": "edema", "value": 0.0}, {"deg": 115, "variable": "edema", "value": 0.0}, {"deg": 120, "variable": "edema", "value": 0.0}, {"deg": 125, "variable": "edema", "value": 0.0}, {"deg": 130, "variable": "edema", "value": 0.0}, {"deg": 135, "variable": "edema", "value": 0.0}, {"deg": 140, "variable": "edema", "value": 0.0}, {"deg": 145, "variable": "edema", "value": 0.0}, {"deg": 150, "variable": "edema", "value": 0.0}, {"deg": 155, "variable": "edema", "value": 0.0}, {"deg": 160, "variable": "edema", "value": 0.0}, {"deg": 165, "variable": "edema", "value": 0.0}, {"deg": 170, "variable": "edema", "value": 0.0}, {"deg": 175, "variable": "edema", "value": 0.0}, {"deg": -180, "variable": "scar", "value": 0.47018739352640543}, {"deg": -175, "variable": "scar", "value": 0.41260744985673353}, {"deg": -170, "variable": "scar", "value": 0.7188940092165899}, {"deg": -165, "variable": "scar", "value": 0.8063380281690141}, {"deg": -160, "variable": "scar", "value": 0.7676767676767676}, {"deg": -155, "variable": "scar", "value": 0.588774341351661}, {"deg": -150, "variable": "scar", "value": 0.7255216693418941}, {"deg": -145, "variable": "scar", "value": 0.7504835589941973}, {"deg": -140, "variable": "scar", "value": 0.5834633385335414}, {"deg": -135, "variable": "scar", "value": 0.5180722891566265}, {"deg": -130, "variable": "scar", "value": 0.5817091454272864}, {"deg": -125, "variable": "scar", "value": 0.4777327935222672}, {"deg": -120, "variable": "scar", "value": 0.7504621072088724}, {"deg": -115, "variable": "scar", "value": 0.7884940778341794}, {"deg": -110, "variable": "scar", "value": 0.7103825136612022}, {"deg": -105, "variable": "scar", "value": 0.7368421052631579}, {"deg": -100, "variable": "scar", "value": 0.7516339869281046}, {"deg": -95, "variable": "scar", "value": 0.6055045871559633}, {"deg": -90, "variable": "scar", "value": 0.628032345013477}, {"deg": -85, "variable": "scar", "value": 0.7217125382262997}, {"deg": -80, "variable": "scar", "value": 0.7165932452276065}, {"deg": -75, "variable": "scar", "value": 0.7548387096774194}, {"deg": -70, "variable": "scar", "value": 0.717201166180758}, {"deg": -65, "variable": "scar", "value": 0.6996904024767802}, {"deg": -60, "variable": "scar", "value": 0.7160493827160493}, {"deg": -55, "variable": "scar", "value": 0.715008431703204}, {"deg": -50, "variable": "scar", "value": 0.4893882646691635}, {"deg": -45, "variable": "scar", "value": 0.4616915422885572}, {"deg": -40, "variable": "scar", "value": 0.48588709677419356}, {"deg": -35, "variable": "scar", "value": 0.5073068893528184}, {"deg": -30, "variable": "scar", "value": 0.5604938271604938}, {"deg": -25, "variable": "scar", "value": 0.46616541353383456}, {"deg": -20, "variable": "scar", "value": 0.5253012048192771}, {"deg": -15, "variable": "scar", "value": 0.6248256624825662}, {"deg": -10, "variable": "scar", "value": 0.6842800528401585}, {"deg": -5, "variable": "scar", "value": 0.7364016736401674}, {"deg": 0, "variable": "scar", "value": 0.7464387464387464}, {"deg": 5, "variable": "scar", "value": 0.7242693773824651}, {"deg": 10, "variable": "scar", "value": 0.7342105263157894}, {"deg": 15, "variable": "scar", "value": 0.7592067988668555}, {"deg": 20, "variable": "scar", "value": 0.6263096623981373}, {"deg": 25, "variable": "scar", "value": 0.438512869399428}, {"deg": 30, "variable": "scar", "value": 0.49952516619183285}, {"deg": 35, "variable": "scar", "value": 0.3776325344952796}, {"deg": 40, "variable": "scar", "value": 0.36884643644379134}, {"deg": 45, "variable": "scar", "value": 0.37351190476190477}, {"deg": 50, "variable": "scar", "value": 0.33501805054151623}, {"deg": 55, "variable": "scar", "value": 0.3865168539325843}, {"deg": 60, "variable": "scar", "value": 0.4434389140271493}, {"deg": 65, "variable": "scar", "value": 0.5}, {"deg": 70, "variable": "scar", "value": 0.49406688241639696}, {"deg": 75, "variable": "scar", "value": 0.601965601965602}, {"deg": 80, "variable": "scar", "value": 0.6111111111111112}, {"deg": 85, "variable": "scar", "value": 0.5504322766570605}, {"deg": 90, "variable": "scar", "value": 0.6405405405405405}, {"deg": 95, "variable": "scar", "value": 0.5761904761904761}, {"deg": 100, "variable": "scar", "value": 0.6962552011095701}, {"deg": 105, "variable": "scar", "value": 0.6697388632872504}, {"deg": 110, "variable": "scar", "value": 0.6736214605067065}, {"deg": 115, "variable": "scar", "value": 0.7331081081081081}, {"deg": 120, "variable": "scar", "value": 0.6892109500805152}, {"deg": 125, "variable": "scar", "value": 0.6809815950920245}, {"deg": 130, "variable": "scar", "value": 0.5341772151898734}, {"deg": 135, "variable": "scar", "value": 0.4222431668237512}, {"deg": 140, "variable": "scar", "value": 0.5466321243523317}, {"deg": 145, "variable": "scar", "value": 0.5765983112183354}, {"deg": 150, "variable": "scar", "value": 0.6944444444444444}, {"deg": 155, "variable": "scar", "value": 0.5741857659831122}, {"deg": 160, "variable": "scar", "value": 0.5685019206145967}, {"deg": 165, "variable": "scar", "value": 0.5080042689434365}, {"deg": 170, "variable": "scar", "value": 0.4385820280296785}, {"deg": 175, "variable": "scar", "value": 0.4239558707643814}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<p>So the range where prediction performance remains stable is quite large for most classes. However the rarer pathology classes scar and particularly edema react much more sensitively to rotation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    get_rotation_series(img(),model, start<span class="op">=</span><span class="dv">0</span>, end<span class="op">=</span><span class="dv">360</span>,step<span class="op">=</span><span class="dv">10</span>),</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/myops/rotation.gif"</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"deg"</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">400</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/myops/rotation.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to rotation</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="sensitivity-to-cropping" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-cropping">Sensitivity to cropping</h3>
+<p>Another variation that might occur in real life is a difference in field of view. This can happen due to different settings when acquiring the images or due to pre-processing steps in an analysis pipeline.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_crop_series(img(),model, start <span class="op">=</span> <span class="dv">50</span>, end <span class="op">=</span> <span class="dv">230</span>, step <span class="op">=</span> <span class="dv">10</span>, finalSize<span class="op">=</span><span class="dv">400</span>), nrow<span class="op">=</span><span class="dv">2</span>, vmax<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-30-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_crop_series(img(),model, start <span class="op">=</span> <span class="dv">80</span>, end <span class="op">=</span> <span class="dv">230</span>, step <span class="op">=</span> <span class="dv">20</span>, finalSize<span class="op">=</span><span class="dv">400</span>), nrow<span class="op">=</span><span class="dv">1</span>, vmax<span class="op">=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-31-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    get_crop_series(img(),model, start<span class="op">=</span><span class="dv">50</span>, end<span class="op">=</span><span class="dv">250</span>,step<span class="op">=</span><span class="dv">10</span>),</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/myops/crop.gif"</span>,</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"pixels"</span>,</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">400</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    vmax<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/myops/crop.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to rotation - myops</figcaption><p></p>
+</figure>
+</div>
+<p>It seems to be okay to crop the image to some extend. But performance degrades even before we start to crop part of the heart.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_crop_series(img(),trueMask(),model,start <span class="op">=</span> <span class="dv">50</span>, end<span class="op">=</span><span class="dv">256</span>, finalSize<span class="op">=</span><span class="dv">400</span>, components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>,<span class="st">"edema"</span>,<span class="st">"scar"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'pixels'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>,<span class="st">'edema'</span>,<span class="st">'scar'</span>]))</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"pixels"</span>,</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"value"</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"value"</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-2fd1a7d952fc46819587dc05bb85a65a"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-2fd1a7d952fc46819587dc05bb85a65a") {
+      outputDiv = document.getElementById("altair-viz-2fd1a7d952fc46819587dc05bb85a65a");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-fe6e64599ca39d26a2483c43e1d5008a"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "value", "type": "quantitative"}, "x": {"field": "pixels", "type": "quantitative"}, "y": {"field": "value", "type": "quantitative"}}, "height": 300, "selection": {"selector002": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-fe6e64599ca39d26a2483c43e1d5008a": [{"pixels": 50, "variable": "LV", "value": 0.8941404985432179}, {"pixels": 60, "variable": "LV", "value": 0.8941404985432179}, {"pixels": 70, "variable": "LV", "value": 0.8941404985432179}, {"pixels": 80, "variable": "LV", "value": 0.8953676708778749}, {"pixels": 90, "variable": "LV", "value": 0.8938948743062357}, {"pixels": 100, "variable": "LV", "value": 0.8941023134571522}, {"pixels": 110, "variable": "LV", "value": 0.8939051918735892}, {"pixels": 120, "variable": "LV", "value": 0.8921885087153002}, {"pixels": 130, "variable": "LV", "value": 0.8880960103795005}, {"pixels": 140, "variable": "LV", "value": 0.8845646437994723}, {"pixels": 150, "variable": "LV", "value": 0.8909214092140921}, {"pixels": 160, "variable": "LV", "value": 0.864206377642422}, {"pixels": 170, "variable": "LV", "value": 0.0}, {"pixels": 180, "variable": "LV", "value": 0.0}, {"pixels": 190, "variable": "LV", "value": 0.0}, {"pixels": 50, "variable": "MY", "value": 0.8061555075593952}, {"pixels": 60, "variable": "MY", "value": 0.8061555075593952}, {"pixels": 70, "variable": "MY", "value": 0.8061555075593952}, {"pixels": 80, "variable": "MY", "value": 0.831728045325779}, {"pixels": 90, "variable": "MY", "value": 0.8476977567886659}, {"pixels": 100, "variable": "MY", "value": 0.8493475682087782}, {"pixels": 110, "variable": "MY", "value": 0.8499137435307648}, {"pixels": 120, "variable": "MY", "value": 0.8252212389380531}, {"pixels": 130, "variable": "MY", "value": 0.8297142857142857}, {"pixels": 140, "variable": "MY", "value": 0.7572493786246893}, {"pixels": 150, "variable": "MY", "value": 0.7100840336134454}, {"pixels": 160, "variable": "MY", "value": 0.3345338135254102}, {"pixels": 170, "variable": "MY", "value": 0.0}, {"pixels": 180, "variable": "MY", "value": 0.0}, {"pixels": 190, "variable": "MY", "value": 1.0}, {"pixels": 50, "variable": "RV", "value": 0.9170149253731343}, {"pixels": 60, "variable": "RV", "value": 0.9170149253731343}, {"pixels": 70, "variable": "RV", "value": 0.9170149253731343}, {"pixels": 80, "variable": "RV", "value": 0.9009920248978798}, {"pixels": 90, "variable": "RV", "value": 0.9012057565149747}, {"pixels": 100, "variable": "RV", "value": 0.9042324946362396}, {"pixels": 110, "variable": "RV", "value": 0.907868722815342}, {"pixels": 120, "variable": "RV", "value": 0.9037095501183899}, {"pixels": 130, "variable": "RV", "value": 0.8927966101694915}, {"pixels": 140, "variable": "RV", "value": 0.8218059558117194}, {"pixels": 150, "variable": "RV", "value": 0.19034224097515237}, {"pixels": 160, "variable": "RV", "value": 0.0}, {"pixels": 170, "variable": "RV", "value": 0.0}, {"pixels": 180, "variable": "RV", "value": 0.0}, {"pixels": 190, "variable": "RV", "value": 1.0}, {"pixels": 50, "variable": "edema", "value": 0.5913410770855333}, {"pixels": 60, "variable": "edema", "value": 0.5913410770855333}, {"pixels": 70, "variable": "edema", "value": 0.5913410770855333}, {"pixels": 80, "variable": "edema", "value": 0.7274401473296501}, {"pixels": 90, "variable": "edema", "value": 0.7739273927392739}, {"pixels": 100, "variable": "edema", "value": 0.7699836867862969}, {"pixels": 110, "variable": "edema", "value": 0.7660714285714286}, {"pixels": 120, "variable": "edema", "value": 0.676056338028169}, {"pixels": 130, "variable": "edema", "value": 0.6568338249754179}, {"pixels": 140, "variable": "edema", "value": 0.24654088050314465}, {"pixels": 150, "variable": "edema", "value": 0.21282401091405184}, {"pixels": 160, "variable": "edema", "value": 0.0}, {"pixels": 170, "variable": "edema", "value": 0.0}, {"pixels": 180, "variable": "edema", "value": 0.0}, {"pixels": 190, "variable": "edema", "value": 1.0}, {"pixels": 50, "variable": "scar", "value": 0.6873614190687362}, {"pixels": 60, "variable": "scar", "value": 0.6873614190687362}, {"pixels": 70, "variable": "scar", "value": 0.6873614190687362}, {"pixels": 80, "variable": "scar", "value": 0.6570247933884298}, {"pixels": 90, "variable": "scar", "value": 0.6286836935166994}, {"pixels": 100, "variable": "scar", "value": 0.6452905811623246}, {"pixels": 110, "variable": "scar", "value": 0.6553191489361702}, {"pixels": 120, "variable": "scar", "value": 0.6864988558352403}, {"pixels": 130, "variable": "scar", "value": 0.6086956521739131}, {"pixels": 140, "variable": "scar", "value": 0.531986531986532}, {"pixels": 150, "variable": "scar", "value": 0.5962962962962963}, {"pixels": 160, "variable": "scar", "value": 0.6123348017621145}, {"pixels": 170, "variable": "scar", "value": 0.0}, {"pixels": 180, "variable": "scar", "value": 0.0}, {"pixels": 190, "variable": "scar", "value": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+</section>
+<section id="sensitivity-to-brightness" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-brightness">Sensitivity to brightness</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_brightness_series(img(),model), nrow<span class="op">=</span><span class="dv">1</span>) <span class="co">#end = 0.99, step = 0.18</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-35-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_bright_series(img(),trueMask(),model, components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>,<span class="st">"edema"</span>,<span class="st">"scar"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'brightness'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>,<span class="st">'edema'</span>,<span class="st">'scar'</span>]))</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"brightness"</span>,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"value"</span>,</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"value"</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-c47aa8ff45b8400c9176f07911310600"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-c47aa8ff45b8400c9176f07911310600") {
+      outputDiv = document.getElementById("altair-viz-c47aa8ff45b8400c9176f07911310600");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-0b553b06446c577af2005ebb41604aeb"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "value", "type": "quantitative"}, "x": {"field": "brightness", "type": "quantitative"}, "y": {"field": "value", "type": "quantitative"}}, "height": 300, "selection": {"selector003": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-0b553b06446c577af2005ebb41604aeb": [{"brightness": 0.05, "variable": "LV", "value": 0.8250202210838501}, {"brightness": 0.1, "variable": "LV", "value": 0.9148524431543299}, {"brightness": 0.15000000000000002, "variable": "LV", "value": 0.913574097135741}, {"brightness": 0.2, "variable": "LV", "value": 0.9336621454993834}, {"brightness": 0.25, "variable": "LV", "value": 0.9318463444857497}, {"brightness": 0.3, "variable": "LV", "value": 0.9356754082137556}, {"brightness": 0.35000000000000003, "variable": "LV", "value": 0.9365588743520118}, {"brightness": 0.4, "variable": "LV", "value": 0.9433040078201369}, {"brightness": 0.45, "variable": "LV", "value": 0.9474452554744526}, {"brightness": 0.5, "variable": "LV", "value": 0.9526570048309179}, {"brightness": 0.55, "variable": "LV", "value": 0.9548854041013269}, {"brightness": 0.6000000000000001, "variable": "LV", "value": 0.9569608078865112}, {"brightness": 0.6500000000000001, "variable": "LV", "value": 0.9576719576719577}, {"brightness": 0.7000000000000001, "variable": "LV", "value": 0.9559354683361425}, {"brightness": 0.7500000000000001, "variable": "LV", "value": 0.9615108773607459}, {"brightness": 0.8, "variable": "LV", "value": 0.9640390569183139}, {"brightness": 0.8500000000000001, "variable": "LV", "value": 0.9631931166347992}, {"brightness": 0.9000000000000001, "variable": "LV", "value": 0.9644136613326965}, {"brightness": 0.05, "variable": "MY", "value": 0.5564694082246741}, {"brightness": 0.1, "variable": "MY", "value": 0.7289073305670816}, {"brightness": 0.15000000000000002, "variable": "MY", "value": 0.735628167045256}, {"brightness": 0.2, "variable": "MY", "value": 0.7510321306767187}, {"brightness": 0.25, "variable": "MY", "value": 0.749212233549583}, {"brightness": 0.3, "variable": "MY", "value": 0.7543827274404872}, {"brightness": 0.35000000000000003, "variable": "MY", "value": 0.7538005190952911}, {"brightness": 0.4, "variable": "MY", "value": 0.765115426896299}, {"brightness": 0.45, "variable": "MY", "value": 0.7848054582334502}, {"brightness": 0.5, "variable": "MY", "value": 0.8059869036482694}, {"brightness": 0.55, "variable": "MY", "value": 0.8137750327531349}, {"brightness": 0.6000000000000001, "variable": "MY", "value": 0.8150375939849624}, {"brightness": 0.6500000000000001, "variable": "MY", "value": 0.8227488151658767}, {"brightness": 0.7000000000000001, "variable": "MY", "value": 0.8400077384407042}, {"brightness": 0.7500000000000001, "variable": "MY", "value": 0.8542118761096863}, {"brightness": 0.8, "variable": "MY", "value": 0.8580504268413738}, {"brightness": 0.8500000000000001, "variable": "MY", "value": 0.874185667752443}, {"brightness": 0.9000000000000001, "variable": "MY", "value": 0.8789940218511647}, {"brightness": 0.05, "variable": "RV", "value": 0.9083927591881514}, {"brightness": 0.1, "variable": "RV", "value": 0.877072913924717}, {"brightness": 0.15000000000000002, "variable": "RV", "value": 0.8974937011006497}, {"brightness": 0.2, "variable": "RV", "value": 0.9046096456168399}, {"brightness": 0.25, "variable": "RV", "value": 0.9136266094420601}, {"brightness": 0.3, "variable": "RV", "value": 0.9249658935879945}, {"brightness": 0.35000000000000003, "variable": "RV", "value": 0.9315557998900494}, {"brightness": 0.4, "variable": "RV", "value": 0.9332047927282744}, {"brightness": 0.45, "variable": "RV", "value": 0.9395452024403772}, {"brightness": 0.5, "variable": "RV", "value": 0.938961937716263}, {"brightness": 0.55, "variable": "RV", "value": 0.934860612751863}, {"brightness": 0.6000000000000001, "variable": "RV", "value": 0.9366842543737851}, {"brightness": 0.6500000000000001, "variable": "RV", "value": 0.9338478500551268}, {"brightness": 0.7000000000000001, "variable": "RV", "value": 0.935093509350935}, {"brightness": 0.7500000000000001, "variable": "RV", "value": 0.9327292696320703}, {"brightness": 0.8, "variable": "RV", "value": 0.9341960352422908}, {"brightness": 0.8500000000000001, "variable": "RV", "value": 0.9323246217331499}, {"brightness": 0.9000000000000001, "variable": "RV", "value": 0.9358689616879511}, {"brightness": 0.05, "variable": "edema", "value": 0.0}, {"brightness": 0.1, "variable": "edema", "value": 0.0}, {"brightness": 0.15000000000000002, "variable": "edema", "value": 0.0}, {"brightness": 0.2, "variable": "edema", "value": 0.0}, {"brightness": 0.25, "variable": "edema", "value": 0.0}, {"brightness": 0.3, "variable": "edema", "value": 0.0}, {"brightness": 0.35000000000000003, "variable": "edema", "value": 0.0}, {"brightness": 0.4, "variable": "edema", "value": 0.0}, {"brightness": 0.45, "variable": "edema", "value": 0.09474768280123584}, {"brightness": 0.5, "variable": "edema", "value": 0.23304680038204392}, {"brightness": 0.55, "variable": "edema", "value": 0.2914757103574702}, {"brightness": 0.6000000000000001, "variable": "edema", "value": 0.3602058319039451}, {"brightness": 0.6500000000000001, "variable": "edema", "value": 0.4003308519437552}, {"brightness": 0.7000000000000001, "variable": "edema", "value": 0.5473843821076573}, {"brightness": 0.7500000000000001, "variable": "edema", "value": 0.6009922041105599}, {"brightness": 0.8, "variable": "edema", "value": 0.6440677966101694}, {"brightness": 0.8500000000000001, "variable": "edema", "value": 0.7152734129478315}, {"brightness": 0.9000000000000001, "variable": "edema", "value": 0.737410071942446}, {"brightness": 0.05, "variable": "scar", "value": 0.0}, {"brightness": 0.1, "variable": "scar", "value": 0.5098039215686274}, {"brightness": 0.15000000000000002, "variable": "scar", "value": 0.8071895424836601}, {"brightness": 0.2, "variable": "scar", "value": 0.6807017543859649}, {"brightness": 0.25, "variable": "scar", "value": 0.5395095367847411}, {"brightness": 0.3, "variable": "scar", "value": 0.5384615384615384}, {"brightness": 0.35000000000000003, "variable": "scar", "value": 0.5271739130434783}, {"brightness": 0.4, "variable": "scar", "value": 0.5584158415841585}, {"brightness": 0.45, "variable": "scar", "value": 0.5764828303850156}, {"brightness": 0.5, "variable": "scar", "value": 0.5732349841938883}, {"brightness": 0.55, "variable": "scar", "value": 0.6081081081081081}, {"brightness": 0.6000000000000001, "variable": "scar", "value": 0.6348448687350835}, {"brightness": 0.6500000000000001, "variable": "scar", "value": 0.6583541147132169}, {"brightness": 0.7000000000000001, "variable": "scar", "value": 0.6869455006337135}, {"brightness": 0.7500000000000001, "variable": "scar", "value": 0.6829268292682927}, {"brightness": 0.8, "variable": "scar", "value": 0.7224546722454672}, {"brightness": 0.8500000000000001, "variable": "scar", "value": 0.7171853856562923}, {"brightness": 0.9000000000000001, "variable": "scar", "value": 0.7227586206896551}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+</section>
+<section id="sensitivity-to-contrast" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-contrast">Sensitivity to contrast</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_contrast_series(img(),model), nrow <span class="op">=</span> <span class="dv">1</span>, vmax<span class="op">=</span><span class="dv">5</span>) <span class="co">#start=0.1, end=3, step=0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-38-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_contrast_series(img(),trueMask(),model, components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>,<span class="st">"edema"</span>,<span class="st">"scar"</span>]) <span class="co">#end = 2.5, step = 0.3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'contrast'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>,<span class="st">'edema'</span>,<span class="st">'scar'</span>]))</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"contrast"</span>,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"value"</span>,</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"value"</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-877f29b8567c4ebca234efd68f7a8a65"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-877f29b8567c4ebca234efd68f7a8a65") {
+      outputDiv = document.getElementById("altair-viz-877f29b8567c4ebca234efd68f7a8a65");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-8ff454680debc5043d6b24552ec5b632"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "value", "type": "quantitative"}, "x": {"field": "contrast", "type": "quantitative"}, "y": {"field": "value", "type": "quantitative"}}, "height": 300, "selection": {"selector004": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-8ff454680debc5043d6b24552ec5b632": [{"contrast": 0.25, "variable": "LV", "value": 0.9087683730359858}, {"contrast": 1.6642135623730951, "variable": "LV", "value": 0.9666353383458647}, {"contrast": 3.0784271247461903, "variable": "LV", "value": 0.9400228050171038}, {"contrast": 4.492640687119286, "variable": "LV", "value": 0.8626893939393939}, {"contrast": 5.906854249492381, "variable": "LV", "value": 0.6038377459315035}, {"contrast": 7.3210678118654755, "variable": "LV", "value": 0.17507059298104075}, {"contrast": 0.25, "variable": "MY", "value": 0.7326249782267897}, {"contrast": 1.6642135623730951, "variable": "MY", "value": 0.8686485346826903}, {"contrast": 3.0784271247461903, "variable": "MY", "value": 0.6317198304706669}, {"contrast": 4.492640687119286, "variable": "MY", "value": 0.4358192403659551}, {"contrast": 5.906854249492381, "variable": "MY", "value": 0.07906066536203522}, {"contrast": 7.3210678118654755, "variable": "MY", "value": 0.0}, {"contrast": 0.25, "variable": "RV", "value": 0.8956211139039556}, {"contrast": 1.6642135623730951, "variable": "RV", "value": 0.937929061784897}, {"contrast": 3.0784271247461903, "variable": "RV", "value": 0.9064912782384902}, {"contrast": 4.492640687119286, "variable": "RV", "value": 0.8515542077331312}, {"contrast": 5.906854249492381, "variable": "RV", "value": 0.10633181939620626}, {"contrast": 7.3210678118654755, "variable": "RV", "value": 0.0}, {"contrast": 0.25, "variable": "edema", "value": 0.0}, {"contrast": 1.6642135623730951, "variable": "edema", "value": 0.7118210862619808}, {"contrast": 3.0784271247461903, "variable": "edema", "value": 0.05985915492957746}, {"contrast": 4.492640687119286, "variable": "edema", "value": 0.0}, {"contrast": 5.906854249492381, "variable": "edema", "value": 0.0921409214092141}, {"contrast": 7.3210678118654755, "variable": "edema", "value": 0.07239819004524888}, {"contrast": 0.25, "variable": "scar", "value": 0.6273684210526316}, {"contrast": 1.6642135623730951, "variable": "scar", "value": 0.7149460708782742}, {"contrast": 3.0784271247461903, "variable": "scar", "value": 0.7765793528505393}, {"contrast": 4.492640687119286, "variable": "scar", "value": 0.4212678936605317}, {"contrast": 5.906854249492381, "variable": "scar", "value": 0.08586883029073698}, {"contrast": 7.3210678118654755, "variable": "scar", "value": 0.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+</section>
+<section id="sensitivity-to-zoom" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-to-zoom">Sensitivity to zoom</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_zoom_series(img(),model), param_name<span class="op">=</span><span class="st">"zoom"</span>, nrow<span class="op">=</span><span class="dv">2</span>, vmax<span class="op">=</span><span class="dv">5</span>) <span class="co">#start=160,end=750,step=60, finalSize=480)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-41-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>plot_series(get_zoom_series(img(),model), param_name<span class="op">=</span><span class="st">"zoom"</span>, nrow<span class="op">=</span><span class="dv">1</span>, vmax<span class="op">=</span><span class="dv">5</span>)<span class="co">#,start=160,end=770,step=120, finalSize=480)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="07_myops_files/figure-html/cell-42-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_zoom_series(img(),trueMask(),model,components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>,<span class="st">"RV"</span>,<span class="st">"edema"</span>,<span class="st">"scar"</span>]) <span class="co">#,start=160,end=900,step=20,finalSize=480</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>(alt</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a> .Chart(results.melt(id_vars<span class="op">=</span>[<span class="st">'scale'</span>],value_vars<span class="op">=</span>[<span class="st">'LV'</span>,<span class="st">'MY'</span>,<span class="st">'RV'</span>,<span class="st">'edema'</span>,<span class="st">'scar'</span>]))</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a> .mark_line()</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a> .encode(</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>     x<span class="op">=</span><span class="st">"scale"</span>,</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>     y<span class="op">=</span><span class="st">"value"</span>,</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>     color<span class="op">=</span><span class="st">"variable"</span>,</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>     tooltip<span class="op">=</span><span class="st">"value"</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a> )</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a> .properties(width<span class="op">=</span><span class="dv">700</span>,height<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a> .interactive()</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-a053d0557bd14a8994a7a50c8b694013"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-a053d0557bd14a8994a7a50c8b694013") {
+      outputDiv = document.getElementById("altair-viz-a053d0557bd14a8994a7a50c8b694013");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-55eb8275d910b6cb98490a17520b0d64"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "value", "type": "quantitative"}, "x": {"field": "scale", "type": "quantitative"}, "y": {"field": "value", "type": "quantitative"}}, "height": 300, "selection": {"selector005": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-55eb8275d910b6cb98490a17520b0d64": [{"scale": 0.0, "variable": "LV", "value": 0.9544907295930652}, {"scale": 0.1, "variable": "LV", "value": 0.9104225352112676}, {"scale": 0.2, "variable": "LV", "value": 0.9175438596491228}, {"scale": 0.30000000000000004, "variable": "LV", "value": 0.9135104578858112}, {"scale": 0.4, "variable": "LV", "value": 0.8459582198001816}, {"scale": 0.5, "variable": "LV", "value": 0.4006852402849157}, {"scale": 0.6000000000000001, "variable": "LV", "value": 0.0}, {"scale": 0.7000000000000001, "variable": "LV", "value": 0.0}, {"scale": 0.8, "variable": "LV", "value": 0.0}, {"scale": 0.9, "variable": "LV", "value": 0.0}, {"scale": 0.0, "variable": "MY", "value": 0.8985507246376812}, {"scale": 0.1, "variable": "MY", "value": 0.8365591397849462}, {"scale": 0.2, "variable": "MY", "value": 0.7736405036163944}, {"scale": 0.30000000000000004, "variable": "MY", "value": 0.6841539453880886}, {"scale": 0.4, "variable": "MY", "value": 0.31628623711836656}, {"scale": 0.5, "variable": "MY", "value": 0.1723528371928584}, {"scale": 0.6000000000000001, "variable": "MY", "value": 0.0}, {"scale": 0.7000000000000001, "variable": "MY", "value": 0.0}, {"scale": 0.8, "variable": "MY", "value": 0.0}, {"scale": 0.9, "variable": "MY", "value": 1.0}, {"scale": 0.0, "variable": "RV", "value": 0.935309599667544}, {"scale": 0.1, "variable": "RV", "value": 0.9385641969627243}, {"scale": 0.2, "variable": "RV", "value": 0.914065438134637}, {"scale": 0.30000000000000004, "variable": "RV", "value": 0.8723581546852511}, {"scale": 0.4, "variable": "RV", "value": 0.7219701095177589}, {"scale": 0.5, "variable": "RV", "value": 0.38827874429001846}, {"scale": 0.6000000000000001, "variable": "RV", "value": 0.0004490849893342315}, {"scale": 0.7000000000000001, "variable": "RV", "value": 0.0015926102882624622}, {"scale": 0.8, "variable": "RV", "value": 0.0014106859460412625}, {"scale": 0.9, "variable": "RV", "value": 1.0}, {"scale": 0.0, "variable": "edema", "value": 0.8087912087912088}, {"scale": 0.1, "variable": "edema", "value": 0.7153811456923771}, {"scale": 0.2, "variable": "edema", "value": 0.47751937984496123}, {"scale": 0.30000000000000004, "variable": "edema", "value": 0.05380237972064149}, {"scale": 0.4, "variable": "edema", "value": 0.0}, {"scale": 0.5, "variable": "edema", "value": 0.0}, {"scale": 0.6000000000000001, "variable": "edema", "value": 0.0}, {"scale": 0.7000000000000001, "variable": "edema", "value": 0.0}, {"scale": 0.8, "variable": "edema", "value": 0.0}, {"scale": 0.9, "variable": "edema", "value": 1.0}, {"scale": 0.0, "variable": "scar", "value": 0.7464387464387464}, {"scale": 0.1, "variable": "scar", "value": 0.6651162790697674}, {"scale": 0.2, "variable": "scar", "value": 0.6348884381338742}, {"scale": 0.30000000000000004, "variable": "scar", "value": 0.5321205230244457}, {"scale": 0.4, "variable": "scar", "value": 0.6866630958757365}, {"scale": 0.5, "variable": "scar", "value": 0.6814955040227165}, {"scale": 0.6000000000000001, "variable": "scar", "value": 0.0}, {"scale": 0.7000000000000001, "variable": "scar", "value": 0.0}, {"scale": 0.8, "variable": "scar", "value": 0.0}, {"scale": 0.9, "variable": "scar", "value": 1.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    get_zoom_series(img(),model) , <span class="co">#start=50, end=900,step=50</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/myops/zoom.gif"</span>,</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"scale"</span>,</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">400</span>,</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    vmax<span class="op">=</span><span class="dv">5</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/myops/zoom.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to zoom</figcaption><p></p>
+</figure>
+</div>
+<p><strong>IDEA: Channel imbalance transformation</strong> For multi-channel images it might be useful to consider transformations that work differently on different channels.</p>
+</section>
+</section>
+<section id="robustness-to-mr-artifacts" class="level2">
+<h2 class="anchored" data-anchor-id="robustness-to-mr-artifacts">Robustness to MR artifacts</h2>
+<p><strong>It would be nice to analyze the effect of MR artifacts. However, we are dealing with multi-channel images here. Each channel is a separate MR image. So it is not obvious how to deal with this.</strong></p>
+</section>
+<section id="package-versions" class="level2">
+<h2 class="anchored" data-anchor-id="package-versions">Package Versions</h2>
+<pre><code># packages in environment at /opt/conda/envs/misas:
+#
+# Name                    Version                   Build  Channel
+_libgcc_mutex             0.1                 conda_forge    conda-forge
+_openmp_mutex             4.5                       1_gnu    conda-forge
+absl-py                   0.11.0                   pypi_0    pypi
+altair                    4.1.0                    pypi_0    pypi
+argon2-cffi               20.1.0                   pypi_0    pypi
+astunparse                1.6.3                    pypi_0    pypi
+async-generator           1.10                     pypi_0    pypi
+attrs                     20.3.0                   pypi_0    pypi
+backcall                  0.2.0                    pypi_0    pypi
+beautifulsoup4            4.9.3                    pypi_0    pypi
+bleach                    3.2.1                    pypi_0    pypi
+blis                      0.7.4                    pypi_0    pypi
+bottleneck                1.3.2                    pypi_0    pypi
+ca-certificates           2020.12.5            ha878542_0    conda-forge
+cachetools                4.2.0                    pypi_0    pypi
+catalogue                 1.0.0                    pypi_0    pypi
+certifi                   2020.12.5        py36h5fab9bb_0    conda-forge
+cffi                      1.14.4                   pypi_0    pypi
+chardet                   4.0.0                    pypi_0    pypi
+click                     7.1.2                    pypi_0    pypi
+contextvars               2.4                      pypi_0    pypi
+cycler                    0.10.0                   pypi_0    pypi
+cymem                     2.0.5                    pypi_0    pypi
+dataclasses               0.8                      pypi_0    pypi
+decorator                 4.4.2                    pypi_0    pypi
+defusedxml                0.6.0                    pypi_0    pypi
+entrypoints               0.3                      pypi_0    pypi
+fastai                    1.0.61                   pypi_0    pypi
+fastai2                   0.0.30                   pypi_0    pypi
+fastcore                  1.0.0                    pypi_0    pypi
+fastinference             0.0.35                   pypi_0    pypi
+fastprogress              1.0.0                    pypi_0    pypi
+fastscript                1.0.0                    pypi_0    pypi
+flatbuffers               1.12                     pypi_0    pypi
+future                    0.18.2                   pypi_0    pypi
+gast                      0.3.3                    pypi_0    pypi
+gif                       2.0.0                    pypi_0    pypi
+google-auth               1.24.0                   pypi_0    pypi
+google-auth-oauthlib      0.4.2                    pypi_0    pypi
+google-pasta              0.2.0                    pypi_0    pypi
+grpcio                    1.32.0                   pypi_0    pypi
+h5py                      2.10.0                   pypi_0    pypi
+humanize                  3.2.0                    pypi_0    pypi
+idna                      2.10                     pypi_0    pypi
+imageio                   2.9.0                    pypi_0    pypi
+immutables                0.14                     pypi_0    pypi
+importlib-metadata        3.3.0                    pypi_0    pypi
+ipykernel                 5.4.2                    pypi_0    pypi
+ipython                   7.16.1                   pypi_0    pypi
+ipython-genutils          0.2.0                    pypi_0    pypi
+ipywidgets                7.6.2                    pypi_0    pypi
+jedi                      0.18.0                   pypi_0    pypi
+jinja2                    2.11.2                   pypi_0    pypi
+joblib                    1.0.0                    pypi_0    pypi
+jsonschema                3.2.0                    pypi_0    pypi
+jupyter                   1.0.0                    pypi_0    pypi
+jupyter-client            6.1.7                    pypi_0    pypi
+jupyter-console           6.2.0                    pypi_0    pypi
+jupyter-core              4.7.0                    pypi_0    pypi
+jupyterlab-pygments       0.1.2                    pypi_0    pypi
+jupyterlab-widgets        1.0.0                    pypi_0    pypi
+keras-preprocessing       1.1.2                    pypi_0    pypi
+kiwisolver                1.3.1                    pypi_0    pypi
+kornia                    0.2.2                    pypi_0    pypi
+libgcc-ng                 9.3.0               h5dbcf3e_17    conda-forge
+libgomp                   9.3.0               h5dbcf3e_17    conda-forge
+markdown                  3.3.3                    pypi_0    pypi
+markupsafe                1.1.1                    pypi_0    pypi
+matplotlib                3.3.3                    pypi_0    pypi
+misas                     0.0.3                     dev_0    &lt;develop&gt;
+mistune                   0.8.4                    pypi_0    pypi
+murmurhash                1.0.5                    pypi_0    pypi
+nbclient                  0.5.1                    pypi_0    pypi
+nbconvert                 6.0.7                    pypi_0    pypi
+nbdev                     1.0.10                   pypi_0    pypi
+nbformat                  5.0.8                    pypi_0    pypi
+ncurses                   5.9                          10    conda-forge
+nest-asyncio              1.4.3                    pypi_0    pypi
+networkx                  2.5                      pypi_0    pypi
+nibabel                   3.2.1                    pypi_0    pypi
+notebook                  6.1.6                    pypi_0    pypi
+numexpr                   2.7.2                    pypi_0    pypi
+numpy                     1.19.4                   pypi_0    pypi
+nvidia-ml-py3             7.352.0                  pypi_0    pypi
+oauthlib                  3.1.0                    pypi_0    pypi
+onnxruntime               1.6.0                    pypi_0    pypi
+openssl                   1.0.2u               h516909a_0    conda-forge
+opt-einsum                3.3.0                    pypi_0    pypi
+packaging                 20.8                     pypi_0    pypi
+pandas                    0.25.3                   pypi_0    pypi
+pandocfilters             1.4.3                    pypi_0    pypi
+parso                     0.8.1                    pypi_0    pypi
+pexpect                   4.8.0                    pypi_0    pypi
+pickleshare               0.7.5                    pypi_0    pypi
+pillow                    8.1.0                    pypi_0    pypi
+pip                       20.3.3             pyhd8ed1ab_0    conda-forge
+plac                      1.1.3                    pypi_0    pypi
+preshed                   3.0.5                    pypi_0    pypi
+prometheus-client         0.9.0                    pypi_0    pypi
+prompt-toolkit            3.0.3                    pypi_0    pypi
+protobuf                  3.14.0                   pypi_0    pypi
+ptyprocess                0.7.0                    pypi_0    pypi
+pyasn1                    0.4.8                    pypi_0    pypi
+pyasn1-modules            0.2.8                    pypi_0    pypi
+pycparser                 2.20                     pypi_0    pypi
+pydicom                   2.1.1                    pypi_0    pypi
+pygments                  2.7.3                    pypi_0    pypi
+pyparsing                 2.4.7                    pypi_0    pypi
+pyrsistent                0.17.3                   pypi_0    pypi
+python                    3.6.5                         1    conda-forge
+python-dateutil           2.8.1                    pypi_0    pypi
+python_abi                3.6                     1_cp36m    conda-forge
+pytz                      2020.5                   pypi_0    pypi
+pywavelets                1.1.1                    pypi_0    pypi
+pyyaml                    5.3.1                    pypi_0    pypi
+pyzmq                     20.0.0                   pypi_0    pypi
+qtconsole                 5.0.1                    pypi_0    pypi
+qtpy                      1.9.0                    pypi_0    pypi
+readline                  7.0                           0    conda-forge
+requests                  2.25.1                   pypi_0    pypi
+requests-oauthlib         1.3.0                    pypi_0    pypi
+rsa                       4.6                      pypi_0    pypi
+scikit-image              0.17.2                   pypi_0    pypi
+scikit-learn              0.24.0                   pypi_0    pypi
+scipy                     1.5.4                    pypi_0    pypi
+send2trash                1.5.0                    pypi_0    pypi
+setuptools                49.6.0           py36h9880bd3_2    conda-forge
+simpleitk                 1.2.4                    pypi_0    pypi
+six                       1.15.0                   pypi_0    pypi
+soupsieve                 2.1                      pypi_0    pypi
+spacy                     2.3.5                    pypi_0    pypi
+sqlite                    3.20.1                        2    conda-forge
+srsly                     1.0.5                    pypi_0    pypi
+tensorboard               2.4.0                    pypi_0    pypi
+tensorboard-plugin-wit    1.7.0                    pypi_0    pypi
+tensorflow                2.4.0                    pypi_0    pypi
+tensorflow-estimator      2.4.0                    pypi_0    pypi
+termcolor                 1.1.0                    pypi_0    pypi
+terminado                 0.9.2                    pypi_0    pypi
+testpath                  0.4.4                    pypi_0    pypi
+thinc                     7.4.5                    pypi_0    pypi
+threadpoolctl             2.1.0                    pypi_0    pypi
+tifffile                  2020.9.3                 pypi_0    pypi
+tk                        8.6.10               h21135ba_1    conda-forge
+toolz                     0.11.1                   pypi_0    pypi
+torch                     1.6.0                    pypi_0    pypi
+torchio                   0.18.15                  pypi_0    pypi
+torchvision               0.8.2                    pypi_0    pypi
+tornado                   6.1                      pypi_0    pypi
+tqdm                      4.55.1                   pypi_0    pypi
+traitlets                 4.3.3                    pypi_0    pypi
+typing-extensions         3.7.4.3                  pypi_0    pypi
+urllib3                   1.26.2                   pypi_0    pypi
+wasabi                    0.8.0                    pypi_0    pypi
+wcwidth                   0.2.5                    pypi_0    pypi
+webencodings              0.5.1                    pypi_0    pypi
+werkzeug                  1.0.1                    pypi_0    pypi
+wheel                     0.36.2             pyhd3deb0d_0    conda-forge
+widgetsnbextension        3.5.1                    pypi_0    pypi
+wrapt                     1.12.1                   pypi_0    pypi
+xz                        5.2.5                h516909a_1    conda-forge
+zipp                      3.4.0                    pypi_0    pypi
+zlib                      1.2.11            h516909a_1010    conda-forge</code></pre>
+
+
+</section>
+
+</main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{},"version_major":2,"version_minor":0}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

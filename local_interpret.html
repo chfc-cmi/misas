@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>misas - Local Interpretability</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="misas - Local Interpretability">
+<meta property="og:description" content="The default score for evaluation is the Dice-Score calculated separately for each component.">
+<meta property="og:site-name" content="misas">
+<meta name="twitter:title" content="misas - Local Interpretability">
+<meta name="twitter:description" content="The default score for evaluation is the Dice-Score calculated separately for each component.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">misas</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Local Interpretability</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Model Interpretation through Sensitivity Analysis for Segmentation</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./local_interpret.html" class="sidebar-item-text sidebar-link active">Local Interpretability</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ukbb_on_kaggle.html" class="sidebar-item-text sidebar-link">Case Study - Model Suitability</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./transversals.html" class="sidebar-item-text sidebar-link">Case Study - Model Robustness</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mr_artifacts.html" class="sidebar-item-text sidebar-link">Simulated MR artifacts (torchio)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./camvid.html" class="sidebar-item-text sidebar-link">CamVid Demo</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pneumothorax.html" class="sidebar-item-text sidebar-link">Pneumothorax demo</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./myops.html" class="sidebar-item-text sidebar-link">Case Study: MyoPS - myocardial pathology segmentation</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./batch_mode.html" class="sidebar-item-text sidebar-link">Batch Mode</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fastai_model.html" class="sidebar-item-text sidebar-link">Fastai Model (misas)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./tensorflow_model.html" class="sidebar-item-text sidebar-link">Tensorflow Model (misas)</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#evaluation-functions" id="toc-evaluation-functions" class="nav-link active" data-scroll-target="#evaluation-functions">Evaluation functions</a></li>
+  <li><a href="#sensitivity-analysis" id="toc-sensitivity-analysis" class="nav-link" data-scroll-target="#sensitivity-analysis">Sensitivity Analysis</a>
+  <ul class="collapse">
+  <li><a href="#example-data-kaggle" id="toc-example-data-kaggle" class="nav-link" data-scroll-target="#example-data-kaggle">Example data (kaggle)</a></li>
+  <li><a href="#default-color-map" id="toc-default-color-map" class="nav-link" data-scroll-target="#default-color-map">Default color map</a></li>
+  <li><a href="#generic-functions" id="toc-generic-functions" class="nav-link" data-scroll-target="#generic-functions">Generic functions</a></li>
+  <li><a href="#get_generic_series" id="toc-get_generic_series" class="nav-link" data-scroll-target="#get_generic_series">get_generic_series</a></li>
+  <li><a href="#plot_series" id="toc-plot_series" class="nav-link" data-scroll-target="#plot_series">plot_series</a></li>
+  <li><a href="#plot_frame" id="toc-plot_frame" class="nav-link" data-scroll-target="#plot_frame">plot_frame</a></li>
+  <li><a href="#gif_series" id="toc-gif_series" class="nav-link" data-scroll-target="#gif_series">gif_series</a></li>
+  <li><a href="#eval_generic_series" id="toc-eval_generic_series" class="nav-link" data-scroll-target="#eval_generic_series">eval_generic_series</a></li>
+  <li><a href="#plot_eval_series" id="toc-plot_eval_series" class="nav-link" data-scroll-target="#plot_eval_series">plot_eval_series</a></li>
+  <li><a href="#rotation" id="toc-rotation" class="nav-link" data-scroll-target="#rotation">Rotation</a></li>
+  <li><a href="#get_rotation_series" id="toc-get_rotation_series" class="nav-link" data-scroll-target="#get_rotation_series">get_rotation_series</a></li>
+  <li><a href="#rotationtransform" id="toc-rotationtransform" class="nav-link" data-scroll-target="#rotationtransform">rotationTransform</a></li>
+  <li><a href="#eval_rotation_series" id="toc-eval_rotation_series" class="nav-link" data-scroll-target="#eval_rotation_series">eval_rotation_series</a></li>
+  <li><a href="#cropping" id="toc-cropping" class="nav-link" data-scroll-target="#cropping">Cropping</a></li>
+  <li><a href="#get_crop_series" id="toc-get_crop_series" class="nav-link" data-scroll-target="#get_crop_series">get_crop_series</a></li>
+  <li><a href="#croptransform" id="toc-croptransform" class="nav-link" data-scroll-target="#croptransform">cropTransform</a></li>
+  <li><a href="#eval_crop_series" id="toc-eval_crop_series" class="nav-link" data-scroll-target="#eval_crop_series">eval_crop_series</a></li>
+  <li><a href="#brightness" id="toc-brightness" class="nav-link" data-scroll-target="#brightness">Brightness</a></li>
+  <li><a href="#get_brightness_series" id="toc-get_brightness_series" class="nav-link" data-scroll-target="#get_brightness_series">get_brightness_series</a></li>
+  <li><a href="#brightnesstransform" id="toc-brightnesstransform" class="nav-link" data-scroll-target="#brightnesstransform">brightnessTransform</a></li>
+  <li><a href="#eval_bright_series" id="toc-eval_bright_series" class="nav-link" data-scroll-target="#eval_bright_series">eval_bright_series</a></li>
+  <li><a href="#contrast" id="toc-contrast" class="nav-link" data-scroll-target="#contrast">Contrast</a></li>
+  <li><a href="#get_contrast_series" id="toc-get_contrast_series" class="nav-link" data-scroll-target="#get_contrast_series">get_contrast_series</a></li>
+  <li><a href="#contrasttransform" id="toc-contrasttransform" class="nav-link" data-scroll-target="#contrasttransform">contrastTransform</a></li>
+  <li><a href="#eval_contrast_series" id="toc-eval_contrast_series" class="nav-link" data-scroll-target="#eval_contrast_series">eval_contrast_series</a></li>
+  <li><a href="#zoom" id="toc-zoom" class="nav-link" data-scroll-target="#zoom">Zoom</a></li>
+  <li><a href="#get_zoom_series" id="toc-get_zoom_series" class="nav-link" data-scroll-target="#get_zoom_series">get_zoom_series</a></li>
+  <li><a href="#zoomtransform" id="toc-zoomtransform" class="nav-link" data-scroll-target="#zoomtransform">zoomTransform</a></li>
+  <li><a href="#eval_zoom_series" id="toc-eval_zoom_series" class="nav-link" data-scroll-target="#eval_zoom_series">eval_zoom_series</a></li>
+  <li><a href="#dihedral" id="toc-dihedral" class="nav-link" data-scroll-target="#dihedral">Dihedral</a></li>
+  <li><a href="#get_dihedral_series" id="toc-get_dihedral_series" class="nav-link" data-scroll-target="#get_dihedral_series">get_dihedral_series</a></li>
+  <li><a href="#dihedraltransform" id="toc-dihedraltransform" class="nav-link" data-scroll-target="#dihedraltransform">dihedralTransform</a></li>
+  <li><a href="#eval_dihedral_series" id="toc-eval_dihedral_series" class="nav-link" data-scroll-target="#eval_dihedral_series">eval_dihedral_series</a></li>
+  <li><a href="#resize" id="toc-resize" class="nav-link" data-scroll-target="#resize">Resize</a></li>
+  <li><a href="#resizetransform" id="toc-resizetransform" class="nav-link" data-scroll-target="#resizetransform">resizeTransform</a></li>
+  <li><a href="#get_resize_series" id="toc-get_resize_series" class="nav-link" data-scroll-target="#get_resize_series">get_resize_series</a></li>
+  <li><a href="#eval_resize_series" id="toc-eval_resize_series" class="nav-link" data-scroll-target="#eval_resize_series">eval_resize_series</a></li>
+  </ul></li>
+  <li><a href="#more-on-evaluation" id="toc-more-on-evaluation" class="nav-link" data-scroll-target="#more-on-evaluation">More on Evaluation</a></li>
+  <li><a href="#confusion-matrices" id="toc-confusion-matrices" class="nav-link" data-scroll-target="#confusion-matrices">Confusion Matrices</a>
+  <ul class="collapse">
+  <li><a href="#get_confusion" id="toc-get_confusion" class="nav-link" data-scroll-target="#get_confusion">get_confusion</a></li>
+  <li><a href="#plot_confusion" id="toc-plot_confusion" class="nav-link" data-scroll-target="#plot_confusion">plot_confusion</a></li>
+  <li><a href="#plot_confusion_series" id="toc-plot_confusion_series" class="nav-link" data-scroll-target="#plot_confusion_series">plot_confusion_series</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/chfc-cmi/misas/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Local Interpretability</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> misas.fastai_model <span class="im">import</span> Fastai2_model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="evaluation-functions" class="level2">
+<h2 class="anchored" data-anchor-id="evaluation-functions">Evaluation functions</h2>
+</section>
+<section id="sensitivity-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="sensitivity-analysis">Sensitivity Analysis</h2>
+<section id="example-data-kaggle" class="level3">
+<h3 class="anchored" data-anchor-id="example-data-kaggle">Example data (kaggle)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> label_func(x):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> acc_seg(<span class="bu">input</span>, target):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diceComb(<span class="bu">input</span>, targs):</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diceLV(<span class="bu">input</span>, targs):</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> diceMY(<span class="bu">input</span>, targs):</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> img():</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Opens the sample image as a PIL image</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Image.<span class="bu">open</span>(<span class="st">"example/kaggle/images/1-frame014-slice005.png"</span>).convert(<span class="st">"RGB"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#img = lambda: Image.open("example/kaggle/images/1-frame014-slice005.png")</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trueMask():</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Opens the true mask as a PIL image</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Image.<span class="bu">open</span>(<span class="st">"example/kaggle/masks/1-frame014-slice005.png"</span>).convert(<span class="st">"I"</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#trueMask = lambda: Image.open("example/kaggle/masks/1-frame014-slice005.png")</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>trainedModel <span class="op">=</span> Fastai2_model(<span class="st">"chfc-cmi/cmr-seg-tl"</span>, <span class="st">"cmr_seg_base"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Using cache found in /home/csa84mikl/.cache/torch/hub/chfc-cmi_cmr-seg-tl_master</code></pre>
+</div>
+</div>
+</section>
+<section id="default-color-map" class="level3">
+<h3 class="anchored" data-anchor-id="default-color-map">Default color map</h3>
+<p>Define a default color map for the sample image derived from <code>viridis</code> and a default color map for the true map derived from <code>plasma</code> but setting the color for class “0” to completely transparent. This makes sense if class “0” is the background.</p>
+</section>
+<section id="generic-functions" class="level3">
+<h3 class="anchored" data-anchor-id="generic-functions">Generic functions</h3>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L87" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_generic_series" class="level3">
+<h3 class="anchored" data-anchor-id="get_generic_series">get_generic_series</h3>
+<blockquote class="blockquote">
+<pre><code> get_generic_series (image, model, transform, truth=None, tfm_y=False,
+                     start=0, end=180, step=30, log_steps=False)</code></pre>
+</blockquote>
+<p>Generic function for transforming images. Input: image (PIP image, usually your sample image opened by img()), model (the function for your model that manages the prediction for your mask), transform (your specific transformation function), truth = None (replaces with a true mask if available), tfm_y = False (set to True if your true mask has to be transformed as well to fit the transformed sample image e.g in case of a rotation of the sample image), start, end, step as values the transform function, log_steps = False (if enabled logarithmic steps as parameters for the transform function are possible) Output: a list containing lists of [param, img, pred, trueMask] after img and optionally trueMask have been transformed and pred has been determined by using a modell on the transformed img for each different param</p>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L135" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="plot_series" class="level3">
+<h3 class="anchored" data-anchor-id="plot_series">plot_series</h3>
+<blockquote class="blockquote">
+<pre><code> plot_series (series, nrow=1, figsize=(16, 6), param_name='param',
+              overlay_truth=False, vmax=None, vmin=0,
+              cmap=&lt;matplotlib.colors.ListedColormap object at
+              0x7f52ec9228e0&gt;,
+              cmap_true_mask=&lt;matplotlib.colors.ListedColormap object at
+              0x7f520556ddf0&gt;, **kwargs)</code></pre>
+</blockquote>
+<p>plots the transformed images with the prediction and optionally the true mask overlayed intput: series = a list containing lists of [param, img, pred, trueMask] from the function get_generic_series nrow = number of rows drawn with the transformed images figsize = (16,6) param_name=‘param’, overlay_truth = False (if True displays the true mask over the sample along with the prediction) vmax = None (controls how many colors the prediction is going to have, can be set manually by the user, otherwise is deterimed by the max amount of colors in the prediction cmap= default_cmap (sets the default color map) output: a plot generated by mathplotlib</p>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L186" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="plot_frame" class="level3">
+<h3 class="anchored" data-anchor-id="plot_frame">plot_frame</h3>
+<blockquote class="blockquote">
+<pre><code> plot_frame (param, img, pred, param_name='param', vmax=None, vmin=0,
+             cmap=&lt;matplotlib.colors.ListedColormap object at
+             0x7f52ec9228e0&gt;, **kwargs)</code></pre>
+</blockquote>
+<p>plots the transformed images and prediction overlayed for the gif_series function</p>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L206" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gif_series" class="level3">
+<h3 class="anchored" data-anchor-id="gif_series">gif_series</h3>
+<blockquote class="blockquote">
+<pre><code> gif_series (series, fname, duration=150, param_name='param', vmax=None,
+             vmin=0, cmap=&lt;matplotlib.colors.ListedColormap object at
+             0x7f52ec9228e0&gt;)</code></pre>
+</blockquote>
+<p>creates a gif from the output of plot_frame</p>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L221" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="eval_generic_series" class="level3">
+<h3 class="anchored" data-anchor-id="eval_generic_series">eval_generic_series</h3>
+<blockquote class="blockquote">
+<pre><code> eval_generic_series (image, mask, model, transform_function, start=0,
+                      end=360, step=5, param_name='param',
+                      mask_transform_function=None, components=['bg',
+                      'c1', 'c2'], eval_function=&lt;function
+                      dice_by_component&gt;, mask_prepareSize=True)</code></pre>
+</blockquote>
+<p>Perform the transformation on the sample, creates a prediction and then uses the prediction and true mask to run an evaluation function to measure the overlap between predicted mask and true mask</p>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L263" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="plot_eval_series" class="level3">
+<h3 class="anchored" data-anchor-id="plot_eval_series">plot_eval_series</h3>
+<blockquote class="blockquote">
+<pre><code> plot_eval_series (results, chart_type='line', value_vars=None,
+                   value_name='Dice Score')</code></pre>
+</blockquote>
+<p>Plots the resuls of the eval_generic_function</p>
+</section>
+<section id="rotation" class="level3">
+<h3 class="anchored" data-anchor-id="rotation">Rotation</h3>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L293" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_rotation_series" class="level3">
+<h3 class="anchored" data-anchor-id="get_rotation_series">get_rotation_series</h3>
+<blockquote class="blockquote">
+<pre><code> get_rotation_series (image, model, start=0, end=361, step=60, **kwargs)</code></pre>
+</blockquote>
+<p>runs the get_generic_series with rotationTransform as transform</p>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L286" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="rotationtransform" class="level3">
+<h3 class="anchored" data-anchor-id="rotationtransform">rotationTransform</h3>
+<blockquote class="blockquote">
+<pre><code> rotationTransform (image, deg)</code></pre>
+</blockquote>
+<p>rotates an image by x degrees (deg)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> get_rotation_series(img(), trainedModel, truth<span class="op">=</span>trueMask())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>[W NNPACK.cpp:51] Could not initialize NNPACK! Reason: Unsupported hardware.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>plot_series(series, overlay_truth <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L300" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="eval_rotation_series" class="level3">
+<h3 class="anchored" data-anchor-id="eval_rotation_series">eval_rotation_series</h3>
+<blockquote class="blockquote">
+<pre><code> eval_rotation_series (image, mask, model, step=5, start=0, end=360,
+                       param_name='deg', **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_rotation_series(img(), trueMask(), trainedModel, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>])</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>plot_eval_series(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-c20feaee63c14a829a8168d60dfa2233"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-c20feaee63c14a829a8168d60dfa2233") {
+      outputDiv = document.getElementById("altair-viz-c20feaee63c14a829a8168d60dfa2233");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-268a00b1b211e9708e4f26b8ee3cb2c7"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Dice Score", "type": "quantitative"}, "x": {"field": "deg", "type": "quantitative"}, "y": {"field": "Dice Score", "type": "quantitative"}}, "height": 300, "selection": {"selector001": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-268a00b1b211e9708e4f26b8ee3cb2c7": [{"deg": 0, "variable": "LV", "Dice Score": 0.9185905224787363}, {"deg": 5, "variable": "LV", "Dice Score": 0.9197530864197531}, {"deg": 10, "variable": "LV", "Dice Score": 0.9214723926380368}, {"deg": 15, "variable": "LV", "Dice Score": 0.9187538179596824}, {"deg": 20, "variable": "LV", "Dice Score": 0.9141475211608222}, {"deg": 25, "variable": "LV", "Dice Score": 0.9262644728823888}, {"deg": 30, "variable": "LV", "Dice Score": 0.9295071740486588}, {"deg": 35, "variable": "LV", "Dice Score": 0.9202453987730062}, {"deg": 40, "variable": "LV", "Dice Score": 0.9266503667481663}, {"deg": 45, "variable": "LV", "Dice Score": 0.91320293398533}, {"deg": 50, "variable": "LV", "Dice Score": 0.9252625077208153}, {"deg": 55, "variable": "LV", "Dice Score": 0.9199507389162561}, {"deg": 60, "variable": "LV", "Dice Score": 0.9260651629072681}, {"deg": 65, "variable": "LV", "Dice Score": 0.9258312020460358}, {"deg": 70, "variable": "LV", "Dice Score": 0.9188168659534298}, {"deg": 75, "variable": "LV", "Dice Score": 0.9336670838548186}, {"deg": 80, "variable": "LV", "Dice Score": 0.9254467036352434}, {"deg": 85, "variable": "LV", "Dice Score": 0.9444791016843419}, {"deg": 90, "variable": "LV", "Dice Score": 0.9361179361179361}, {"deg": 95, "variable": "LV", "Dice Score": 0.9251369446135118}, {"deg": 100, "variable": "LV", "Dice Score": 0.9183922046285018}, {"deg": 105, "variable": "LV", "Dice Score": 0.920099875156055}, {"deg": 110, "variable": "LV", "Dice Score": 0.9295261239368166}, {"deg": 115, "variable": "LV", "Dice Score": 0.9265822784810127}, {"deg": 120, "variable": "LV", "Dice Score": 0.8795595320027529}, {"deg": 125, "variable": "LV", "Dice Score": 0.9186785260482846}, {"deg": 130, "variable": "LV", "Dice Score": 0.8259052924791086}, {"deg": 135, "variable": "LV", "Dice Score": 0.0611764705882353}, {"deg": 140, "variable": "LV", "Dice Score": 0.0}, {"deg": 145, "variable": "LV", "Dice Score": 0.0}, {"deg": 150, "variable": "LV", "Dice Score": 0.0}, {"deg": 155, "variable": "LV", "Dice Score": 0.0}, {"deg": 160, "variable": "LV", "Dice Score": 0.057007125890736345}, {"deg": 165, "variable": "LV", "Dice Score": 0.0}, {"deg": 170, "variable": "LV", "Dice Score": 0.0}, {"deg": 175, "variable": "LV", "Dice Score": 0.0}, {"deg": 180, "variable": "LV", "Dice Score": 0.0}, {"deg": 185, "variable": "LV", "Dice Score": 0.0}, {"deg": 190, "variable": "LV", "Dice Score": 0.0}, {"deg": 195, "variable": "LV", "Dice Score": 0.0}, {"deg": 200, "variable": "LV", "Dice Score": 0.143658810325477}, {"deg": 205, "variable": "LV", "Dice Score": 0.8752424046541694}, {"deg": 210, "variable": "LV", "Dice Score": 0.9050632911392406}, {"deg": 215, "variable": "LV", "Dice Score": 0.8993865030674847}, {"deg": 220, "variable": "LV", "Dice Score": 0.9123252858958069}, {"deg": 225, "variable": "LV", "Dice Score": 0.8926829268292683}, {"deg": 230, "variable": "LV", "Dice Score": 0.9159925326695706}, {"deg": 235, "variable": "LV", "Dice Score": 0.9141813755325624}, {"deg": 240, "variable": "LV", "Dice Score": 0.9164619164619164}, {"deg": 245, "variable": "LV", "Dice Score": 0.9172286940527283}, {"deg": 250, "variable": "LV", "Dice Score": 0.9172205438066465}, {"deg": 255, "variable": "LV", "Dice Score": 0.9264978381717109}, {"deg": 260, "variable": "LV", "Dice Score": 0.9185548071034905}, {"deg": 265, "variable": "LV", "Dice Score": 0.9362229102167182}, {"deg": 270, "variable": "LV", "Dice Score": 0.939639079029247}, {"deg": 275, "variable": "LV", "Dice Score": 0.926224426534408}, {"deg": 280, "variable": "LV", "Dice Score": 0.9250614250614251}, {"deg": 285, "variable": "LV", "Dice Score": 0.9244823386114495}, {"deg": 290, "variable": "LV", "Dice Score": 0.926799758015729}, {"deg": 295, "variable": "LV", "Dice Score": 0.9211165048543689}, {"deg": 300, "variable": "LV", "Dice Score": 0.9234567901234568}, {"deg": 305, "variable": "LV", "Dice Score": 0.9217498459642637}, {"deg": 310, "variable": "LV", "Dice Score": 0.9098712446351931}, {"deg": 315, "variable": "LV", "Dice Score": 0.9153567110036276}, {"deg": 320, "variable": "LV", "Dice Score": 0.9271028037383178}, {"deg": 325, "variable": "LV", "Dice Score": 0.9283065512978986}, {"deg": 330, "variable": "LV", "Dice Score": 0.929368029739777}, {"deg": 335, "variable": "LV", "Dice Score": 0.924812030075188}, {"deg": 340, "variable": "LV", "Dice Score": 0.9310130515848353}, {"deg": 345, "variable": "LV", "Dice Score": 0.926860025220681}, {"deg": 350, "variable": "LV", "Dice Score": 0.922397476340694}, {"deg": 355, "variable": "LV", "Dice Score": 0.9330024813895782}, {"deg": 0, "variable": "MY", "Dice Score": 0.8207171314741036}, {"deg": 5, "variable": "MY", "Dice Score": 0.81951871657754}, {"deg": 10, "variable": "MY", "Dice Score": 0.8341044282881692}, {"deg": 15, "variable": "MY", "Dice Score": 0.8261455525606469}, {"deg": 20, "variable": "MY", "Dice Score": 0.8252032520325203}, {"deg": 25, "variable": "MY", "Dice Score": 0.8193891102257637}, {"deg": 30, "variable": "MY", "Dice Score": 0.8391793514228988}, {"deg": 35, "variable": "MY", "Dice Score": 0.8167539267015707}, {"deg": 40, "variable": "MY", "Dice Score": 0.8360763660302831}, {"deg": 45, "variable": "MY", "Dice Score": 0.8169381107491857}, {"deg": 50, "variable": "MY", "Dice Score": 0.8150594451783355}, {"deg": 55, "variable": "MY", "Dice Score": 0.8243064729194187}, {"deg": 60, "variable": "MY", "Dice Score": 0.8263888888888888}, {"deg": 65, "variable": "MY", "Dice Score": 0.8286099865047234}, {"deg": 70, "variable": "MY", "Dice Score": 0.8255892255892255}, {"deg": 75, "variable": "MY", "Dice Score": 0.829700272479564}, {"deg": 80, "variable": "MY", "Dice Score": 0.8133333333333334}, {"deg": 85, "variable": "MY", "Dice Score": 0.8372093023255814}, {"deg": 90, "variable": "MY", "Dice Score": 0.8158253751705321}, {"deg": 95, "variable": "MY", "Dice Score": 0.8221453287197232}, {"deg": 100, "variable": "MY", "Dice Score": 0.817234190410007}, {"deg": 105, "variable": "MY", "Dice Score": 0.7839416058394161}, {"deg": 110, "variable": "MY", "Dice Score": 0.8127659574468085}, {"deg": 115, "variable": "MY", "Dice Score": 0.7164404223227753}, {"deg": 120, "variable": "MY", "Dice Score": 0.5668449197860963}, {"deg": 125, "variable": "MY", "Dice Score": 0.6857142857142857}, {"deg": 130, "variable": "MY", "Dice Score": 0.46866485013623976}, {"deg": 135, "variable": "MY", "Dice Score": 0.24193548387096775}, {"deg": 140, "variable": "MY", "Dice Score": 0.01634877384196185}, {"deg": 145, "variable": "MY", "Dice Score": 0.021917808219178082}, {"deg": 150, "variable": "MY", "Dice Score": 0.0}, {"deg": 155, "variable": "MY", "Dice Score": 0.0}, {"deg": 160, "variable": "MY", "Dice Score": 0.2615933412604043}, {"deg": 165, "variable": "MY", "Dice Score": 0.0}, {"deg": 170, "variable": "MY", "Dice Score": 0.0}, {"deg": 175, "variable": "MY", "Dice Score": 0.008174386920980926}, {"deg": 180, "variable": "MY", "Dice Score": 0.0}, {"deg": 185, "variable": "MY", "Dice Score": 0.0}, {"deg": 190, "variable": "MY", "Dice Score": 0.0}, {"deg": 195, "variable": "MY", "Dice Score": 0.0}, {"deg": 200, "variable": "MY", "Dice Score": 0.383025027203482}, {"deg": 205, "variable": "MY", "Dice Score": 0.6655710764174199}, {"deg": 210, "variable": "MY", "Dice Score": 0.7228727556596409}, {"deg": 215, "variable": "MY", "Dice Score": 0.7620376831821354}, {"deg": 220, "variable": "MY", "Dice Score": 0.7719298245614035}, {"deg": 225, "variable": "MY", "Dice Score": 0.7564191533657183}, {"deg": 230, "variable": "MY", "Dice Score": 0.8074792243767313}, {"deg": 235, "variable": "MY", "Dice Score": 0.8204778156996587}, {"deg": 240, "variable": "MY", "Dice Score": 0.8177269478198713}, {"deg": 245, "variable": "MY", "Dice Score": 0.8270158511371468}, {"deg": 250, "variable": "MY", "Dice Score": 0.8210818307905686}, {"deg": 255, "variable": "MY", "Dice Score": 0.8397480755773268}, {"deg": 260, "variable": "MY", "Dice Score": 0.8301369863013699}, {"deg": 265, "variable": "MY", "Dice Score": 0.8411602209944752}, {"deg": 270, "variable": "MY", "Dice Score": 0.83785664578984}, {"deg": 275, "variable": "MY", "Dice Score": 0.8292011019283747}, {"deg": 280, "variable": "MY", "Dice Score": 0.850480109739369}, {"deg": 285, "variable": "MY", "Dice Score": 0.8377622377622378}, {"deg": 290, "variable": "MY", "Dice Score": 0.826265389876881}, {"deg": 295, "variable": "MY", "Dice Score": 0.8207547169811321}, {"deg": 300, "variable": "MY", "Dice Score": 0.8189189189189189}, {"deg": 305, "variable": "MY", "Dice Score": 0.8202020202020202}, {"deg": 310, "variable": "MY", "Dice Score": 0.8141592920353983}, {"deg": 315, "variable": "MY", "Dice Score": 0.8223418573351279}, {"deg": 320, "variable": "MY", "Dice Score": 0.8395225464190982}, {"deg": 325, "variable": "MY", "Dice Score": 0.8466175485599464}, {"deg": 330, "variable": "MY", "Dice Score": 0.8422442244224423}, {"deg": 335, "variable": "MY", "Dice Score": 0.8423153692614771}, {"deg": 340, "variable": "MY", "Dice Score": 0.8411843876177658}, {"deg": 345, "variable": "MY", "Dice Score": 0.842032967032967}, {"deg": 350, "variable": "MY", "Dice Score": 0.8220779220779221}, {"deg": 355, "variable": "MY", "Dice Score": 0.8382749326145552}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<p>You can easily generate gifs by plotting multiple frames</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    get_rotation_series(img(),trainedModel,start<span class="op">=</span><span class="dv">0</span>,end<span class="op">=</span><span class="dv">360</span>,step<span class="op">=</span><span class="dv">5</span>),</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/rotation.gif"</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"degrees"</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/rotation.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to rotation</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="cropping" class="level3">
+<h3 class="anchored" data-anchor-id="cropping">Cropping</h3>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L323" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_crop_series" class="level3">
+<h3 class="anchored" data-anchor-id="get_crop_series">get_crop_series</h3>
+<blockquote class="blockquote">
+<pre><code> get_crop_series (image, model, start=0, end=256, step=10, finalSize=None,
+                  **kwargs)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L315" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="croptransform" class="level3">
+<h3 class="anchored" data-anchor-id="croptransform">cropTransform</h3>
+<blockquote class="blockquote">
+<pre><code> cropTransform (image, pxls, finalSize=None)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> get_crop_series(img(), trainedModel, truth<span class="op">=</span>trueMask(), step<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>plot_series(series,nrow<span class="op">=</span><span class="dv">3</span>,figsize<span class="op">=</span>(<span class="dv">16</span>,<span class="dv">15</span>), overlay_truth <span class="op">=</span> <span class="va">True</span>) <span class="co">#,overlay_truth=True)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L334" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="eval_crop_series" class="level3">
+<h3 class="anchored" data-anchor-id="eval_crop_series">eval_crop_series</h3>
+<blockquote class="blockquote">
+<pre><code> eval_crop_series (image, mask, model, step=10, start=0, end=256,
+                   finalSize=None, param_name='pixels', **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_crop_series(img(), trueMask(), trainedModel, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>])</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>plot_eval_series(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-46c2cdde5de84995bdb442695f263588"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-46c2cdde5de84995bdb442695f263588") {
+      outputDiv = document.getElementById("altair-viz-46c2cdde5de84995bdb442695f263588");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-cea67ff3da0a99d18f560c566b8a01c5"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Dice Score", "type": "quantitative"}, "x": {"field": "pixels", "type": "quantitative"}, "y": {"field": "Dice Score", "type": "quantitative"}}, "height": 300, "selection": {"selector002": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-cea67ff3da0a99d18f560c566b8a01c5": [{"pixels": 0, "variable": "LV", "Dice Score": 0.9185905224787363}, {"pixels": 10, "variable": "LV", "Dice Score": 0.9219512195121952}, {"pixels": 20, "variable": "LV", "Dice Score": 0.9223241590214067}, {"pixels": 30, "variable": "LV", "Dice Score": 0.9198055893074119}, {"pixels": 40, "variable": "LV", "Dice Score": 0.9197080291970803}, {"pixels": 50, "variable": "LV", "Dice Score": 0.9195402298850575}, {"pixels": 60, "variable": "LV", "Dice Score": 0.9172205438066465}, {"pixels": 70, "variable": "LV", "Dice Score": 0.9237339841366687}, {"pixels": 80, "variable": "LV", "Dice Score": 0.0}, {"pixels": 90, "variable": "LV", "Dice Score": 0.1948488241881299}, {"pixels": 100, "variable": "LV", "Dice Score": 0.0}, {"pixels": 110, "variable": "LV", "Dice Score": 0.0}, {"pixels": 0, "variable": "MY", "Dice Score": 0.8207171314741036}, {"pixels": 10, "variable": "MY", "Dice Score": 0.8254810882548109}, {"pixels": 20, "variable": "MY", "Dice Score": 0.8266315095583389}, {"pixels": 30, "variable": "MY", "Dice Score": 0.8258839226150767}, {"pixels": 40, "variable": "MY", "Dice Score": 0.830290736984449}, {"pixels": 50, "variable": "MY", "Dice Score": 0.8215024121295658}, {"pixels": 60, "variable": "MY", "Dice Score": 0.830135039090263}, {"pixels": 70, "variable": "MY", "Dice Score": 0.7975270479134466}, {"pixels": 80, "variable": "MY", "Dice Score": 0.0}, {"pixels": 90, "variable": "MY", "Dice Score": 0.15789473684210525}, {"pixels": 100, "variable": "MY", "Dice Score": 0.0}, {"pixels": 110, "variable": "MY", "Dice Score": 0.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<p>Cropping and comparing to the full original mask might not be desired. In this case it is possible to crop the mask as well. All pixels in the cropped area are set to 0 (commonly the background class). As soon as a class is completely missing, the dice score might jump to 1 because not predicting the class is correct in that case.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    get_crop_series(img(),trainedModel,start<span class="op">=</span><span class="dv">0</span>,end<span class="op">=</span><span class="dv">256</span>,step<span class="op">=</span><span class="dv">5</span>),</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/crop.gif"</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"pixels"</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/crop.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to cropping</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="brightness" class="level3">
+<h3 class="anchored" data-anchor-id="brightness">Brightness</h3>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L363" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_brightness_series" class="level3">
+<h3 class="anchored" data-anchor-id="get_brightness_series">get_brightness_series</h3>
+<blockquote class="blockquote">
+<pre><code> get_brightness_series (image, model, start=0.25, end=8,
+                        step=1.4142135623730951, log_steps=True, **kwargs)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L358" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="brightnesstransform" class="level3">
+<h3 class="anchored" data-anchor-id="brightnesstransform">brightnessTransform</h3>
+<blockquote class="blockquote">
+<pre><code> brightnessTransform (image, light)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> get_brightness_series(img(), trainedModel, truth<span class="op">=</span>trueMask(), start<span class="op">=</span><span class="dv">1</span><span class="op">/</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>plot_series(series, nrow<span class="op">=</span><span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">6</span>), overlay_truth <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-28-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L367" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="eval_bright_series" class="level3">
+<h3 class="anchored" data-anchor-id="eval_bright_series">eval_bright_series</h3>
+<blockquote class="blockquote">
+<pre><code> eval_bright_series (image, mask, model, start=0.05, end=0.95, step=0.05,
+                     param_name='brightness', **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_bright_series(img(), trueMask(), trainedModel, start<span class="op">=</span><span class="dv">0</span>, end<span class="op">=</span><span class="fl">1.05</span>, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>])</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>plot_eval_series(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-d242f9b3b9074fb08dd132b46f434744"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-d242f9b3b9074fb08dd132b46f434744") {
+      outputDiv = document.getElementById("altair-viz-d242f9b3b9074fb08dd132b46f434744");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-67a8d56d8e45e2829099b40661d1fc8a"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Dice Score", "type": "quantitative"}, "x": {"field": "brightness", "type": "quantitative"}, "y": {"field": "Dice Score", "type": "quantitative"}}, "height": 300, "selection": {"selector003": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-67a8d56d8e45e2829099b40661d1fc8a": [{"brightness": 0.0, "variable": "LV", "Dice Score": 0.0}, {"brightness": 0.05, "variable": "LV", "Dice Score": 0.9157641395908543}, {"brightness": 0.1, "variable": "LV", "Dice Score": 0.9178164367126574}, {"brightness": 0.15000000000000002, "variable": "LV", "Dice Score": 0.916267942583732}, {"brightness": 0.2, "variable": "LV", "Dice Score": 0.9161676646706587}, {"brightness": 0.25, "variable": "LV", "Dice Score": 0.913329348475792}, {"brightness": 0.30000000000000004, "variable": "LV", "Dice Score": 0.9132256134051466}, {"brightness": 0.35000000000000003, "variable": "LV", "Dice Score": 0.9116945107398569}, {"brightness": 0.4, "variable": "LV", "Dice Score": 0.911377245508982}, {"brightness": 0.45, "variable": "LV", "Dice Score": 0.9123434704830053}, {"brightness": 0.5, "variable": "LV", "Dice Score": 0.9120287253141831}, {"brightness": 0.55, "variable": "LV", "Dice Score": 0.9124700239808153}, {"brightness": 0.6000000000000001, "variable": "LV", "Dice Score": 0.9125748502994012}, {"brightness": 0.65, "variable": "LV", "Dice Score": 0.9135654261704682}, {"brightness": 0.7000000000000001, "variable": "LV", "Dice Score": 0.9166666666666666}, {"brightness": 0.75, "variable": "LV", "Dice Score": 0.9177750906892382}, {"brightness": 0.8, "variable": "LV", "Dice Score": 0.9161134580567291}, {"brightness": 0.8500000000000001, "variable": "LV", "Dice Score": 0.9199029126213593}, {"brightness": 0.9, "variable": "LV", "Dice Score": 0.9199029126213593}, {"brightness": 0.9500000000000001, "variable": "LV", "Dice Score": 0.9179331306990881}, {"brightness": 1.0, "variable": "LV", "Dice Score": 0.9185905224787363}, {"brightness": 0.0, "variable": "MY", "Dice Score": 0.0}, {"brightness": 0.05, "variable": "MY", "Dice Score": 0.811948404616429}, {"brightness": 0.1, "variable": "MY", "Dice Score": 0.8263795423956931}, {"brightness": 0.15000000000000002, "variable": "MY", "Dice Score": 0.8170326014637392}, {"brightness": 0.2, "variable": "MY", "Dice Score": 0.8107752956636005}, {"brightness": 0.25, "variable": "MY", "Dice Score": 0.8089005235602095}, {"brightness": 0.30000000000000004, "variable": "MY", "Dice Score": 0.8059895833333334}, {"brightness": 0.35000000000000003, "variable": "MY", "Dice Score": 0.8018312622629169}, {"brightness": 0.4, "variable": "MY", "Dice Score": 0.8031393067364291}, {"brightness": 0.45, "variable": "MY", "Dice Score": 0.8076416337285902}, {"brightness": 0.5, "variable": "MY", "Dice Score": 0.8130405854956753}, {"brightness": 0.55, "variable": "MY", "Dice Score": 0.8144192256341789}, {"brightness": 0.6000000000000001, "variable": "MY", "Dice Score": 0.8148639681486397}, {"brightness": 0.65, "variable": "MY", "Dice Score": 0.8173333333333334}, {"brightness": 0.7000000000000001, "variable": "MY", "Dice Score": 0.8214046822742475}, {"brightness": 0.75, "variable": "MY", "Dice Score": 0.820855614973262}, {"brightness": 0.8, "variable": "MY", "Dice Score": 0.8172757475083057}, {"brightness": 0.8500000000000001, "variable": "MY", "Dice Score": 0.8260292164674635}, {"brightness": 0.9, "variable": "MY", "Dice Score": 0.8230616302186878}, {"brightness": 0.9500000000000001, "variable": "MY", "Dice Score": 0.8226666666666667}, {"brightness": 1.0, "variable": "MY", "Dice Score": 0.8207171314741036}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    get_brightness_series(img(), trainedModel, step <span class="op">=</span> np.sqrt(<span class="dv">2</span>)),</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/brightness.gif"</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"brightness"</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/brightness.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to brightness</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="contrast" class="level3">
+<h3 class="anchored" data-anchor-id="contrast">Contrast</h3>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L385" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_contrast_series" class="level3">
+<h3 class="anchored" data-anchor-id="get_contrast_series">get_contrast_series</h3>
+<blockquote class="blockquote">
+<pre><code> get_contrast_series (image, model, start=0.25, end=8,
+                      step=1.4142135623730951, log_steps=True, **kwargs)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L381" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="contrasttransform" class="level3">
+<h3 class="anchored" data-anchor-id="contrasttransform">contrastTransform</h3>
+<blockquote class="blockquote">
+<pre><code> contrastTransform (image, scale)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> get_contrast_series(img(), trainedModel, truth<span class="op">=</span>trueMask(), start<span class="op">=</span><span class="dv">1</span><span class="op">/</span><span class="dv">8</span>, end<span class="op">=</span><span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>plot_series(series, nrow<span class="op">=</span><span class="dv">3</span>, figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">8</span>), overlay_truth <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-35-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L389" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="eval_contrast_series" class="level3">
+<h3 class="anchored" data-anchor-id="eval_contrast_series">eval_contrast_series</h3>
+<blockquote class="blockquote">
+<pre><code> eval_contrast_series (image, mask, model, start=0.25, end=8,
+                       step=1.4142135623730951, param_name='contrast',
+                       **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_contrast_series(img(), trueMask(), trainedModel, start<span class="op">=</span><span class="fl">0.25</span>, end<span class="op">=</span><span class="dv">8</span>, step<span class="op">=</span>np.sqrt(<span class="dv">2</span>), components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>])</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>plot_eval_series(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-123bdc15f1674f63bf35c5d921f58eea"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-123bdc15f1674f63bf35c5d921f58eea") {
+      outputDiv = document.getElementById("altair-viz-123bdc15f1674f63bf35c5d921f58eea");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-41f9eabbd685042a1adb50df592336d4"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Dice Score", "type": "quantitative"}, "x": {"field": "contrast", "type": "quantitative"}, "y": {"field": "Dice Score", "type": "quantitative"}}, "height": 300, "selection": {"selector004": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-41f9eabbd685042a1adb50df592336d4": [{"contrast": 0.25, "variable": "LV", "Dice Score": 0.9246658566221142}, {"contrast": 1.6642135623730951, "variable": "LV", "Dice Score": 0.9264978381717109}, {"contrast": 3.0784271247461903, "variable": "LV", "Dice Score": 0.9088524590163934}, {"contrast": 4.492640687119286, "variable": "LV", "Dice Score": 0.8261494252873564}, {"contrast": 5.906854249492381, "variable": "LV", "Dice Score": 0.6845528455284553}, {"contrast": 7.3210678118654755, "variable": "LV", "Dice Score": 0.5909090909090909}, {"contrast": 0.25, "variable": "MY", "Dice Score": 0.8093480934809348}, {"contrast": 1.6642135623730951, "variable": "MY", "Dice Score": 0.7974683544303798}, {"contrast": 3.0784271247461903, "variable": "MY", "Dice Score": 0.7048242027800491}, {"contrast": 4.492640687119286, "variable": "MY", "Dice Score": 0.6532751091703056}, {"contrast": 5.906854249492381, "variable": "MY", "Dice Score": 0.5647058823529412}, {"contrast": 7.3210678118654755, "variable": "MY", "Dice Score": 0.5074906367041199}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    get_contrast_series(img(), trainedModel,step<span class="op">=</span>np.sqrt(<span class="dv">2</span>)),</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/contrast.gif"</span>,</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"contrast"</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/contrast.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to contrast</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="zoom" class="level3">
+<h3 class="anchored" data-anchor-id="zoom">Zoom</h3>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L413" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_zoom_series" class="level3">
+<h3 class="anchored" data-anchor-id="get_zoom_series">get_zoom_series</h3>
+<blockquote class="blockquote">
+<pre><code> get_zoom_series (image, model, start=0, end=1, step=0.1, finalSize=None,
+                  **kwargs)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L403" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="zoomtransform" class="level3">
+<h3 class="anchored" data-anchor-id="zoomtransform">zoomTransform</h3>
+<blockquote class="blockquote">
+<pre><code> zoomTransform (image, zoom, finalSize=None)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> get_zoom_series(img(), trainedModel, truth<span class="op">=</span>trueMask())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>plot_series(series, nrow<span class="op">=</span><span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">16</span>,<span class="dv">8</span>), overlay_truth <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-42-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L423" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="eval_zoom_series" class="level3">
+<h3 class="anchored" data-anchor-id="eval_zoom_series">eval_zoom_series</h3>
+<blockquote class="blockquote">
+<pre><code> eval_zoom_series (image, mask, model, step=0.1, start=0, end=1,
+                   finalSize=None, param_name='scale', **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_zoom_series(img(), trueMask(), trainedModel, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>])</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>plot_eval_series(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-5dbe2e6f00e24029afdf39c9a61c47af"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-5dbe2e6f00e24029afdf39c9a61c47af") {
+      outputDiv = document.getElementById("altair-viz-5dbe2e6f00e24029afdf39c9a61c47af");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-561d8bd61f823da9bb40371623f6567d"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Dice Score", "type": "quantitative"}, "x": {"field": "scale", "type": "quantitative"}, "y": {"field": "Dice Score", "type": "quantitative"}}, "height": 300, "selection": {"selector005": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-561d8bd61f823da9bb40371623f6567d": [{"scale": 0.0, "variable": "LV", "Dice Score": 0.9185905224787363}, {"scale": 0.1, "variable": "LV", "Dice Score": 0.9063116370808678}, {"scale": 0.2, "variable": "LV", "Dice Score": 0.9158143194335169}, {"scale": 0.30000000000000004, "variable": "LV", "Dice Score": 0.9140243902439025}, {"scale": 0.4, "variable": "LV", "Dice Score": 0.9004739336492891}, {"scale": 0.5, "variable": "LV", "Dice Score": 0.7087359495168606}, {"scale": 0.6000000000000001, "variable": "LV", "Dice Score": 0.0}, {"scale": 0.7000000000000001, "variable": "LV", "Dice Score": 0.0}, {"scale": 0.8, "variable": "LV", "Dice Score": 0.0}, {"scale": 0.9, "variable": "LV", "Dice Score": 0.0}, {"scale": 0.0, "variable": "MY", "Dice Score": 0.8207171314741036}, {"scale": 0.1, "variable": "MY", "Dice Score": 0.8348476750400855}, {"scale": 0.2, "variable": "MY", "Dice Score": 0.8547509418166597}, {"scale": 0.30000000000000004, "variable": "MY", "Dice Score": 0.8625}, {"scale": 0.4, "variable": "MY", "Dice Score": 0.7826767545003913}, {"scale": 0.5, "variable": "MY", "Dice Score": 0.34909851058270186}, {"scale": 0.6000000000000001, "variable": "MY", "Dice Score": 0.0}, {"scale": 0.7000000000000001, "variable": "MY", "Dice Score": 0.0}, {"scale": 0.8, "variable": "MY", "Dice Score": 0.0}, {"scale": 0.9, "variable": "MY", "Dice Score": 0.0}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    get_zoom_series(img(),trainedModel,start<span class="op">=</span><span class="dv">0</span>,end<span class="op">=</span><span class="dv">1</span>,step<span class="op">=</span><span class="fl">0.1</span>),</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/zoom.gif"</span>,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">500</span>,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"scale"</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/zoom.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to zoom</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="dihedral" class="level3">
+<h3 class="anchored" data-anchor-id="dihedral">Dihedral</h3>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L458" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_dihedral_series" class="level3">
+<h3 class="anchored" data-anchor-id="get_dihedral_series">get_dihedral_series</h3>
+<blockquote class="blockquote">
+<pre><code> get_dihedral_series (image, model, start=0, end=8, step=1, **kwargs)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L447" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="dihedraltransform" class="level3">
+<h3 class="anchored" data-anchor-id="dihedraltransform">dihedralTransform</h3>
+<blockquote class="blockquote">
+<pre><code> dihedralTransform (image, sym_im)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> get_dihedral_series(img(), trainedModel, truth<span class="op">=</span>trueMask())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>plot_series(series, overlay_truth <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-49-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L462" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="eval_dihedral_series" class="level3">
+<h3 class="anchored" data-anchor-id="eval_dihedral_series">eval_dihedral_series</h3>
+<blockquote class="blockquote">
+<pre><code> eval_dihedral_series (image, mask, model, start=0, end=8, step=1,
+                       param_name='k', **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_dihedral_series(img(), trueMask(), trainedModel, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>])</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>plot_eval_series(results, chart_type<span class="op">=</span><span class="st">"point"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-be3883eaa8ce49969e8ffcf963e86d71"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-be3883eaa8ce49969e8ffcf963e86d71") {
+      outputDiv = document.getElementById("altair-viz-be3883eaa8ce49969e8ffcf963e86d71");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-82a5bd4264c055c261dd8f2d33277026"}, "mark": {"type": "point", "size": 80}, "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Dice Score", "type": "quantitative"}, "x": {"field": "k", "type": "quantitative"}, "y": {"field": "Dice Score", "type": "quantitative"}}, "height": 300, "selection": {"selector006": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-82a5bd4264c055c261dd8f2d33277026": [{"k": 0, "variable": "LV", "Dice Score": 0.9185905224787363}, {"k": 1, "variable": "LV", "Dice Score": 0.9274832419256551}, {"k": 2, "variable": "LV", "Dice Score": 0.9361179361179361}, {"k": 3, "variable": "LV", "Dice Score": 0.9288753799392098}, {"k": 4, "variable": "LV", "Dice Score": 0.0}, {"k": 5, "variable": "LV", "Dice Score": 0.0}, {"k": 6, "variable": "LV", "Dice Score": 0.939639079029247}, {"k": 7, "variable": "LV", "Dice Score": 0.9342347879532883}, {"k": 0, "variable": "MY", "Dice Score": 0.8207171314741036}, {"k": 1, "variable": "MY", "Dice Score": 0.8237572627501614}, {"k": 2, "variable": "MY", "Dice Score": 0.8158253751705321}, {"k": 3, "variable": "MY", "Dice Score": 0.8312037659717552}, {"k": 4, "variable": "MY", "Dice Score": 0.0}, {"k": 5, "variable": "MY", "Dice Score": 0.0}, {"k": 6, "variable": "MY", "Dice Score": 0.83785664578984}, {"k": 7, "variable": "MY", "Dice Score": 0.8508655126498003}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>    get_dihedral_series(img(), trainedModel),</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/dihedral.gif"</span>,</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"k"</span>,</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">1000</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/dihedral.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to dihedral</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="resize" class="level3">
+<h3 class="anchored" data-anchor-id="resize">Resize</h3>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L477" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="resizetransform" class="level3">
+<h3 class="anchored" data-anchor-id="resizetransform">resizeTransform</h3>
+<blockquote class="blockquote">
+<pre><code> resizeTransform (image, size)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L485" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_resize_series" class="level3">
+<h3 class="anchored" data-anchor-id="get_resize_series">get_resize_series</h3>
+<blockquote class="blockquote">
+<pre><code> get_resize_series (image, model, start=10, end=200, step=30, **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> get_resize_series(img(), trainedModel, truth<span class="op">=</span>trueMask())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>plot_series(series, sharex<span class="op">=</span><span class="va">True</span>, sharey<span class="op">=</span><span class="va">True</span>, overlay_truth <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-56-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L489" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="eval_resize_series" class="level3">
+<h3 class="anchored" data-anchor-id="eval_resize_series">eval_resize_series</h3>
+<blockquote class="blockquote">
+<pre><code> eval_resize_series (image, mask, model, start=22, end=3000, step=100,
+                     param_name='px', **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> eval_resize_series(img(), trueMask(), trainedModel, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>])</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>plot_eval_series(results)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-167611234f544a72816615e9d174c6b9"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-167611234f544a72816615e9d174c6b9") {
+      outputDiv = document.getElementById("altair-viz-167611234f544a72816615e9d174c6b9");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-d5e7d9fbb4328494cf0ef54a3da75cc1"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Dice Score", "type": "quantitative"}, "x": {"field": "px", "type": "quantitative"}, "y": {"field": "Dice Score", "type": "quantitative"}}, "height": 300, "selection": {"selector007": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-d5e7d9fbb4328494cf0ef54a3da75cc1": [{"px": 22, "variable": "LV", "Dice Score": 0.0}, {"px": 122, "variable": "LV", "Dice Score": 0.8270181219110379}, {"px": 222, "variable": "LV", "Dice Score": 0.8881199538638985}, {"px": 322, "variable": "LV", "Dice Score": 0.9079102715466352}, {"px": 422, "variable": "LV", "Dice Score": 0.9072532699167658}, {"px": 522, "variable": "LV", "Dice Score": 0.911070780399274}, {"px": 622, "variable": "LV", "Dice Score": 0.9052132701421801}, {"px": 722, "variable": "LV", "Dice Score": 0.9046483909415971}, {"px": 822, "variable": "LV", "Dice Score": 0.9090909090909091}, {"px": 922, "variable": "LV", "Dice Score": 0.9074626865671642}, {"px": 1022, "variable": "LV", "Dice Score": 0.9040284360189573}, {"px": 1122, "variable": "LV", "Dice Score": 0.9071300179748353}, {"px": 1222, "variable": "LV", "Dice Score": 0.9100655151876117}, {"px": 1322, "variable": "LV", "Dice Score": 0.9098507462686567}, {"px": 1422, "variable": "LV", "Dice Score": 0.9074733096085409}, {"px": 1522, "variable": "LV", "Dice Score": 0.9088743299583085}, {"px": 1622, "variable": "LV", "Dice Score": 0.9088729016786571}, {"px": 1722, "variable": "LV", "Dice Score": 0.9071300179748353}, {"px": 1822, "variable": "LV", "Dice Score": 0.9033412887828163}, {"px": 1922, "variable": "LV", "Dice Score": 0.9105011933174224}, {"px": 2022, "variable": "LV", "Dice Score": 0.9100655151876117}, {"px": 2122, "variable": "LV", "Dice Score": 0.9099582587954681}, {"px": 2222, "variable": "LV", "Dice Score": 0.9065868263473054}, {"px": 2322, "variable": "LV", "Dice Score": 0.9061566049013747}, {"px": 2422, "variable": "LV", "Dice Score": 0.9033412887828163}, {"px": 2522, "variable": "LV", "Dice Score": 0.9099582587954681}, {"px": 2622, "variable": "LV", "Dice Score": 0.907792980368828}, {"px": 2722, "variable": "LV", "Dice Score": 0.9071428571428571}, {"px": 2822, "variable": "LV", "Dice Score": 0.9072411729503291}, {"px": 2922, "variable": "LV", "Dice Score": 0.907673860911271}, {"px": 22, "variable": "MY", "Dice Score": 0.0}, {"px": 122, "variable": "MY", "Dice Score": 0.7370572207084468}, {"px": 222, "variable": "MY", "Dice Score": 0.8061292471685543}, {"px": 322, "variable": "MY", "Dice Score": 0.8149606299212598}, {"px": 422, "variable": "MY", "Dice Score": 0.8075916230366492}, {"px": 522, "variable": "MY", "Dice Score": 0.8109161793372319}, {"px": 622, "variable": "MY", "Dice Score": 0.8068331143232589}, {"px": 722, "variable": "MY", "Dice Score": 0.808120497707924}, {"px": 822, "variable": "MY", "Dice Score": 0.8170491803278689}, {"px": 922, "variable": "MY", "Dice Score": 0.8067885117493473}, {"px": 1022, "variable": "MY", "Dice Score": 0.8102094240837696}, {"px": 1122, "variable": "MY", "Dice Score": 0.8078175895765473}, {"px": 1222, "variable": "MY", "Dice Score": 0.8081471747700394}, {"px": 1322, "variable": "MY", "Dice Score": 0.8109517601043025}, {"px": 1422, "variable": "MY", "Dice Score": 0.8047337278106509}, {"px": 1522, "variable": "MY", "Dice Score": 0.8099606815203145}, {"px": 1622, "variable": "MY", "Dice Score": 0.8111979166666666}, {"px": 1722, "variable": "MY", "Dice Score": 0.8101761252446184}, {"px": 1822, "variable": "MY", "Dice Score": 0.8049575994781474}, {"px": 1922, "variable": "MY", "Dice Score": 0.8093994778067886}, {"px": 2022, "variable": "MY", "Dice Score": 0.8107049608355091}, {"px": 2122, "variable": "MY", "Dice Score": 0.8083714846304775}, {"px": 2222, "variable": "MY", "Dice Score": 0.8065146579804561}, {"px": 2322, "variable": "MY", "Dice Score": 0.8075668623613829}, {"px": 2422, "variable": "MY", "Dice Score": 0.8020901371652515}, {"px": 2522, "variable": "MY", "Dice Score": 0.8093994778067886}, {"px": 2622, "variable": "MY", "Dice Score": 0.8091803278688524}, {"px": 2722, "variable": "MY", "Dice Score": 0.8075916230366492}, {"px": 2822, "variable": "MY", "Dice Score": 0.8078175895765473}, {"px": 2922, "variable": "MY", "Dice Score": 0.808565866320571}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>gif_series(</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>    get_resize_series(img(), trainedModel),</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"example/kaggle/resize.gif"</span>,</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>    param_name<span class="op">=</span><span class="st">"px"</span>,</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>    duration<span class="op">=</span><span class="dv">500</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="example/kaggle/resize.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">segmentation sensitivity to resizing</figcaption><p></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="more-on-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="more-on-evaluation">More on Evaluation</h2>
+<p>The default score for evaluation is the Dice-Score calculated separately for each component. In addition to Dice, <code>misas</code> provides functions for component-wise functions for precision and recall but you can easily define your own.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>results_dice <span class="op">=</span> eval_rotation_series(img(), trueMask(), trainedModel, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>])</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>plot_dice <span class="op">=</span> plot_eval_series(results_dice, value_vars<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>], value_name<span class="op">=</span><span class="st">"Dice Score"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>results_precision <span class="op">=</span> eval_rotation_series(img(), trueMask(), trainedModel, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>], eval_function<span class="op">=</span>precision_by_component)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>plot_precision <span class="op">=</span> plot_eval_series(results_precision, value_vars<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>], value_name<span class="op">=</span><span class="st">"Precision"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>results_recall <span class="op">=</span> eval_rotation_series(img(), trueMask(), trainedModel, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>], eval_function<span class="op">=</span>recall_by_component)</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>plot_recall <span class="op">=</span> plot_eval_series(results_recall, value_vars<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>], value_name<span class="op">=</span><span class="st">"Recall"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<p>The objects returned by the plot function are <code>altair</code> graphs that can be further customized and combined</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>plot_dice <span class="op">=</span> plot_dice.properties(title<span class="op">=</span><span class="st">"Dice"</span>)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>plot_precision <span class="op">=</span> plot_precision.properties(title<span class="op">=</span><span class="st">"Precision"</span>)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>plot_recall <span class="op">=</span> plot_recall.properties(title<span class="op">=</span><span class="st">"Recall"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>plot_dice <span class="op">&amp;</span> plot_precision <span class="op">&amp;</span> plot_recall</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-92703b6bda8244c79aa13579d05f4d76"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-92703b6bda8244c79aa13579d05f4d76") {
+      outputDiv = document.getElementById("altair-viz-92703b6bda8244c79aa13579d05f4d76");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "vconcat": [{"data": {"name": "data-aa637015f1593bc2bba428ee61d80b55"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Dice Score", "type": "quantitative"}, "x": {"field": "deg", "type": "quantitative"}, "y": {"field": "Dice Score", "type": "quantitative"}}, "height": 300, "selection": {"selector008": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "title": "Dice", "width": 700}, {"data": {"name": "data-d194124ec8df3bb8237e346f843055af"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Precision", "type": "quantitative"}, "x": {"field": "deg", "type": "quantitative"}, "y": {"field": "Precision", "type": "quantitative"}}, "height": 300, "selection": {"selector009": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "title": "Precision", "width": 700}, {"data": {"name": "data-71bc080a1b599ca711de3a4017b57531"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Recall", "type": "quantitative"}, "x": {"field": "deg", "type": "quantitative"}, "y": {"field": "Recall", "type": "quantitative"}}, "height": 300, "selection": {"selector010": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "title": "Recall", "width": 700}], "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-aa637015f1593bc2bba428ee61d80b55": [{"deg": 0, "variable": "bg", "Dice Score": 0.9984677923702314}, {"deg": 5, "variable": "bg", "Dice Score": 0.9984682234518115}, {"deg": 10, "variable": "bg", "Dice Score": 0.9987258557481102}, {"deg": 15, "variable": "bg", "Dice Score": 0.9987417058092551}, {"deg": 20, "variable": "bg", "Dice Score": 0.998733801253693}, {"deg": 25, "variable": "bg", "Dice Score": 0.9984913034981434}, {"deg": 30, "variable": "bg", "Dice Score": 0.9987183294518513}, {"deg": 35, "variable": "bg", "Dice Score": 0.9986240755507607}, {"deg": 40, "variable": "bg", "Dice Score": 0.9987257362195798}, {"deg": 45, "variable": "bg", "Dice Score": 0.9986943026246863}, {"deg": 50, "variable": "bg", "Dice Score": 0.9985071010403396}, {"deg": 55, "variable": "bg", "Dice Score": 0.9985617584066785}, {"deg": 60, "variable": "bg", "Dice Score": 0.9985472835764941}, {"deg": 65, "variable": "bg", "Dice Score": 0.9984065736647244}, {"deg": 70, "variable": "bg", "Dice Score": 0.9986093532711449}, {"deg": 75, "variable": "bg", "Dice Score": 0.9985313188444291}, {"deg": 80, "variable": "bg", "Dice Score": 0.9983665366669532}, {"deg": 85, "variable": "bg", "Dice Score": 0.9984453975173233}, {"deg": 90, "variable": "bg", "Dice Score": 0.9982340714810358}, {"deg": 95, "variable": "bg", "Dice Score": 0.9984060507563446}, {"deg": 100, "variable": "bg", "Dice Score": 0.9984295770796384}, {"deg": 105, "variable": "bg", "Dice Score": 0.9980952380952381}, {"deg": 110, "variable": "bg", "Dice Score": 0.9984064491938508}, {"deg": 115, "variable": "bg", "Dice Score": 0.9974252141753663}, {"deg": 120, "variable": "bg", "Dice Score": 0.9958676078040732}, {"deg": 125, "variable": "bg", "Dice Score": 0.9971997535159084}, {"deg": 130, "variable": "bg", "Dice Score": 0.9951375111837243}, {"deg": 135, "variable": "bg", "Dice Score": 0.9893316016512825}, {"deg": 140, "variable": "bg", "Dice Score": 0.9881802530707409}, {"deg": 145, "variable": "bg", "Dice Score": 0.9881798880524996}, {"deg": 150, "variable": "bg", "Dice Score": 0.9882125902196148}, {"deg": 155, "variable": "bg", "Dice Score": 0.9881344810282935}, {"deg": 160, "variable": "bg", "Dice Score": 0.9891876434627364}, {"deg": 165, "variable": "bg", "Dice Score": 0.9881032339748786}, {"deg": 170, "variable": "bg", "Dice Score": 0.9881501038313377}, {"deg": 175, "variable": "bg", "Dice Score": 0.9881183073799286}, {"deg": 180, "variable": "bg", "Dice Score": 0.9881344810282935}, {"deg": 185, "variable": "bg", "Dice Score": 0.9881188577428146}, {"deg": 190, "variable": "bg", "Dice Score": 0.9880954219099822}, {"deg": 195, "variable": "bg", "Dice Score": 0.9881501038313377}, {"deg": 200, "variable": "bg", "Dice Score": 0.9900047964599031}, {"deg": 205, "variable": "bg", "Dice Score": 0.9971786638401346}, {"deg": 210, "variable": "bg", "Dice Score": 0.9979018960931589}, {"deg": 215, "variable": "bg", "Dice Score": 0.9983204305947239}, {"deg": 220, "variable": "bg", "Dice Score": 0.9982049480995864}, {"deg": 225, "variable": "bg", "Dice Score": 0.9982420638951176}, {"deg": 230, "variable": "bg", "Dice Score": 0.9985549245826857}, {"deg": 235, "variable": "bg", "Dice Score": 0.998687130755525}, {"deg": 240, "variable": "bg", "Dice Score": 0.9986801515092351}, {"deg": 245, "variable": "bg", "Dice Score": 0.9986717712321275}, {"deg": 250, "variable": "bg", "Dice Score": 0.998741941785505}, {"deg": 255, "variable": "bg", "Dice Score": 0.9988283446853715}, {"deg": 260, "variable": "bg", "Dice Score": 0.9986638432867893}, {"deg": 265, "variable": "bg", "Dice Score": 0.9986172847221679}, {"deg": 270, "variable": "bg", "Dice Score": 0.9985003280532384}, {"deg": 275, "variable": "bg", "Dice Score": 0.998523518245096}, {"deg": 280, "variable": "bg", "Dice Score": 0.9987342365571235}, {"deg": 285, "variable": "bg", "Dice Score": 0.998578125}, {"deg": 290, "variable": "bg", "Dice Score": 0.9986167228053174}, {"deg": 295, "variable": "bg", "Dice Score": 0.9985149288729092}, {"deg": 300, "variable": "bg", "Dice Score": 0.9984527865470572}, {"deg": 305, "variable": "bg", "Dice Score": 0.998437060423244}, {"deg": 310, "variable": "bg", "Dice Score": 0.998499671803207}, {"deg": 315, "variable": "bg", "Dice Score": 0.9985304693118219}, {"deg": 320, "variable": "bg", "Dice Score": 0.9984917043740573}, {"deg": 325, "variable": "bg", "Dice Score": 0.9986011362837114}, {"deg": 330, "variable": "bg", "Dice Score": 0.9985853075197549}, {"deg": 335, "variable": "bg", "Dice Score": 0.9986325240480414}, {"deg": 340, "variable": "bg", "Dice Score": 0.9985544277487362}, {"deg": 345, "variable": "bg", "Dice Score": 0.9986097008513629}, {"deg": 350, "variable": "bg", "Dice Score": 0.9984915629127685}, {"deg": 355, "variable": "bg", "Dice Score": 0.9985466024879665}, {"deg": 0, "variable": "LV", "Dice Score": 0.9185905224787363}, {"deg": 5, "variable": "LV", "Dice Score": 0.9197530864197531}, {"deg": 10, "variable": "LV", "Dice Score": 0.9214723926380368}, {"deg": 15, "variable": "LV", "Dice Score": 0.9187538179596824}, {"deg": 20, "variable": "LV", "Dice Score": 0.9141475211608222}, {"deg": 25, "variable": "LV", "Dice Score": 0.9262644728823888}, {"deg": 30, "variable": "LV", "Dice Score": 0.9295071740486588}, {"deg": 35, "variable": "LV", "Dice Score": 0.9202453987730062}, {"deg": 40, "variable": "LV", "Dice Score": 0.9266503667481663}, {"deg": 45, "variable": "LV", "Dice Score": 0.91320293398533}, {"deg": 50, "variable": "LV", "Dice Score": 0.9252625077208153}, {"deg": 55, "variable": "LV", "Dice Score": 0.9199507389162561}, {"deg": 60, "variable": "LV", "Dice Score": 0.9260651629072681}, {"deg": 65, "variable": "LV", "Dice Score": 0.9258312020460358}, {"deg": 70, "variable": "LV", "Dice Score": 0.9188168659534298}, {"deg": 75, "variable": "LV", "Dice Score": 0.9336670838548186}, {"deg": 80, "variable": "LV", "Dice Score": 0.9254467036352434}, {"deg": 85, "variable": "LV", "Dice Score": 0.9444791016843419}, {"deg": 90, "variable": "LV", "Dice Score": 0.9361179361179361}, {"deg": 95, "variable": "LV", "Dice Score": 0.9251369446135118}, {"deg": 100, "variable": "LV", "Dice Score": 0.9183922046285018}, {"deg": 105, "variable": "LV", "Dice Score": 0.920099875156055}, {"deg": 110, "variable": "LV", "Dice Score": 0.9295261239368166}, {"deg": 115, "variable": "LV", "Dice Score": 0.9265822784810127}, {"deg": 120, "variable": "LV", "Dice Score": 0.8795595320027529}, {"deg": 125, "variable": "LV", "Dice Score": 0.9186785260482846}, {"deg": 130, "variable": "LV", "Dice Score": 0.8259052924791086}, {"deg": 135, "variable": "LV", "Dice Score": 0.0611764705882353}, {"deg": 140, "variable": "LV", "Dice Score": 0.0}, {"deg": 145, "variable": "LV", "Dice Score": 0.0}, {"deg": 150, "variable": "LV", "Dice Score": 0.0}, {"deg": 155, "variable": "LV", "Dice Score": 0.0}, {"deg": 160, "variable": "LV", "Dice Score": 0.057007125890736345}, {"deg": 165, "variable": "LV", "Dice Score": 0.0}, {"deg": 170, "variable": "LV", "Dice Score": 0.0}, {"deg": 175, "variable": "LV", "Dice Score": 0.0}, {"deg": 180, "variable": "LV", "Dice Score": 0.0}, {"deg": 185, "variable": "LV", "Dice Score": 0.0}, {"deg": 190, "variable": "LV", "Dice Score": 0.0}, {"deg": 195, "variable": "LV", "Dice Score": 0.0}, {"deg": 200, "variable": "LV", "Dice Score": 0.143658810325477}, {"deg": 205, "variable": "LV", "Dice Score": 0.8752424046541694}, {"deg": 210, "variable": "LV", "Dice Score": 0.9050632911392406}, {"deg": 215, "variable": "LV", "Dice Score": 0.8993865030674847}, {"deg": 220, "variable": "LV", "Dice Score": 0.9123252858958069}, {"deg": 225, "variable": "LV", "Dice Score": 0.8926829268292683}, {"deg": 230, "variable": "LV", "Dice Score": 0.9159925326695706}, {"deg": 235, "variable": "LV", "Dice Score": 0.9141813755325624}, {"deg": 240, "variable": "LV", "Dice Score": 0.9164619164619164}, {"deg": 245, "variable": "LV", "Dice Score": 0.9172286940527283}, {"deg": 250, "variable": "LV", "Dice Score": 0.9172205438066465}, {"deg": 255, "variable": "LV", "Dice Score": 0.9264978381717109}, {"deg": 260, "variable": "LV", "Dice Score": 0.9185548071034905}, {"deg": 265, "variable": "LV", "Dice Score": 0.9362229102167182}, {"deg": 270, "variable": "LV", "Dice Score": 0.939639079029247}, {"deg": 275, "variable": "LV", "Dice Score": 0.926224426534408}, {"deg": 280, "variable": "LV", "Dice Score": 0.9250614250614251}, {"deg": 285, "variable": "LV", "Dice Score": 0.9244823386114495}, {"deg": 290, "variable": "LV", "Dice Score": 0.926799758015729}, {"deg": 295, "variable": "LV", "Dice Score": 0.9211165048543689}, {"deg": 300, "variable": "LV", "Dice Score": 0.9234567901234568}, {"deg": 305, "variable": "LV", "Dice Score": 0.9217498459642637}, {"deg": 310, "variable": "LV", "Dice Score": 0.9098712446351931}, {"deg": 315, "variable": "LV", "Dice Score": 0.9153567110036276}, {"deg": 320, "variable": "LV", "Dice Score": 0.9271028037383178}, {"deg": 325, "variable": "LV", "Dice Score": 0.9283065512978986}, {"deg": 330, "variable": "LV", "Dice Score": 0.929368029739777}, {"deg": 335, "variable": "LV", "Dice Score": 0.924812030075188}, {"deg": 340, "variable": "LV", "Dice Score": 0.9310130515848353}, {"deg": 345, "variable": "LV", "Dice Score": 0.926860025220681}, {"deg": 350, "variable": "LV", "Dice Score": 0.922397476340694}, {"deg": 355, "variable": "LV", "Dice Score": 0.9330024813895782}, {"deg": 0, "variable": "MY", "Dice Score": 0.8207171314741036}, {"deg": 5, "variable": "MY", "Dice Score": 0.81951871657754}, {"deg": 10, "variable": "MY", "Dice Score": 0.8341044282881692}, {"deg": 15, "variable": "MY", "Dice Score": 0.8261455525606469}, {"deg": 20, "variable": "MY", "Dice Score": 0.8252032520325203}, {"deg": 25, "variable": "MY", "Dice Score": 0.8193891102257637}, {"deg": 30, "variable": "MY", "Dice Score": 0.8391793514228988}, {"deg": 35, "variable": "MY", "Dice Score": 0.8167539267015707}, {"deg": 40, "variable": "MY", "Dice Score": 0.8360763660302831}, {"deg": 45, "variable": "MY", "Dice Score": 0.8169381107491857}, {"deg": 50, "variable": "MY", "Dice Score": 0.8150594451783355}, {"deg": 55, "variable": "MY", "Dice Score": 0.8243064729194187}, {"deg": 60, "variable": "MY", "Dice Score": 0.8263888888888888}, {"deg": 65, "variable": "MY", "Dice Score": 0.8286099865047234}, {"deg": 70, "variable": "MY", "Dice Score": 0.8255892255892255}, {"deg": 75, "variable": "MY", "Dice Score": 0.829700272479564}, {"deg": 80, "variable": "MY", "Dice Score": 0.8133333333333334}, {"deg": 85, "variable": "MY", "Dice Score": 0.8372093023255814}, {"deg": 90, "variable": "MY", "Dice Score": 0.8158253751705321}, {"deg": 95, "variable": "MY", "Dice Score": 0.8221453287197232}, {"deg": 100, "variable": "MY", "Dice Score": 0.817234190410007}, {"deg": 105, "variable": "MY", "Dice Score": 0.7839416058394161}, {"deg": 110, "variable": "MY", "Dice Score": 0.8127659574468085}, {"deg": 115, "variable": "MY", "Dice Score": 0.7164404223227753}, {"deg": 120, "variable": "MY", "Dice Score": 0.5668449197860963}, {"deg": 125, "variable": "MY", "Dice Score": 0.6857142857142857}, {"deg": 130, "variable": "MY", "Dice Score": 0.46866485013623976}, {"deg": 135, "variable": "MY", "Dice Score": 0.24193548387096775}, {"deg": 140, "variable": "MY", "Dice Score": 0.01634877384196185}, {"deg": 145, "variable": "MY", "Dice Score": 0.021917808219178082}, {"deg": 150, "variable": "MY", "Dice Score": 0.0}, {"deg": 155, "variable": "MY", "Dice Score": 0.0}, {"deg": 160, "variable": "MY", "Dice Score": 0.2615933412604043}, {"deg": 165, "variable": "MY", "Dice Score": 0.0}, {"deg": 170, "variable": "MY", "Dice Score": 0.0}, {"deg": 175, "variable": "MY", "Dice Score": 0.008174386920980926}, {"deg": 180, "variable": "MY", "Dice Score": 0.0}, {"deg": 185, "variable": "MY", "Dice Score": 0.0}, {"deg": 190, "variable": "MY", "Dice Score": 0.0}, {"deg": 195, "variable": "MY", "Dice Score": 0.0}, {"deg": 200, "variable": "MY", "Dice Score": 0.383025027203482}, {"deg": 205, "variable": "MY", "Dice Score": 0.6655710764174199}, {"deg": 210, "variable": "MY", "Dice Score": 0.7228727556596409}, {"deg": 215, "variable": "MY", "Dice Score": 0.7620376831821354}, {"deg": 220, "variable": "MY", "Dice Score": 0.7719298245614035}, {"deg": 225, "variable": "MY", "Dice Score": 0.7564191533657183}, {"deg": 230, "variable": "MY", "Dice Score": 0.8074792243767313}, {"deg": 235, "variable": "MY", "Dice Score": 0.8204778156996587}, {"deg": 240, "variable": "MY", "Dice Score": 0.8177269478198713}, {"deg": 245, "variable": "MY", "Dice Score": 0.8270158511371468}, {"deg": 250, "variable": "MY", "Dice Score": 0.8210818307905686}, {"deg": 255, "variable": "MY", "Dice Score": 0.8397480755773268}, {"deg": 260, "variable": "MY", "Dice Score": 0.8301369863013699}, {"deg": 265, "variable": "MY", "Dice Score": 0.8411602209944752}, {"deg": 270, "variable": "MY", "Dice Score": 0.83785664578984}, {"deg": 275, "variable": "MY", "Dice Score": 0.8292011019283747}, {"deg": 280, "variable": "MY", "Dice Score": 0.850480109739369}, {"deg": 285, "variable": "MY", "Dice Score": 0.8377622377622378}, {"deg": 290, "variable": "MY", "Dice Score": 0.826265389876881}, {"deg": 295, "variable": "MY", "Dice Score": 0.8207547169811321}, {"deg": 300, "variable": "MY", "Dice Score": 0.8189189189189189}, {"deg": 305, "variable": "MY", "Dice Score": 0.8202020202020202}, {"deg": 310, "variable": "MY", "Dice Score": 0.8141592920353983}, {"deg": 315, "variable": "MY", "Dice Score": 0.8223418573351279}, {"deg": 320, "variable": "MY", "Dice Score": 0.8395225464190982}, {"deg": 325, "variable": "MY", "Dice Score": 0.8466175485599464}, {"deg": 330, "variable": "MY", "Dice Score": 0.8422442244224423}, {"deg": 335, "variable": "MY", "Dice Score": 0.8423153692614771}, {"deg": 340, "variable": "MY", "Dice Score": 0.8411843876177658}, {"deg": 345, "variable": "MY", "Dice Score": 0.842032967032967}, {"deg": 350, "variable": "MY", "Dice Score": 0.8220779220779221}, {"deg": 355, "variable": "MY", "Dice Score": 0.8382749326145552}], "data-d194124ec8df3bb8237e346f843055af": [{"deg": 0, "variable": "bg", "Precision": 0.9990769856541669}, {"deg": 5, "variable": "bg", "Precision": 0.9987648337216029}, {"deg": 10, "variable": "bg", "Precision": 0.9992023023743235}, {"deg": 15, "variable": "bg", "Precision": 0.9991399530883502}, {"deg": 20, "variable": "bg", "Precision": 0.9991398858393933}, {"deg": 25, "variable": "bg", "Precision": 0.9988582868046106}, {"deg": 30, "variable": "bg", "Precision": 0.9991243569496349}, {"deg": 35, "variable": "bg", "Precision": 0.9992490260806984}, {"deg": 40, "variable": "bg", "Precision": 0.9993272841051314}, {"deg": 45, "variable": "bg", "Precision": 0.9993584527758653}, {"deg": 50, "variable": "bg", "Precision": 0.9990302802802803}, {"deg": 55, "variable": "bg", "Precision": 0.9990615468835536}, {"deg": 60, "variable": "bg", "Precision": 0.9983757359946275}, {"deg": 65, "variable": "bg", "Precision": 0.9982350368611771}, {"deg": 70, "variable": "bg", "Precision": 0.9986561660103757}, {"deg": 75, "variable": "bg", "Precision": 0.998578125}, {"deg": 80, "variable": "bg", "Precision": 0.9988427373952208}, {"deg": 85, "variable": "bg", "Precision": 0.9984219982813842}, {"deg": 90, "variable": "bg", "Precision": 0.998436913842691}, {"deg": 95, "variable": "bg", "Precision": 0.9985152770180511}, {"deg": 100, "variable": "bg", "Precision": 0.9983281772444611}, {"deg": 105, "variable": "bg", "Precision": 0.9972700185638738}, {"deg": 110, "variable": "bg", "Precision": 0.9983752538665833}, {"deg": 115, "variable": "bg", "Precision": 0.9959642862707824}, {"deg": 120, "variable": "bg", "Precision": 0.9921383160179873}, {"deg": 125, "variable": "bg", "Precision": 0.9955767373765692}, {"deg": 130, "variable": "bg", "Precision": 0.9908283886160473}, {"deg": 135, "variable": "bg", "Precision": 0.9789333578116395}, {"deg": 140, "variable": "bg", "Precision": 0.9766366549671907}, {"deg": 145, "variable": "bg", "Precision": 0.9766359418874374}, {"deg": 150, "variable": "bg", "Precision": 0.9766998291015625}, {"deg": 155, "variable": "bg", "Precision": 0.9765472412109375}, {"deg": 160, "variable": "bg", "Precision": 0.9786963968923962}, {"deg": 165, "variable": "bg", "Precision": 0.9764862060546875}, {"deg": 170, "variable": "bg", "Precision": 0.9765777587890625}, {"deg": 175, "variable": "bg", "Precision": 0.9765156486045199}, {"deg": 180, "variable": "bg", "Precision": 0.9765472412109375}, {"deg": 185, "variable": "bg", "Precision": 0.9765167236328125}, {"deg": 190, "variable": "bg", "Precision": 0.976470947265625}, {"deg": 195, "variable": "bg", "Precision": 0.9765777587890625}, {"deg": 200, "variable": "bg", "Precision": 0.9803876503485789}, {"deg": 205, "variable": "bg", "Precision": 0.9945741736886291}, {"deg": 210, "variable": "bg", "Precision": 0.9963399059277949}, {"deg": 215, "variable": "bg", "Precision": 0.9982034618509029}, {"deg": 220, "variable": "bg", "Precision": 0.9971465548157735}, {"deg": 225, "variable": "bg", "Precision": 0.9981562788081436}, {"deg": 230, "variable": "bg", "Precision": 0.9984379393295636}, {"deg": 235, "variable": "bg", "Precision": 0.9989525521769718}, {"deg": 240, "variable": "bg", "Precision": 0.9984384271838596}, {"deg": 245, "variable": "bg", "Precision": 0.9987966305655837}, {"deg": 250, "variable": "bg", "Precision": 0.9989526995341858}, {"deg": 255, "variable": "bg", "Precision": 0.9987347308569465}, {"deg": 260, "variable": "bg", "Precision": 0.9989214199740516}, {"deg": 265, "variable": "bg", "Precision": 0.9985782805005703}, {"deg": 270, "variable": "bg", "Precision": 0.9983131852684847}, {"deg": 275, "variable": "bg", "Precision": 0.9984533183352081}, {"deg": 280, "variable": "bg", "Precision": 0.9986718127412223}, {"deg": 285, "variable": "bg", "Precision": 0.9985313188444291}, {"deg": 290, "variable": "bg", "Precision": 0.9990149015683393}, {"deg": 295, "variable": "bg", "Precision": 0.9988115901236885}, {"deg": 300, "variable": "bg", "Precision": 0.9987805831314}, {"deg": 305, "variable": "bg", "Precision": 0.9986711898322572}, {"deg": 310, "variable": "bg", "Precision": 0.9985308827206801}, {"deg": 315, "variable": "bg", "Precision": 0.9989365029715358}, {"deg": 320, "variable": "bg", "Precision": 0.9987961225766104}, {"deg": 325, "variable": "bg", "Precision": 0.9988587330373335}, {"deg": 330, "variable": "bg", "Precision": 0.9991710201144931}, {"deg": 335, "variable": "bg", "Precision": 0.9988276487322975}, {"deg": 340, "variable": "bg", "Precision": 0.9987495310741528}, {"deg": 345, "variable": "bg", "Precision": 0.9982978058874054}, {"deg": 350, "variable": "bg", "Precision": 0.9988897228998561}, {"deg": 355, "variable": "bg", "Precision": 0.9986402425682223}, {"deg": 0, "variable": "LV", "Precision": 0.9}, {"deg": 5, "variable": "LV", "Precision": 0.910757946210269}, {"deg": 10, "variable": "LV", "Precision": 0.9103030303030303}, {"deg": 15, "variable": "LV", "Precision": 0.9148418491484185}, {"deg": 20, "variable": "LV", "Precision": 0.9053892215568863}, {"deg": 25, "variable": "LV", "Precision": 0.914560770156438}, {"deg": 30, "variable": "LV", "Precision": 0.9277708592777086}, {"deg": 35, "variable": "LV", "Precision": 0.9168704156479217}, {"deg": 40, "variable": "LV", "Precision": 0.9165659008464329}, {"deg": 45, "variable": "LV", "Precision": 0.9087591240875912}, {"deg": 50, "variable": "LV", "Precision": 0.9034981905910736}, {"deg": 55, "variable": "LV", "Precision": 0.9076549210206561}, {"deg": 60, "variable": "LV", "Precision": 0.934260429835651}, {"deg": 65, "variable": "LV", "Precision": 0.9513797634691196}, {"deg": 70, "variable": "LV", "Precision": 0.9346991037131882}, {"deg": 75, "variable": "LV", "Precision": 0.9407313997477932}, {"deg": 80, "variable": "LV", "Precision": 0.9081015719467956}, {"deg": 85, "variable": "LV", "Precision": 0.9334155363748459}, {"deg": 90, "variable": "LV", "Precision": 0.9169675090252708}, {"deg": 95, "variable": "LV", "Precision": 0.9069212410501193}, {"deg": 100, "variable": "LV", "Precision": 0.9195121951219513}, {"deg": 105, "variable": "LV", "Precision": 0.9534282018111255}, {"deg": 110, "variable": "LV", "Precision": 0.9216867469879518}, {"deg": 115, "variable": "LV", "Precision": 0.9581151832460733}, {"deg": 120, "variable": "LV", "Precision": 0.9861111111111112}, {"deg": 125, "variable": "LV", "Precision": 0.9588859416445623}, {"deg": 130, "variable": "LV", "Precision": 0.9689542483660131}, {"deg": 135, "variable": "LV", "Precision": 1.0}, {"deg": 140, "variable": "LV", "Precision": 0.0}, {"deg": 145, "variable": "LV", "Precision": 0.0}, {"deg": 150, "variable": "LV", "Precision": 0.0}, {"deg": 155, "variable": "LV", "Precision": 0.0}, {"deg": 160, "variable": "LV", "Precision": 1.0}, {"deg": 165, "variable": "LV", "Precision": 0.0}, {"deg": 170, "variable": "LV", "Precision": 0.0}, {"deg": 175, "variable": "LV", "Precision": 0.0}, {"deg": 180, "variable": "LV", "Precision": 0.0}, {"deg": 185, "variable": "LV", "Precision": 0.0}, {"deg": 190, "variable": "LV", "Precision": 0.0}, {"deg": 195, "variable": "LV", "Precision": 0.0}, {"deg": 200, "variable": "LV", "Precision": 0.8888888888888888}, {"deg": 205, "variable": "LV", "Precision": 0.9185888738127544}, {"deg": 210, "variable": "LV", "Precision": 0.9166666666666666}, {"deg": 215, "variable": "LV", "Precision": 0.8960880195599022}, {"deg": 220, "variable": "LV", "Precision": 0.938562091503268}, {"deg": 225, "variable": "LV", "Precision": 0.8872727272727273}, {"deg": 230, "variable": "LV", "Precision": 0.9008567931456548}, {"deg": 235, "variable": "LV", "Precision": 0.8919239904988123}, {"deg": 240, "variable": "LV", "Precision": 0.9064398541919806}, {"deg": 245, "variable": "LV", "Precision": 0.9033816425120773}, {"deg": 250, "variable": "LV", "Precision": 0.8961038961038961}, {"deg": 255, "variable": "LV", "Precision": 0.9213759213759214}, {"deg": 260, "variable": "LV", "Precision": 0.8960573476702509}, {"deg": 265, "variable": "LV", "Precision": 0.9185905224787363}, {"deg": 270, "variable": "LV", "Precision": 0.9320987654320988}, {"deg": 275, "variable": "LV", "Precision": 0.9245049504950495}, {"deg": 280, "variable": "LV", "Precision": 0.93424317617866}, {"deg": 285, "variable": "LV", "Precision": 0.933579335793358}, {"deg": 290, "variable": "LV", "Precision": 0.916267942583732}, {"deg": 295, "variable": "LV", "Precision": 0.9122596153846154}, {"deg": 300, "variable": "LV", "Precision": 0.9177914110429448}, {"deg": 305, "variable": "LV", "Precision": 0.9315068493150684}, {"deg": 310, "variable": "LV", "Precision": 0.919454770755886}, {"deg": 315, "variable": "LV", "Precision": 0.9142512077294686}, {"deg": 320, "variable": "LV", "Precision": 0.9346733668341709}, {"deg": 325, "variable": "LV", "Precision": 0.9375780274656679}, {"deg": 330, "variable": "LV", "Precision": 0.9363295880149812}, {"deg": 335, "variable": "LV", "Precision": 0.9437340153452686}, {"deg": 340, "variable": "LV", "Precision": 0.9469026548672567}, {"deg": 345, "variable": "LV", "Precision": 0.9645669291338582}, {"deg": 350, "variable": "LV", "Precision": 0.938382541720154}, {"deg": 355, "variable": "LV", "Precision": 0.9388264669163545}, {"deg": 0, "variable": "MY", "Precision": 0.7974193548387096}, {"deg": 5, "variable": "MY", "Precision": 0.8076416337285902}, {"deg": 10, "variable": "MY", "Precision": 0.8120978120978121}, {"deg": 15, "variable": "MY", "Precision": 0.8023560209424084}, {"deg": 20, "variable": "MY", "Precision": 0.8055555555555556}, {"deg": 25, "variable": "MY", "Precision": 0.8054830287206266}, {"deg": 30, "variable": "MY", "Precision": 0.8128205128205128}, {"deg": 35, "variable": "MY", "Precision": 0.7790262172284644}, {"deg": 40, "variable": "MY", "Precision": 0.8048162230671736}, {"deg": 45, "variable": "MY", "Precision": 0.7779156327543424}, {"deg": 50, "variable": "MY", "Precision": 0.8002594033722439}, {"deg": 55, "variable": "MY", "Precision": 0.8020565552699229}, {"deg": 60, "variable": "MY", "Precision": 0.8310055865921788}, {"deg": 65, "variable": "MY", "Precision": 0.8175765645805593}, {"deg": 70, "variable": "MY", "Precision": 0.8076416337285902}, {"deg": 75, "variable": "MY", "Precision": 0.819650067294751}, {"deg": 80, "variable": "MY", "Precision": 0.7973856209150327}, {"deg": 85, "variable": "MY", "Precision": 0.85}, {"deg": 90, "variable": "MY", "Precision": 0.8203017832647462}, {"deg": 95, "variable": "MY", "Precision": 0.8330995792426368}, {"deg": 100, "variable": "MY", "Precision": 0.8235294117647058}, {"deg": 105, "variable": "MY", "Precision": 0.8136363636363636}, {"deg": 110, "variable": "MY", "Precision": 0.8232758620689655}, {"deg": 115, "variable": "MY", "Precision": 0.7983193277310925}, {"deg": 120, "variable": "MY", "Precision": 0.7989949748743719}, {"deg": 125, "variable": "MY", "Precision": 0.7708333333333334}, {"deg": 130, "variable": "MY", "Precision": 0.6843501326259946}, {"deg": 135, "variable": "MY", "Precision": 0.7191780821917808}, {"deg": 140, "variable": "MY", "Precision": 1.0}, {"deg": 145, "variable": "MY", "Precision": 1.0}, {"deg": 150, "variable": "MY", "Precision": 0.0}, {"deg": 155, "variable": "MY", "Precision": 0.0}, {"deg": 160, "variable": "MY", "Precision": 0.8870967741935484}, {"deg": 165, "variable": "MY", "Precision": 0.0}, {"deg": 170, "variable": "MY", "Precision": 0.0}, {"deg": 175, "variable": "MY", "Precision": 1.0}, {"deg": 180, "variable": "MY", "Precision": 0.0}, {"deg": 185, "variable": "MY", "Precision": 0.0}, {"deg": 190, "variable": "MY", "Precision": 0.0}, {"deg": 195, "variable": "MY", "Precision": 0.0}, {"deg": 200, "variable": "MY", "Precision": 0.8844221105527639}, {"deg": 205, "variable": "MY", "Precision": 0.8490566037735849}, {"deg": 210, "variable": "MY", "Precision": 0.8418181818181818}, {"deg": 215, "variable": "MY", "Precision": 0.773371104815864}, {"deg": 220, "variable": "MY", "Precision": 0.8275862068965517}, {"deg": 225, "variable": "MY", "Precision": 0.7676056338028169}, {"deg": 230, "variable": "MY", "Precision": 0.8316690442225392}, {"deg": 235, "variable": "MY", "Precision": 0.8244170096021948}, {"deg": 240, "variable": "MY", "Precision": 0.8474074074074074}, {"deg": 245, "variable": "MY", "Precision": 0.8321775312066574}, {"deg": 250, "variable": "MY", "Precision": 0.827972027972028}, {"deg": 255, "variable": "MY", "Precision": 0.8522727272727273}, {"deg": 260, "variable": "MY", "Precision": 0.8347107438016529}, {"deg": 265, "variable": "MY", "Precision": 0.8626062322946175}, {"deg": 270, "variable": "MY", "Precision": 0.86}, {"deg": 275, "variable": "MY", "Precision": 0.8361111111111111}, {"deg": 280, "variable": "MY", "Precision": 0.8458390177353342}, {"deg": 285, "variable": "MY", "Precision": 0.8319444444444445}, {"deg": 290, "variable": "MY", "Precision": 0.8085676037483266}, {"deg": 295, "variable": "MY", "Precision": 0.8087649402390438}, {"deg": 300, "variable": "MY", "Precision": 0.8015873015873016}, {"deg": 305, "variable": "MY", "Precision": 0.7950391644908616}, {"deg": 310, "variable": "MY", "Precision": 0.8026845637583893}, {"deg": 315, "variable": "MY", "Precision": 0.7955729166666666}, {"deg": 320, "variable": "MY", "Precision": 0.8115384615384615}, {"deg": 325, "variable": "MY", "Precision": 0.8197146562905318}, {"deg": 330, "variable": "MY", "Precision": 0.7965043695380774}, {"deg": 335, "variable": "MY", "Precision": 0.8115384615384615}, {"deg": 340, "variable": "MY", "Precision": 0.812743823146944}, {"deg": 345, "variable": "MY", "Precision": 0.8294993234100135}, {"deg": 350, "variable": "MY", "Precision": 0.7824474660074165}, {"deg": 355, "variable": "MY", "Precision": 0.8260292164674635}], "data-71bc080a1b599ca711de3a4017b57531": [{"deg": 0, "variable": "bg", "Recall": 0.9978593415522118}, {"deg": 5, "variable": "bg", "Recall": 0.9981717893026235}, {"deg": 10, "variable": "bg", "Recall": 0.998249863270568}, {"deg": 15, "variable": "bg", "Recall": 0.9983437758785019}, {"deg": 20, "variable": "bg", "Recall": 0.9983280466271857}, {"deg": 25, "variable": "bg", "Recall": 0.9981245897540086}, {"deg": 30, "variable": "bg", "Recall": 0.9983126318256387}, {"deg": 35, "variable": "bg", "Recall": 0.9979999062456053}, {"deg": 40, "variable": "bg", "Recall": 0.9981249121052549}, {"deg": 45, "variable": "bg", "Recall": 0.9980310346444142}, {"deg": 50, "variable": "bg", "Recall": 0.9979844694779932}, {"deg": 55, "variable": "bg", "Recall": 0.9980624697260895}, {"deg": 60, "variable": "bg", "Recall": 0.9987188901213929}, {"deg": 65, "variable": "bg", "Recall": 0.9985781694322052}, {"deg": 70, "variable": "bg", "Recall": 0.9985625449204713}, {"deg": 75, "variable": "bg", "Recall": 0.9984845170765241}, {"deg": 80, "variable": "bg", "Recall": 0.9978907897820483}, {"deg": 85, "variable": "bg", "Recall": 0.9984687978500671}, {"deg": 90, "variable": "bg", "Recall": 0.9980313115215149}, {"deg": 95, "variable": "bg", "Recall": 0.998296848388256}, {"deg": 100, "variable": "bg", "Recall": 0.9985309975151979}, {"deg": 105, "variable": "bg", "Recall": 0.9989218244605216}, {"deg": 110, "variable": "bg", "Recall": 0.9984376464706434}, {"deg": 115, "variable": "bg", "Recall": 0.9988904342933942}, {"deg": 120, "variable": "bg", "Recall": 0.9996250410111394}, {"deg": 125, "variable": "bg", "Recall": 0.9988280700657843}, {"deg": 130, "variable": "bg", "Recall": 0.9994842783021817}, {"deg": 135, "variable": "bg", "Recall": 0.9999531176746367}, {"deg": 140, "variable": "bg", "Recall": 1.0}, {"deg": 145, "variable": "bg", "Recall": 1.0}, {"deg": 150, "variable": "bg", "Recall": 1.0}, {"deg": 155, "variable": "bg", "Recall": 1.0}, {"deg": 160, "variable": "bg", "Recall": 0.9999062514648208}, {"deg": 165, "variable": "bg", "Recall": 1.0}, {"deg": 170, "variable": "bg", "Recall": 1.0}, {"deg": 175, "variable": "bg", "Recall": 1.0}, {"deg": 180, "variable": "bg", "Recall": 1.0}, {"deg": 185, "variable": "bg", "Recall": 1.0}, {"deg": 190, "variable": "bg", "Recall": 1.0}, {"deg": 195, "variable": "bg", "Recall": 1.0}, {"deg": 200, "variable": "bg", "Recall": 0.9998124912105255}, {"deg": 205, "variable": "bg", "Recall": 0.9997968305566842}, {"deg": 210, "variable": "bg", "Recall": 0.999468791500664}, {"deg": 215, "variable": "bg", "Recall": 0.9984374267543791}, {"deg": 220, "variable": "bg", "Recall": 0.9992655905745582}, {"deg": 225, "variable": "bg", "Recall": 0.9983278637287076}, {"deg": 230, "variable": "bg", "Recall": 0.9986719372529412}, {"deg": 235, "variable": "bg", "Recall": 0.9984218503414116}, {"deg": 240, "variable": "bg", "Recall": 0.9989219929070258}, {"deg": 245, "variable": "bg", "Recall": 0.9985469431120416}, {"deg": 250, "variable": "bg", "Recall": 0.9985312729488601}, {"deg": 255, "variable": "bg", "Recall": 0.998921976064744}, {"deg": 260, "variable": "bg", "Recall": 0.9984063994000563}, {"deg": 265, "variable": "bg", "Recall": 0.9986562919908752}, {"deg": 270, "variable": "bg", "Recall": 0.9986875410143433}, {"deg": 275, "variable": "bg", "Recall": 0.9985937280270004}, {"deg": 280, "variable": "bg", "Recall": 0.998796668177343}, {"deg": 285, "variable": "bg", "Recall": 0.9986249355438536}, {"deg": 290, "variable": "bg", "Recall": 0.9982188613211674}, {"deg": 295, "variable": "bg", "Recall": 0.9982184437950272}, {"deg": 300, "variable": "bg", "Recall": 0.998125205055697}, {"deg": 305, "variable": "bg", "Recall": 0.998203040767536}, {"deg": 310, "variable": "bg", "Recall": 0.9984684628367819}, {"deg": 315, "variable": "bg", "Recall": 0.9981247655956995}, {"deg": 320, "variable": "bg", "Recall": 0.998187471679245}, {"deg": 325, "variable": "bg", "Recall": 0.9983436723596418}, {"deg": 330, "variable": "bg", "Recall": 0.9980002812104548}, {"deg": 335, "variable": "bg", "Recall": 0.9984374755855561}, {"deg": 340, "variable": "bg", "Recall": 0.9983594006343651}, {"deg": 345, "variable": "bg", "Recall": 0.9989217907649035}, {"deg": 350, "variable": "bg", "Recall": 0.9980937202143784}, {"deg": 355, "variable": "bg", "Recall": 0.9984529799668719}, {"deg": 0, "variable": "LV", "Recall": 0.9379652605459057}, {"deg": 5, "variable": "LV", "Recall": 0.928927680798005}, {"deg": 10, "variable": "LV", "Recall": 0.9329192546583851}, {"deg": 15, "variable": "LV", "Recall": 0.9226993865030675}, {"deg": 20, "variable": "LV", "Recall": 0.9230769230769231}, {"deg": 25, "variable": "LV", "Recall": 0.9382716049382716}, {"deg": 30, "variable": "LV", "Recall": 0.93125}, {"deg": 35, "variable": "LV", "Recall": 0.9236453201970444}, {"deg": 40, "variable": "LV", "Recall": 0.9369592088998764}, {"deg": 45, "variable": "LV", "Recall": 0.9176904176904177}, {"deg": 50, "variable": "LV", "Recall": 0.9481012658227848}, {"deg": 55, "variable": "LV", "Recall": 0.9325842696629213}, {"deg": 60, "variable": "LV", "Recall": 0.9180124223602485}, {"deg": 65, "variable": "LV", "Recall": 0.9016189290161893}, {"deg": 70, "variable": "LV", "Recall": 0.9034653465346535}, {"deg": 75, "variable": "LV", "Recall": 0.9267080745341615}, {"deg": 80, "variable": "LV", "Recall": 0.9434673366834171}, {"deg": 85, "variable": "LV", "Recall": 0.9558080808080808}, {"deg": 90, "variable": "LV", "Recall": 0.9560853199498118}, {"deg": 95, "variable": "LV", "Recall": 0.9440993788819876}, {"deg": 100, "variable": "LV", "Recall": 0.9172749391727494}, {"deg": 105, "variable": "LV", "Recall": 0.8890229191797346}, {"deg": 110, "variable": "LV", "Recall": 0.9375}, {"deg": 115, "variable": "LV", "Recall": 0.8970588235294118}, {"deg": 120, "variable": "LV", "Recall": 0.7937888198757764}, {"deg": 125, "variable": "LV", "Recall": 0.8817073170731707}, {"deg": 130, "variable": "LV", "Recall": 0.7196601941747572}, {"deg": 135, "variable": "LV", "Recall": 0.03155339805825243}, {"deg": 140, "variable": "LV", "Recall": 0.0}, {"deg": 145, "variable": "LV", "Recall": 0.0}, {"deg": 150, "variable": "LV", "Recall": 0.0}, {"deg": 155, "variable": "LV", "Recall": 0.0}, {"deg": 160, "variable": "LV", "Recall": 0.029339853300733496}, {"deg": 165, "variable": "LV", "Recall": 0.0}, {"deg": 170, "variable": "LV", "Recall": 0.0}, {"deg": 175, "variable": "LV", "Recall": 0.0}, {"deg": 180, "variable": "LV", "Recall": 0.0}, {"deg": 185, "variable": "LV", "Recall": 0.0}, {"deg": 190, "variable": "LV", "Recall": 0.0}, {"deg": 195, "variable": "LV", "Recall": 0.0}, {"deg": 200, "variable": "LV", "Recall": 0.07814407814407814}, {"deg": 205, "variable": "LV", "Recall": 0.8358024691358025}, {"deg": 210, "variable": "LV", "Recall": 0.89375}, {"deg": 215, "variable": "LV", "Recall": 0.9027093596059114}, {"deg": 220, "variable": "LV", "Recall": 0.8875154511742892}, {"deg": 225, "variable": "LV", "Recall": 0.898159509202454}, {"deg": 230, "variable": "LV", "Recall": 0.9316455696202531}, {"deg": 235, "variable": "LV", "Recall": 0.9375780274656679}, {"deg": 240, "variable": "LV", "Recall": 0.9267080745341615}, {"deg": 245, "variable": "LV", "Recall": 0.9315068493150684}, {"deg": 250, "variable": "LV", "Recall": 0.9393564356435643}, {"deg": 255, "variable": "LV", "Recall": 0.9316770186335404}, {"deg": 260, "variable": "LV", "Recall": 0.9422110552763819}, {"deg": 265, "variable": "LV", "Recall": 0.9545454545454546}, {"deg": 270, "variable": "LV", "Recall": 0.9473023839397742}, {"deg": 275, "variable": "LV", "Recall": 0.9279503105590062}, {"deg": 280, "variable": "LV", "Recall": 0.916058394160584}, {"deg": 285, "variable": "LV", "Recall": 0.9155609167671894}, {"deg": 290, "variable": "LV", "Recall": 0.9375764993880049}, {"deg": 295, "variable": "LV", "Recall": 0.9301470588235294}, {"deg": 300, "variable": "LV", "Recall": 0.929192546583851}, {"deg": 305, "variable": "LV", "Recall": 0.9121951219512195}, {"deg": 310, "variable": "LV", "Recall": 0.9004854368932039}, {"deg": 315, "variable": "LV", "Recall": 0.9164648910411622}, {"deg": 320, "variable": "LV", "Recall": 0.9196538936959209}, {"deg": 325, "variable": "LV", "Recall": 0.9192166462668299}, {"deg": 330, "variable": "LV", "Recall": 0.922509225092251}, {"deg": 335, "variable": "LV", "Recall": 0.9066339066339066}, {"deg": 340, "variable": "LV", "Recall": 0.9156479217603912}, {"deg": 345, "variable": "LV", "Recall": 0.8919902912621359}, {"deg": 350, "variable": "LV", "Recall": 0.9069478908188585}, {"deg": 355, "variable": "LV", "Recall": 0.9272503082614056}, {"deg": 0, "variable": "MY", "Recall": 0.8454172366621067}, {"deg": 5, "variable": "MY", "Recall": 0.8317503392130258}, {"deg": 10, "variable": "MY", "Recall": 0.8573369565217391}, {"deg": 15, "variable": "MY", "Recall": 0.8513888888888889}, {"deg": 20, "variable": "MY", "Recall": 0.8458333333333333}, {"deg": 25, "variable": "MY", "Recall": 0.8337837837837838}, {"deg": 30, "variable": "MY", "Recall": 0.8673050615595075}, {"deg": 35, "variable": "MY", "Recall": 0.8583218707015131}, {"deg": 40, "variable": "MY", "Recall": 0.8698630136986302}, {"deg": 45, "variable": "MY", "Recall": 0.8600823045267489}, {"deg": 50, "variable": "MY", "Recall": 0.8304172274562585}, {"deg": 55, "variable": "MY", "Recall": 0.8478260869565217}, {"deg": 60, "variable": "MY", "Recall": 0.8218232044198895}, {"deg": 65, "variable": "MY", "Recall": 0.8399452804377565}, {"deg": 70, "variable": "MY", "Recall": 0.8443526170798898}, {"deg": 75, "variable": "MY", "Recall": 0.84}, {"deg": 80, "variable": "MY", "Recall": 0.8299319727891157}, {"deg": 85, "variable": "MY", "Recall": 0.8247978436657682}, {"deg": 90, "variable": "MY", "Recall": 0.8113975576662144}, {"deg": 95, "variable": "MY", "Recall": 0.8114754098360656}, {"deg": 100, "variable": "MY", "Recall": 0.8110344827586207}, {"deg": 105, "variable": "MY", "Recall": 0.7563380281690141}, {"deg": 110, "variable": "MY", "Recall": 0.8025210084033614}, {"deg": 115, "variable": "MY", "Recall": 0.6497948016415869}, {"deg": 120, "variable": "MY", "Recall": 0.43922651933701656}, {"deg": 125, "variable": "MY", "Recall": 0.6175243393602226}, {"deg": 130, "variable": "MY", "Recall": 0.356353591160221}, {"deg": 135, "variable": "MY", "Recall": 0.14542936288088643}, {"deg": 140, "variable": "MY", "Recall": 0.008241758241758242}, {"deg": 145, "variable": "MY", "Recall": 0.0110803324099723}, {"deg": 150, "variable": "MY", "Recall": 0.0}, {"deg": 155, "variable": "MY", "Recall": 0.0}, {"deg": 160, "variable": "MY", "Recall": 0.15341701534170155}, {"deg": 165, "variable": "MY", "Recall": 0.0}, {"deg": 170, "variable": "MY", "Recall": 0.0}, {"deg": 175, "variable": "MY", "Recall": 0.004103967168262654}, {"deg": 180, "variable": "MY", "Recall": 0.0}, {"deg": 185, "variable": "MY", "Recall": 0.0}, {"deg": 190, "variable": "MY", "Recall": 0.0}, {"deg": 195, "variable": "MY", "Recall": 0.0}, {"deg": 200, "variable": "MY", "Recall": 0.24444444444444444}, {"deg": 205, "variable": "MY", "Recall": 0.5472972972972973}, {"deg": 210, "variable": "MY", "Recall": 0.6333789329685362}, {"deg": 215, "variable": "MY", "Recall": 0.7510316368638239}, {"deg": 220, "variable": "MY", "Recall": 0.7232876712328767}, {"deg": 225, "variable": "MY", "Recall": 0.7455540355677155}, {"deg": 230, "variable": "MY", "Recall": 0.784656796769852}, {"deg": 235, "variable": "MY", "Recall": 0.8165760869565217}, {"deg": 240, "variable": "MY", "Recall": 0.7900552486187845}, {"deg": 245, "variable": "MY", "Recall": 0.821917808219178}, {"deg": 250, "variable": "MY", "Recall": 0.8143053645116919}, {"deg": 255, "variable": "MY", "Recall": 0.8275862068965517}, {"deg": 260, "variable": "MY", "Recall": 0.8256130790190735}, {"deg": 265, "variable": "MY", "Recall": 0.8207547169811321}, {"deg": 270, "variable": "MY", "Recall": 0.8168249660786974}, {"deg": 275, "variable": "MY", "Recall": 0.8224043715846995}, {"deg": 280, "variable": "MY", "Recall": 0.8551724137931035}, {"deg": 285, "variable": "MY", "Recall": 0.8436619718309859}, {"deg": 290, "variable": "MY", "Recall": 0.8447552447552448}, {"deg": 295, "variable": "MY", "Recall": 0.8331053351573188}, {"deg": 300, "variable": "MY", "Recall": 0.8370165745856354}, {"deg": 305, "variable": "MY", "Recall": 0.847009735744089}, {"deg": 310, "variable": "MY", "Recall": 0.8259668508287292}, {"deg": 315, "variable": "MY", "Recall": 0.850974930362117}, {"deg": 320, "variable": "MY", "Recall": 0.8695054945054945}, {"deg": 325, "variable": "MY", "Recall": 0.8753462603878116}, {"deg": 330, "variable": "MY", "Recall": 0.8935574229691877}, {"deg": 335, "variable": "MY", "Recall": 0.8755186721991701}, {"deg": 340, "variable": "MY", "Recall": 0.8716875871687587}, {"deg": 345, "variable": "MY", "Recall": 0.8549511854951185}, {"deg": 350, "variable": "MY", "Recall": 0.86593707250342}, {"deg": 355, "variable": "MY", "Recall": 0.8508891928864569}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<p>In order to define your own evaluation function you need to define a function with the predicted and true masks as first and second parameter and the component to evaluate as third parameter. Masks are of type ImageSegment and you can access the tensor data using the <code>.data</code> property. This is an example on how to define specificity. This can than be passed as evaluation function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> specificity_by_component(predictedMask, trueMask, component <span class="op">=</span> <span class="dv">1</span>):</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>    specificity <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>    pred <span class="op">=</span> np.array(predictedMask) <span class="op">!=</span> component</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>    msk <span class="op">=</span> np.array(trueMask) <span class="op">!=</span> component</span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>    intersect <span class="op">=</span> pred<span class="op">&amp;</span>msk</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> np.<span class="bu">sum</span>(pred) <span class="op">+</span> np.<span class="bu">sum</span>(msk)</span>
+<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> total <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>        specificity <span class="op">=</span> np.<span class="bu">sum</span>(intersect).astype(<span class="bu">float</span>) <span class="op">/</span> msk.<span class="bu">sum</span>()</span>
+<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> specificity.item()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>results_specificity <span class="op">=</span> eval_rotation_series(img(), trueMask(), trainedModel, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>], eval_function<span class="op">=</span>specificity_by_component)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>plot_specificity <span class="op">=</span> plot_eval_series(results_specificity, value_vars<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>], value_name<span class="op">=</span><span class="st">"Specificity"</span>)</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>plot_specificity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+
+<div id="altair-viz-c91d40af95b14ed890d653fe4b58b65d"></div>
+<script type="text/javascript">
+  var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
+  (function(spec, embedOpt){
+    let outputDiv = document.currentScript.previousElementSibling;
+    if (outputDiv.id !== "altair-viz-c91d40af95b14ed890d653fe4b58b65d") {
+      outputDiv = document.getElementById("altair-viz-c91d40af95b14ed890d653fe4b58b65d");
+    }
+    const paths = {
+      "vega": "https://cdn.jsdelivr.net/npm//vega@5?noext",
+      "vega-lib": "https://cdn.jsdelivr.net/npm//vega-lib?noext",
+      "vega-lite": "https://cdn.jsdelivr.net/npm//vega-lite@4.17.0?noext",
+      "vega-embed": "https://cdn.jsdelivr.net/npm//vega-embed@6?noext",
+    };
+
+    function maybeLoadScript(lib, version) {
+      var key = `${lib.replace("-", "")}_version`;
+      return (VEGA_DEBUG[key] == version) ?
+        Promise.resolve(paths[lib]) :
+        new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          document.getElementsByTagName("head")[0].appendChild(s);
+          s.async = true;
+          s.onload = () => {
+            VEGA_DEBUG[key] = version;
+            return resolve(paths[lib]);
+          };
+          s.onerror = () => reject(`Error loading script: ${paths[lib]}`);
+          s.src = paths[lib];
+        });
+    }
+
+    function showError(err) {
+      outputDiv.innerHTML = `<div class="error" style="color:red;">${err}</div>`;
+      throw err;
+    }
+
+    function displayChart(vegaEmbed) {
+      vegaEmbed(outputDiv, spec, embedOpt)
+        .catch(err => showError(`Javascript Error: ${err.message}<br>This usually means there's a typo in your chart specification. See the javascript console for the full traceback.`));
+    }
+
+    if(typeof define === "function" && define.amd) {
+      requirejs.config({paths});
+      require(["vega-embed"], displayChart, err => showError(`Error loading script: ${err.message}`));
+    } else {
+      maybeLoadScript("vega", "5")
+        .then(() => maybeLoadScript("vega-lite", "4.17.0"))
+        .then(() => maybeLoadScript("vega-embed", "6"))
+        .catch(showError)
+        .then(() => displayChart(vegaEmbed));
+    }
+  })({"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}}, "data": {"name": "data-f8065769a20165073bb2a99e066d8017"}, "mark": "line", "encoding": {"color": {"field": "variable", "type": "nominal"}, "tooltip": {"field": "Specificity", "type": "quantitative"}, "x": {"field": "deg", "type": "quantitative"}, "y": {"field": "Specificity", "type": "quantitative"}}, "height": 300, "selection": {"selector011": {"type": "interval", "bind": "scales", "encodings": ["x", "y"]}}, "width": 700, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-f8065769a20165073bb2a99e066d8017": [{"deg": 0, "variable": "bg", "Specificity": 0.9616135328562134}, {"deg": 5, "variable": "bg", "Specificity": 0.9486679662118258}, {"deg": 10, "variable": "bg", "Specificity": 0.9669046073977936}, {"deg": 15, "variable": "bg", "Specificity": 0.9641693811074918}, {"deg": 20, "variable": "bg", "Specificity": 0.9642625081221572}, {"deg": 25, "variable": "bg", "Specificity": 0.9529032258064516}, {"deg": 30, "variable": "bg", "Specificity": 0.9634225996080993}, {"deg": 35, "variable": "bg", "Specificity": 0.9688109161793372}, {"deg": 40, "variable": "bg", "Specificity": 0.9720597790773229}, {"deg": 45, "variable": "bg", "Specificity": 0.9734283862605314}, {"deg": 50, "variable": "bg", "Specificity": 0.95955642530985}, {"deg": 55, "variable": "bg", "Specificity": 0.9609629147690306}, {"deg": 60, "variable": "bg", "Specificity": 0.9319816873773709}, {"deg": 65, "variable": "bg", "Specificity": 0.9263363754889179}, {"deg": 70, "variable": "bg", "Specificity": 0.9439374185136897}, {"deg": 75, "variable": "bg", "Specificity": 0.9405228758169935}, {"deg": 80, "variable": "bg", "Specificity": 0.9516655780535598}, {"deg": 85, "variable": "bg", "Specificity": 0.9341590612777053}, {"deg": 90, "variable": "bg", "Specificity": 0.9348109517601043}, {"deg": 95, "variable": "bg", "Specificity": 0.9381912817176318}, {"deg": 100, "variable": "bg", "Specificity": 0.9308338720103426}, {"deg": 105, "variable": "bg", "Specificity": 0.8862897985705003}, {"deg": 110, "variable": "bg", "Specificity": 0.9320261437908497}, {"deg": 115, "variable": "bg", "Specificity": 0.832579185520362}, {"deg": 120, "variable": "bg", "Specificity": 0.6684107259646828}, {"deg": 125, "variable": "bg", "Specificity": 0.815464587394412}, {"deg": 130, "variable": "bg", "Specificity": 0.6175710594315246}, {"deg": 135, "variable": "bg", "Specificity": 0.1093143596377749}, {"deg": 140, "variable": "bg", "Specificity": 0.003903708523096942}, {"deg": 145, "variable": "bg", "Specificity": 0.005198180636777128}, {"deg": 150, "variable": "bg", "Specificity": 0.0}, {"deg": 155, "variable": "bg", "Specificity": 0.0}, {"deg": 160, "variable": "bg", "Specificity": 0.09250814332247558}, {"deg": 165, "variable": "bg", "Specificity": 0.0}, {"deg": 170, "variable": "bg", "Specificity": 0.0}, {"deg": 175, "variable": "bg", "Specificity": 0.0019455252918287938}, {"deg": 180, "variable": "bg", "Specificity": 0.0}, {"deg": 185, "variable": "bg", "Specificity": 0.0}, {"deg": 190, "variable": "bg", "Specificity": 0.0}, {"deg": 195, "variable": "bg", "Specificity": 0.0}, {"deg": 200, "variable": "bg", "Specificity": 0.1682910981156595}, {"deg": 205, "variable": "bg", "Specificity": 0.7748387096774193}, {"deg": 210, "variable": "bg", "Specificity": 0.8465055519268452}, {"deg": 215, "variable": "bg", "Specificity": 0.9252761533463287}, {"deg": 220, "variable": "bg", "Specificity": 0.8810916179337231}, {"deg": 225, "variable": "bg", "Specificity": 0.9236739974126779}, {"deg": 230, "variable": "bg", "Specificity": 0.9347684279191129}, {"deg": 235, "variable": "bg", "Specificity": 0.9564085881587508}, {"deg": 240, "variable": "bg", "Specificity": 0.934597776324395}, {"deg": 245, "variable": "bg", "Specificity": 0.9497716894977168}, {"deg": 250, "variable": "bg", "Specificity": 0.9563517915309446}, {"deg": 255, "variable": "bg", "Specificity": 0.9470588235294117}, {"deg": 260, "variable": "bg", "Specificity": 0.9549019607843138}, {"deg": 265, "variable": "bg", "Specificity": 0.940677966101695}, {"deg": 270, "variable": "bg", "Specificity": 0.9295958279009127}, {"deg": 275, "variable": "bg", "Specificity": 0.9355888093689004}, {"deg": 280, "variable": "bg", "Specificity": 0.945054945054945}, {"deg": 285, "variable": "bg", "Specificity": 0.9389213775178687}, {"deg": 290, "variable": "bg", "Specificity": 0.9588772845953003}, {"deg": 295, "variable": "bg", "Specificity": 0.9508726567550096}, {"deg": 300, "variable": "bg", "Specificity": 0.9489862655330281}, {"deg": 305, "variable": "bg", "Specificity": 0.944769330734243}, {"deg": 310, "variable": "bg", "Specificity": 0.9392764857881137}, {"deg": 315, "variable": "bg", "Specificity": 0.9559585492227979}, {"deg": 320, "variable": "bg", "Specificity": 0.9499024072869225}, {"deg": 325, "variable": "bg", "Specificity": 0.9525666016894087}, {"deg": 330, "variable": "bg", "Specificity": 0.9652914210870989}, {"deg": 335, "variable": "bg", "Specificity": 0.9512036434612883}, {"deg": 340, "variable": "bg", "Specificity": 0.9478827361563518}, {"deg": 345, "variable": "bg", "Specificity": 0.9292667099286178}, {"deg": 350, "variable": "bg", "Specificity": 0.9538061158100195}, {"deg": 355, "variable": "bg", "Specificity": 0.943579766536965}, {"deg": 0, "variable": "LV", "Specificity": 0.9987023018693033}, {"deg": 5, "variable": "LV", "Specificity": 0.9988723082151574}, {"deg": 10, "variable": "LV", "Specificity": 0.9988568074029445}, {"deg": 15, "variable": "LV", "Specificity": 0.9989184345112097}, {"deg": 20, "variable": "LV", "Specificity": 0.9987793006474343}, {"deg": 25, "variable": "LV", "Specificity": 0.9989030683187591}, {"deg": 30, "variable": "LV", "Specificity": 0.9991040533860603}, {"deg": 35, "variable": "LV", "Specificity": 0.9989493850812682}, {"deg": 40, "variable": "LV", "Specificity": 0.9989339842724057}, {"deg": 45, "variable": "LV", "Specificity": 0.9988411977380179}, {"deg": 50, "variable": "LV", "Specificity": 0.9987644024341272}, {"deg": 55, "variable": "LV", "Specificity": 0.9988259828531706}, {"deg": 60, "variable": "LV", "Specificity": 0.9991966754723394}, {"deg": 65, "variable": "LV", "Specificity": 0.999428421361593}, {"deg": 70, "variable": "LV", "Specificity": 0.9992120875046347}, {"deg": 75, "variable": "LV", "Specificity": 0.9992739182153837}, {"deg": 80, "variable": "LV", "Specificity": 0.9988260735248687}, {"deg": 85, "variable": "LV", "Specificity": 0.9991659458791549}, {"deg": 90, "variable": "LV", "Specificity": 0.9989341818687345}, {"deg": 95, "variable": "LV", "Specificity": 0.998795013208509}, {"deg": 100, "variable": "LV", "Specificity": 0.9989801279475847}, {"deg": 105, "variable": "LV", "Specificity": 0.9994436459733878}, {"deg": 110, "variable": "LV", "Specificity": 0.998995673671199}, {"deg": 115, "variable": "LV", "Specificity": 0.9995055624227441}, {"deg": 120, "variable": "LV", "Specificity": 0.9998609630625203}, {"deg": 125, "variable": "LV", "Specificity": 0.9995209839915941}, {"deg": 130, "variable": "LV", "Specificity": 0.9997063913957226}, {"deg": 135, "variable": "LV", "Specificity": 1.0}, {"deg": 140, "variable": "LV", "Specificity": 1.0}, {"deg": 145, "variable": "LV", "Specificity": 1.0}, {"deg": 150, "variable": "LV", "Specificity": 1.0}, {"deg": 155, "variable": "LV", "Specificity": 1.0}, {"deg": 160, "variable": "LV", "Specificity": 1.0}, {"deg": 165, "variable": "LV", "Specificity": 1.0}, {"deg": 170, "variable": "LV", "Specificity": 1.0}, {"deg": 175, "variable": "LV", "Specificity": 1.0}, {"deg": 180, "variable": "LV", "Specificity": 1.0}, {"deg": 185, "variable": "LV", "Specificity": 1.0}, {"deg": 190, "variable": "LV", "Specificity": 1.0}, {"deg": 195, "variable": "LV", "Specificity": 1.0}, {"deg": 200, "variable": "LV", "Specificity": 0.9998763848756895}, {"deg": 205, "variable": "LV", "Specificity": 0.9990730154806414}, {"deg": 210, "variable": "LV", "Specificity": 0.998995921898171}, {"deg": 215, "variable": "LV", "Specificity": 0.9986867313515851}, {"deg": 220, "variable": "LV", "Specificity": 0.999273873344972}, {"deg": 225, "variable": "LV", "Specificity": 0.9985630629934642}, {"deg": 230, "variable": "LV", "Specificity": 0.9987489574645538}, {"deg": 235, "variable": "LV", "Specificity": 0.9985942689426122}, {"deg": 240, "variable": "LV", "Specificity": 0.998810461757118}, {"deg": 245, "variable": "LV", "Specificity": 0.9987641542953363}, {"deg": 250, "variable": "LV", "Specificity": 0.9986404647138796}, {"deg": 255, "variable": "LV", "Specificity": 0.9990112928890331}, {"deg": 260, "variable": "LV", "Specificity": 0.9986561631139944}, {"deg": 265, "variable": "LV", "Specificity": 0.9989651550722847}, {"deg": 270, "variable": "LV", "Specificity": 0.9991504348229043}, {"deg": 275, "variable": "LV", "Specificity": 0.9990576385348596}, {"deg": 280, "variable": "LV", "Specificity": 0.9991810118366968}, {"deg": 285, "variable": "LV", "Specificity": 0.9991654689600816}, {"deg": 290, "variable": "LV", "Specificity": 0.9989184010877795}, {"deg": 295, "variable": "LV", "Specificity": 0.998872064276885}, {"deg": 300, "variable": "LV", "Specificity": 0.9989649472432065}, {"deg": 305, "variable": "LV", "Specificity": 0.999150132888312}, {"deg": 310, "variable": "LV", "Specificity": 0.9989955495116826}, {"deg": 315, "variable": "LV", "Specificity": 0.9989027970947303}, {"deg": 320, "variable": "LV", "Specificity": 0.9991966258284796}, {"deg": 325, "variable": "LV", "Specificity": 0.9992274293484139}, {"deg": 330, "variable": "LV", "Specificity": 0.9992120266365898}, {"deg": 335, "variable": "LV", "Specificity": 0.9993201693396372}, {"deg": 340, "variable": "LV", "Specificity": 0.9993510306251738}, {"deg": 345, "variable": "LV", "Specificity": 0.9995827667202374}, {"deg": 350, "variable": "LV", "Specificity": 0.9992584582110304}, {"deg": 355, "variable": "LV", "Specificity": 0.9992429509463113}, {"deg": 0, "variable": "MY", "Specificity": 0.9975773474268961}, {"deg": 5, "variable": "MY", "Specificity": 0.9977468788098581}, {"deg": 10, "variable": "MY", "Specificity": 0.9977469135802469}, {"deg": 15, "variable": "MY", "Specificity": 0.9976703283139965}, {"deg": 20, "variable": "MY", "Specificity": 0.9977320414712416}, {"deg": 25, "variable": "MY", "Specificity": 0.9977004753379838}, {"deg": 30, "variable": "MY", "Specificity": 0.9977470874160944}, {"deg": 35, "variable": "MY", "Specificity": 0.9972688978382632}, {"deg": 40, "variable": "MY", "Specificity": 0.9976236768200475}, {"deg": 45, "variable": "MY", "Specificity": 0.9972379526902958}, {"deg": 50, "variable": "MY", "Specificity": 0.9976232000370411}, {"deg": 55, "variable": "MY", "Specificity": 0.9976234567901234}, {"deg": 60, "variable": "MY", "Specificity": 0.998133061778683}, {"deg": 65, "variable": "MY", "Specificity": 0.9978859655890749}, {"deg": 70, "variable": "MY", "Specificity": 0.9977472612251196}, {"deg": 75, "variable": "MY", "Specificity": 0.9979324497384703}, {"deg": 80, "variable": "MY", "Specificity": 0.9976080616039876}, {"deg": 85, "variable": "MY", "Specificity": 0.9983331789980554}, {"deg": 90, "variable": "MY", "Specificity": 0.9979783638636399}, {"deg": 95, "variable": "MY", "Specificity": 0.9981636935991606}, {"deg": 100, "variable": "MY", "Specificity": 0.9980558855749796}, {"deg": 105, "variable": "MY", "Specificity": 0.9981026131490451}, {"deg": 110, "variable": "MY", "Specificity": 0.9981024960661504}, {"deg": 115, "variable": "MY", "Specificity": 0.9981482910269269}, {"deg": 120, "variable": "MY", "Specificity": 0.998765660680121}, {"deg": 125, "variable": "MY", "Specificity": 0.9979634972306648}, {"deg": 130, "variable": "MY", "Specificity": 0.9981639202616799}, {"deg": 135, "variable": "MY", "Specificity": 0.9993674206190021}, {"deg": 140, "variable": "MY", "Specificity": 1.0}, {"deg": 145, "variable": "MY", "Specificity": 1.0}, {"deg": 150, "variable": "MY", "Specificity": 1.0}, {"deg": 155, "variable": "MY", "Specificity": 1.0}, {"deg": 160, "variable": "MY", "Specificity": 0.999784013946528}, {"deg": 165, "variable": "MY", "Specificity": 1.0}, {"deg": 170, "variable": "MY", "Specificity": 1.0}, {"deg": 175, "variable": "MY", "Specificity": 1.0}, {"deg": 180, "variable": "MY", "Specificity": 1.0}, {"deg": 185, "variable": "MY", "Specificity": 1.0}, {"deg": 190, "variable": "MY", "Specificity": 1.0}, {"deg": 195, "variable": "MY", "Specificity": 1.0}, {"deg": 200, "variable": "MY", "Specificity": 0.9996451493458405}, {"deg": 205, "variable": "MY", "Specificity": 0.9988888202975492}, {"deg": 210, "variable": "MY", "Specificity": 0.998657510994522}, {"deg": 215, "variable": "MY", "Specificity": 0.9975312070854356}, {"deg": 220, "variable": "MY", "Specificity": 0.998302626300034}, {"deg": 225, "variable": "MY", "Specificity": 0.9974539001620245}, {"deg": 230, "variable": "MY", "Specificity": 0.9981788156127976}, {"deg": 235, "variable": "MY", "Specificity": 0.9980246913580247}, {"deg": 240, "variable": "MY", "Specificity": 0.9984107881256558}, {"deg": 245, "variable": "MY", "Specificity": 0.9981328889300374}, {"deg": 250, "variable": "MY", "Specificity": 0.9981021154469286}, {"deg": 255, "variable": "MY", "Specificity": 0.99839533412538}, {"deg": 260, "variable": "MY", "Specificity": 0.9981482053023055}, {"deg": 265, "variable": "MY", "Specificity": 0.998502947803809}, {"deg": 270, "variable": "MY", "Specificity": 0.9984876309819596}, {"deg": 275, "variable": "MY", "Specificity": 0.9981791247453861}, {"deg": 280, "variable": "MY", "Specificity": 0.9982564688093071}, {"deg": 285, "variable": "MY", "Specificity": 0.9981334649677599}, {"deg": 290, "variable": "MY", "Specificity": 0.9977939248083183}, {"deg": 295, "variable": "MY", "Specificity": 0.9977779492323123}, {"deg": 300, "variable": "MY", "Specificity": 0.9976856137752268}, {"deg": 305, "variable": "MY", "Specificity": 0.9975777959485937}, {"deg": 310, "variable": "MY", "Specificity": 0.9977319014997222}, {"deg": 315, "variable": "MY", "Specificity": 0.9975778333179055}, {"deg": 320, "variable": "MY", "Specificity": 0.9977317615109246}, {"deg": 325, "variable": "MY", "Specificity": 0.9978554016107631}, {"deg": 330, "variable": "MY", "Specificity": 0.997485421616118}, {"deg": 335, "variable": "MY", "Specificity": 0.9977319364942219}, {"deg": 340, "variable": "MY", "Specificity": 0.9977784291642883}, {"deg": 345, "variable": "MY", "Specificity": 0.9980561255187522}, {"deg": 350, "variable": "MY", "Specificity": 0.9972841601728262}, {"deg": 355, "variable": "MY", "Specificity": 0.9979785510377286}]}}, {"mode": "vega-lite"});
+</script>
+</div>
+</div>
+<p>The specificity for the background class degrades so dramatically for rotations of around 180 degrees as the LV and MY classes are no longer detected at all. So there are no “true negatives” for the background class, consequently specificity for that class drops to zero.</p>
+</section>
+<section id="confusion-matrices" class="level2">
+<h2 class="anchored" data-anchor-id="confusion-matrices">Confusion Matrices</h2>
+<p>Confusion matrices are useful to evaluate in more detail which classes the model gets wrong. To conveniently generate separate confusion matrices or series <code>misas</code> provides some convenience functions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>series <span class="op">=</span> get_rotation_series(img(), trainedModel, truth<span class="op">=</span>trueMask())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0}
+</script>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L504" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_confusion" class="level3">
+<h3 class="anchored" data-anchor-id="get_confusion">get_confusion</h3>
+<blockquote class="blockquote">
+<pre><code> get_confusion (prediction, truth, max_class=None)</code></pre>
+</blockquote>
+<p>The <a href="https://chfc-cmi.github.io/misas/local_interpret.html#get_confusion"><code>get_confusion</code></a> function returns a two dimensional <code>numpy</code> array with counts for each class combination. The true class is along the columns and the predicted class along the rows. The number of classes is derived from the data if not provided as <code>max_class</code> parameter. This parameter is important if the given instance of prediction and truth does not contain all available classes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>cm <span class="op">=</span> get_confusion(series[<span class="dv">0</span>][<span class="dv">2</span>], series[<span class="dv">0</span>][<span class="dv">3</span>])</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>cm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>array([[63862,    22,    37],
+       [    8,   756,    76],
+       [  129,    28,   618]])</code></pre>
+</div>
+</div>
+<p>This matrix shows that there are 754 pixels classified correctly as “LV” (class=1). However, there are also 17 pixels that are in reality “LV” but predicted as “MY”. Accordingly, there are 68 pixels that are “MY” but predicted as “LV”.</p>
+<p>Looking at tables is much less convenient and informative than looking at graphics so let’s plot this matrix</p>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L513" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="plot_confusion" class="level3">
+<h3 class="anchored" data-anchor-id="plot_confusion">plot_confusion</h3>
+<blockquote class="blockquote">
+<pre><code> plot_confusion (confusion_matrix, norm_axis=0, components=None, ax=None,
+                 ax_label=True, cmap='Blues')</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> plot_confusion(cm, components<span class="op">=</span>[<span class="st">"bg"</span>,<span class="st">"LV"</span>,<span class="st">"MY"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-71-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>This is the confusion matrix for one image. Next we want to look at the confusion matrix for a full series of transformed (in this case rotated) images.</p>
+<hr>
+<p><a href="https://github.com/chfc-cmi/misas/blob/master/misas/core.py#L543" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="plot_confusion_series" class="level3">
+<h3 class="anchored" data-anchor-id="plot_confusion_series">plot_confusion_series</h3>
+<blockquote class="blockquote">
+<pre><code> plot_confusion_series (series, nrow=1, figsize=(16, 6),
+                        param_name='param', cmap='Blues', components=None,
+                        norm_axis=0, **kwargs)</code></pre>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>plot_series(series,figsize<span class="op">=</span>(<span class="fl">16.5</span>,<span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-73-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>plot_confusion_series(series, components<span class="op">=</span>[<span class="st">'bg'</span>,<span class="st">'LV'</span>,<span class="st">'MY'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_local_interpret_files/figure-html/cell-74-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{},"version_major":2,"version_minor":0}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
